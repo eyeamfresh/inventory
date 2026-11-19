@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fresh Collectibles // Vault Intake</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Permanent+Marker&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --neon-cyan: #00f3ff;
+      --neon-magenta: #ff007f;
+      --electric-purple: #9d00ff;
+      --synth-yellow: #ffe600;
+      --bg-dark: #070212;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100vh;
+      background-color: var(--bg-dark);
+      font-family: 'Orbitron', sans-serif;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    /* CRT Scanline & Chromatic Vignette Overlay */
+    .crt-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 50;
+      background:
+        linear-gradient(
+          rgba(18, 16, 16, 0) 50%,
+          rgba(0, 0, 0, 0.35) 50%
+        ),
+        linear-gradient(
+          90deg,
+          rgba(255, 0, 0, 0.04),
+          rgba(0, 255, 0, 0.01),
+          rgba(0, 0, 255, 0.04)
+        );
+      background-size: 100% 3px, 6px 100%;
+      box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.85);
+    }
+
+    @keyframes crtFlicker {
+      0% { opacity: 0.97; }
+      50% { opacity: 1; }
+      100% { opacity: 0.98; }
+    }
+    .crt-flicker {
+      animation: crtFlicker 0.15s infinite;
+    }
+
+    /* Ambient synthwave backdrop (matches welcome.html) */
+    .bg-scene {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 55% at 50% -12%, rgba(157, 0, 255, 0.38), transparent 62%),
+        radial-gradient(circle at 88% 18%, rgba(0, 243, 255, 0.14), transparent 42%),
+        radial-gradient(circle at 8% 70%, rgba(255, 0, 127, 0.12), transparent 46%);
+    }
+    .bg-grid {
+      position: fixed;
+      left: -20%;
+      right: -20%;
+      bottom: -8%;
+      height: 46vh;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.5;
+      background-image:
+        linear-gradient(rgba(0, 243, 255, 0.16) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.16) 1px, transparent 1px);
+      background-size: 52px 52px;
+      transform: perspective(340px) rotateX(62deg);
+      transform-origin: center bottom;
+      -webkit-mask-image: linear-gradient(to top, #000 5%, transparent 72%);
+      mask-image: linear-gradient(to top, #000 5%, transparent 72%);
+    }
+
+    /* 1980s Metallic Chrome Typography */
+    .chrome-text {
+      background: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #a3e4ff 22%,
+        #1a3b70 48%,
+        #090418 50%,
+        #ff4db8 54%,
+        #ff9ce3 78%,
+        #ffffff 100%
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 12px rgba(0, 243, 255, 0.5)) drop-shadow(0 4px 0px #2b064d);
+      letter-spacing: 0.08em;
+    }
+
+    /* Small-size brand mark — same treatment as welcome.html, because the full
+       chrome gradient turns muddy at header sizes. */
+    .brand-mark {
+      background: linear-gradient(180deg, #ffffff 0%, #d8f8ff 38%, #7fe0ff 60%, #ffffff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 8px rgba(0, 243, 255, 0.55)) drop-shadow(0 2px 0 #2b064d);
+      letter-spacing: 0.06em;
+    }
+
+    /* Diecast Collector Blister HUD Frame */
+    .collector-hud {
+      border: 1px solid rgba(0, 243, 255, 0.35);
+      background: rgba(12, 5, 28, 0.85);
+      backdrop-filter: blur(8px);
+      box-shadow:
+        0 0 20px rgba(157, 0, 255, 0.25),
+        inset 0 0 15px rgba(0, 243, 255, 0.15);
+    }
+
+    .font-mono-tech {
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    /* Gallery Card Styling */
+    .diecast-card {
+      background: rgba(18, 8, 38, 0.85);
+      border: 1px solid rgba(0, 243, 255, 0.3);
+      border-radius: 0.75rem;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .diecast-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      border-color: var(--neon-cyan);
+      box-shadow:
+        0 0 25px rgba(0, 243, 255, 0.4),
+        0 0 45px rgba(255, 0, 127, 0.25);
+    }
+
+    .cyber-btn {
+      position: relative;
+      background: linear-gradient(135deg, #1b0736 0%, #3d0952 50%, #17062e 100%);
+      border: 1px solid var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .cyber-btn:hover {
+      border-color: #ffffff;
+      box-shadow: 0 0 20px rgba(0, 243, 255, 0.7), 0 0 30px rgba(255, 0, 127, 0.5);
+    }
+
+    .cyber-btn.sound-active {
+      border-color: var(--neon-magenta);
+      box-shadow: 0 0 14px rgba(255, 0, 127, 0.6), inset 0 0 8px rgba(255, 0, 127, 0.3);
+      color: #ff9ce3;
+    }
+
+    /* Header nav — same treatment as welcome.html */
+    .nav-link {
+      position: relative;
+      padding: 0.45rem 0.15rem;
+      color: #c4b5fd;
+      text-decoration: none;
+      letter-spacing: 0.22em;
+      transition: color 0.2s;
+      white-space: nowrap;
+    }
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.25s ease;
+    }
+    .nav-link:hover { color: #fff; }
+    .nav-link:hover::after { transform: scaleX(1); }
+    .nav-link.active { color: #00f3ff; }
+    .nav-link.active::after { transform: scaleX(1); }
+
+    input, select {
+      background: rgba(7, 2, 18, 0.9);
+      border: 1px solid rgba(0, 243, 255, 0.4);
+      color: #ffffff;
+      padding: 0.6rem 1rem;
+      border-radius: 0.5rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus, select:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 12px rgba(0, 243, 255, 0.5);
+    }
+    /* =====================================================================
+       VAULT INTAKE (add-item.html)
+       ===================================================================== */
+    input, textarea, select { user-select: text; -webkit-user-select: text; }
+
+    #addForm select option { background: #0b0420; color: #fff; }
+
+    .vault-sect {
+      border-top: 1px solid rgba(157, 0, 255, 0.22);
+      margin-top: 1rem;
+      padding-top: 0.95rem;
+    }
+    .vault-sect:first-of-type { border-top: 0; margin-top: 0; padding-top: 0; }
+
+    .sect-head {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      margin-bottom: 0.7rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #c9b6ff;
+    }
+    .sect-no {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 21px;
+      height: 16px;
+      padding: 0 4px;
+      border: 1px solid rgba(0, 243, 255, 0.5);
+      border-radius: 4px;
+      color: #7fe9ff;
+      font-size: 8px;
+      letter-spacing: 0.1em;
+    }
+    .sect-hint {
+      margin-left: auto;
+      font-size: 8px;
+      letter-spacing: 0.16em;
+      color: #6f639a;
+      text-transform: uppercase;
+    }
+
+    .vfield { display: block; min-width: 0; }
+    .vlabel {
+      display: block;
+      margin-bottom: 0.3rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: #9a8fc9;
+    }
+    .vlabel b { color: #ff5fa2; font-weight: 400; }
+    .vfield input, .vfield select {
+      width: 100%;
+      padding: 0.5rem 0.7rem;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+    }
+    .vfield input::placeholder { color: #5d5288; }
+    .vfield select {
+      appearance: none;
+      -webkit-appearance: none;
+      padding-right: 1.9rem;
+      background-image:
+        linear-gradient(45deg, transparent 49%, #7fe9ff 50%),
+        linear-gradient(135deg, #7fe9ff 50%, transparent 51%);
+      background-position: calc(100% - 15px) 50%, calc(100% - 10px) 50%;
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+    }
+
+    /* flag chips */
+    .flag-chip {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.55rem 0.65rem;
+      border: 1px solid rgba(0, 243, 255, 0.22);
+      border-radius: 0.55rem;
+      background: rgba(7, 2, 18, 0.7);
+      cursor: pointer;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #bfaee8;
+      transition: border-color 0.15s, background 0.15s, color 0.15s, box-shadow 0.15s;
+    }
+    .flag-chip:hover { border-color: rgba(0, 243, 255, 0.6); color: #fff; }
+    .flag-chip:has(input:focus-visible) { outline: 2px solid #ff007f; outline-offset: 2px; }
+    .flag-chip .flag-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      border: 1px solid #6f639a;
+      flex: 0 0 auto;
+      transition: background 0.15s, box-shadow 0.15s, border-color 0.15s;
+    }
+    .flag-chip.is-on {
+      border-color: rgba(255, 0, 127, 0.7);
+      background: rgba(255, 0, 127, 0.14);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(255, 0, 127, 0.22);
+    }
+    .flag-chip.is-on .flag-dot {
+      background: #ff007f;
+      border-color: #ff007f;
+      box-shadow: 0 0 8px #ff007f;
+    }
+    .flag-chip.is-on.gold {
+      border-color: rgba(255, 230, 0, 0.75);
+      background: rgba(255, 230, 0, 0.10);
+      box-shadow: 0 0 12px rgba(255, 230, 0, 0.18);
+    }
+    .flag-chip.is-on.gold .flag-dot {
+      background: #ffe600;
+      border-color: #ffe600;
+      box-shadow: 0 0 8px #ffe600;
+    }
+
+    /* photo drop zone */
+    .dropzone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      padding: 1.5rem 1rem;
+      border: 1px dashed rgba(0, 243, 255, 0.4);
+      border-radius: 0.8rem;
+      background: rgba(7, 2, 18, 0.55);
+      cursor: pointer;
+      text-align: center;
+      transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    }
+    .dropzone:hover, .dropzone.is-over {
+      border-color: #00f3ff;
+      background: rgba(0, 243, 255, 0.07);
+      box-shadow: inset 0 0 26px rgba(0, 243, 255, 0.1);
+    }
+    .dropzone:focus-visible { outline: 2px solid #ff007f; outline-offset: 2px; }
+    .dz-icon { font-size: 1.15rem; line-height: 1; color: #7fe9ff; }
+    .dz-main {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #dff9ff;
+    }
+    .dz-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #7d71b0;
+    }
+
+    .thumb-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(74px, 1fr));
+      gap: 0.45rem;
+      margin-top: 0.55rem;
+    }
+    .thumb-grid[hidden] { display: none; }
+    .thumb {
+      position: relative;
+      aspect-ratio: 3 / 4;
+      border: 1px solid rgba(0, 243, 255, 0.3);
+      border-radius: 0.5rem;
+      overflow: hidden;
+      background: #0b0420;
+    }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .thumb button {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 19px;
+      height: 19px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 0, 127, 0.6);
+      background: rgba(5, 1, 15, 0.88);
+      color: #ff9ccb;
+      font-size: 10px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .thumb button:hover { background: #ff007f; color: #fff; }
+    /* photos already attached to the record being edited */
+    .thumb.is-saved { border-color: rgba(168, 85, 247, 0.55); }
+    .thumb.is-saved::after {
+      content: "SAVED";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 1px 0;
+      text-align: center;
+      font-size: 7px;
+      letter-spacing: 0.16em;
+      background: rgba(5, 1, 15, 0.82);
+      color: #c4b5fd;
+      pointer-events: none;
+    }
+
+    /* live preview */
+    .pv-card {
+      border: 1px solid rgba(0, 243, 255, 0.3);
+      border-radius: 0.85rem;
+      overflow: hidden;
+      background: rgba(18, 8, 38, 0.85);
+      box-shadow: 0 0 24px rgba(157, 0, 255, 0.22);
+    }
+    .pv-img {
+      position: relative;
+      aspect-ratio: 3 / 4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: linear-gradient(160deg, #150a2b 0%, #070212 70%);
+    }
+    .pv-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .pv-img img[hidden] { display: none; }
+    .pv-empty {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      line-height: 1.7;
+      text-transform: uppercase;
+      color: #5d5288;
+      text-align: center;
+      padding: 0 1rem;
+    }
+    .pv-empty[hidden] { display: none; }
+    .pv-cat {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background: #00f3ff;
+      color: #070212;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .pv-flags {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+    .pv-flag {
+      padding: 2px 5px;
+      border-radius: 3px;
+      border: 1px solid rgba(255, 0, 127, 0.7);
+      background: rgba(5, 1, 15, 0.82);
+      color: #ff9ccb;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .pv-flag.th { border-color: rgba(0, 243, 255, 0.7); color: #9fe9ff; }
+    .pv-flag.super { border-color: rgba(255, 230, 0, 0.8); color: #ffe600; }
+    .pv-body { padding: 0.7rem 0.8rem 0.85rem; }
+    .pv-title {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 800;
+      font-size: 0.95rem;
+      line-height: 1.15;
+      text-transform: uppercase;
+      color: #fff;
+      overflow-wrap: anywhere;
+    }
+    .pv-series {
+      margin-top: 0.25rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #bfaee8;
+      overflow-wrap: anywhere;
+    }
+    .pv-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.4rem;
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(157, 0, 255, 0.25);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #8b7fc7;
+    }
+
+    /* status + messages */
+    .form-msg {
+      margin-top: 0.8rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      line-height: 1.5;
+    }
+    .form-msg.is-err { color: #ff8fb6; border-left: 2px solid #ff007f; padding-left: 0.55rem; }
+    .form-msg.is-ok { color: #6effc8; border-left: 2px solid #6effc8; padding-left: 0.55rem; }
+    .form-msg.is-busy { color: #7fe9ff; border-left: 2px solid #00f3ff; padding-left: 0.55rem; }
+
+    .dupe-note {
+      margin-top: 0.45rem;
+      padding: 0.4rem 0.55rem;
+      border-left: 2px solid #ffe600;
+      background: rgba(255, 230, 0, 0.08);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #ffe9a3;
+      line-height: 1.5;
+    }
+
+    .success-box {
+      border: 1px solid rgba(110, 255, 200, 0.5);
+      background: rgba(6, 32, 26, 0.55);
+      border-radius: 0.8rem;
+      padding: 0.85rem 1rem;
+      margin-bottom: 0.9rem;
+      box-shadow: 0 0 22px rgba(110, 255, 200, 0.14);
+    }
+
+    .guide-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.06em;
+      line-height: 1.6;
+      color: #a99bd6;
+    }
+    .guide-list li { display: flex; gap: 0.5rem; padding: 0.3rem 0; border-top: 1px solid rgba(157, 0, 255, 0.16); }
+    .guide-list li:first-child { border-top: 0; }
+    .guide-list b { color: #dff9ff; font-weight: 400; flex: 0 0 5.6rem; text-transform: uppercase; letter-spacing: 0.12em; }
+
+    /* ---------- login gate (same look as inventory.html) ---------- */
+    #loginGate {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+      background:
+        radial-gradient(ellipse 62% 48% at 50% 18%, rgba(157, 0, 255, 0.26), transparent 62%),
+        radial-gradient(circle at 84% 82%, rgba(0, 243, 255, 0.12), transparent 46%),
+        rgba(5, 1, 15, 0.66);
+      -webkit-backdrop-filter: blur(3px) saturate(1.05);
+      backdrop-filter: blur(3px) saturate(1.05);
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+    #loginGate.is-gone { opacity: 0; visibility: hidden; pointer-events: none; }
+    #loginGate::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0) 0px,
+        rgba(0, 0, 0, 0) 2px,
+        rgba(0, 0, 0, 0.28) 3px,
+        rgba(0, 0, 0, 0.28) 4px
+      );
+      opacity: 0.35;
+    }
+    .gate-card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 26rem;
+      padding: 1.35rem 1.4rem 1.1rem;
+      border: 1px solid rgba(0, 243, 255, 0.35);
+      background: rgba(12, 5, 28, 0.94);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 30px rgba(157, 0, 255, 0.28), inset 0 0 15px rgba(0, 243, 255, 0.12);
+    }
+    .gate-top {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-bottom: 0.9rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid rgba(0, 243, 255, 0.18);
+    }
+    .gate-dots { display: inline-flex; gap: 4px; }
+    .gate-dots i {
+      display: block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #2b2450;
+      border: 1px solid rgba(0, 243, 255, 0.35);
+    }
+    .gate-dots i:first-child {
+      background: #ff007f;
+      border-color: #ff007f;
+      box-shadow: 0 0 7px #ff007f;
+    }
+    .gate-path {
+      margin-left: auto;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #7d71b0;
+    }
+    .gate-status {
+      margin-top: 0.55rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #8b7fc7;
+    }
+    .gate-status[data-mode="busy"] { color: #00f3ff; }
+    .gate-status[data-mode="ok"] { color: #6effc8; text-shadow: 0 0 10px rgba(110, 255, 200, 0.55); }
+    .gate-status[data-mode="err"] { color: #ff7aa8; text-shadow: 0 0 10px rgba(255, 0, 127, 0.45); }
+    .gate-label {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: #9a8fc9;
+    }
+    .gate-pass { position: relative; }
+    .gate-pass input { width: 100%; padding-right: 3.7rem; letter-spacing: 0.22em; }
+    .gate-show {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: 1px solid rgba(0, 243, 255, 0.28);
+      border-radius: 5px;
+      color: #8fe7ff;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      padding: 4px 6px;
+      cursor: pointer;
+    }
+    .gate-show:hover { border-color: #fff; color: #fff; }
+    .gate-error {
+      margin-top: 0.7rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #ff8fb6;
+      line-height: 1.5;
+    }
+    .gate-error.is-on { border-left: 2px solid #ff007f; padding-left: 0.55rem; }
+    .gate-foot {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.4rem;
+      margin-top: 1rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid rgba(157, 0, 255, 0.22);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #6f639a;
+    }
+    body.locked { overflow: hidden; }
+    body.locked > main { display: none !important; }
+  </style>
+</head>
+<body class="relative min-h-screen flex flex-col justify-between locked">
+
+  <!-- CRT Scanline Overlay -->
+  <div class="crt-overlay crt-flicker"></div>
+
+  <!-- Ambient backdrop -->
+  <div class="bg-scene"></div>
+  <div class="bg-grid"></div>
+
+  <!-- HEADER BAR -->
+  <header class="relative z-20 w-full border-b border-cyan-500/30 bg-[#070212]/90 backdrop-blur-md sticky top-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-3.5 flex flex-wrap justify-between items-center gap-3">
+
+      <!-- Brand Title (always returns to the vault home) -->
+      <div class="flex items-center gap-3">
+        <div>
+          <a href="welcome.html" class="block no-underline group" title="Back to Fresh Collectibles home">
+            <div class="font-mono-tech text-[9px] sm:text-[10px] tracking-[0.32em] text-cyan-300">
+              1:64 &amp; MORE // EST. 1982
+            </div>
+            <h1 class="brand-mark text-xl sm:text-2xl font-black italic tracking-wider uppercase leading-none transition-opacity duration-200 group-hover:opacity-85">
+              FRESH COLLECTIBLES
+            </h1>
+          </a>
+        </div>
+      </div>
+
+      <!-- Nav + actions (same order as welcome.html) -->
+      <div class="flex items-center gap-3 sm:gap-5 flex-wrap">
+        <nav class="flex items-center gap-3 sm:gap-5 font-mono-tech text-[10px] sm:text-[11px] uppercase">
+          <a href="welcome.html" class="nav-link">Home</a>
+          <a href="homepage.html" class="nav-link">Catalog</a>
+          <a href="welcome.html#categories" class="nav-link">Categories</a>
+          <a href="news.html" class="nav-link">News</a>
+        </nav>
+
+        <div class="flex items-center gap-2">
+          <a id="addItemBtn" href="add-item.html" aria-current="page"
+             class="cyber-btn px-3 py-2 rounded-lg text-pink-200 font-mono-tech text-[10px] tracking-widest uppercase flex items-center justify-center gap-1.5"
+             title="Add a new item to the collection">
+            <span class="text-sm leading-none">+</span>
+            <span class="hidden sm:inline">ADD ITEM</span>
+            <span class="sm:hidden">ADD</span>
+          </a>
+          <!-- Background sound lives in the floating dock (bottom-left). -->
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  
+
+  <!-- ================= LOGIN GATE ================= -->
+  <!-- The page is public markup, but every write needs the vault credentials:
+       nginx guards POST/PATCH/DELETE on /diecast-api/ and all of
+       /diecast-upload. This gate collects them once per tab. -->
+  <div id="loginGate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+    <div class="gate-card rounded-xl">
+      <div class="gate-top">
+        <span class="gate-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="gate-path">fresh://vault/intake</span>
+      </div>
+
+      <div class="text-center">
+        <div class="font-mono-tech text-[9px] tracking-[0.32em] text-cyan-300 uppercase">Vault Intake // Write Access</div>
+        <h1 id="gateTitle" class="brand-mark text-xl sm:text-2xl font-black italic tracking-wider uppercase leading-none mt-1.5">
+          FRESH COLLECTIBLES
+        </h1>
+        <div id="gateStatus" class="gate-status" data-mode="locked">Status: locked</div>
+      </div>
+
+      <form id="loginForm" autocomplete="on" novalidate>
+        <label class="gate-label mt-4" for="loginUser">Operator</label>
+        <input id="loginUser" name="username" type="text" autocomplete="username" spellcheck="false"
+               class="w-full" placeholder="username" required />
+
+        <label class="gate-label mt-3" for="loginPass">Access code</label>
+        <div class="gate-pass">
+          <input id="loginPass" name="password" type="password" autocomplete="current-password"
+                 class="w-full" placeholder="••••••••" required />
+          <button type="button" id="gateShow" class="gate-show" aria-label="Show access code" aria-pressed="false">SHOW</button>
+        </div>
+
+        <div id="gateError" class="gate-error" role="alert" aria-live="polite"></div>
+
+        <button id="gateSubmit" type="submit"
+                class="cyber-btn w-full mt-4 py-2.5 rounded-lg text-cyan-100 font-mono-tech text-[11px] tracking-[0.22em] uppercase">
+          ▶ Enter Vault
+        </button>
+      </form>
+
+      <div class="gate-foot">
+        <span>Authorised operators only</span>
+        <span>Session ends on tab close</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= INTAKE FORM ================= -->
+  <main class="relative z-10 max-w-6xl w-full mx-auto px-4 sm:px-8 py-8 flex-1">
+
+    <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <div id="pageKicker" class="font-mono-tech text-[10px] tracking-[0.32em] text-cyan-300">VAULT INTAKE // NEW RECORD</div>
+        <h2 id="pageTitle" class="chrome-text text-2xl sm:text-3xl font-black italic uppercase leading-none mt-1">ADD TO COLLECTION</h2>
+      </div>
+      <div class="flex items-center gap-4 font-mono-tech text-[10px] tracking-[0.18em] uppercase">
+        <span id="vaultCount" class="text-purple-300">READING VAULT…</span>
+        <a href="homepage.html" class="text-cyan-400 hover:text-cyan-200 no-underline">&larr; CATALOG</a>
+      </div>
+    </div>
+
+    <div id="successBox" class="success-box hidden" role="status" aria-live="polite"></div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.45fr)_minmax(0,0.85fr)] gap-5 items-start">
+
+      <!-- ---------------- FORM ---------------- -->
+      <form id="addForm" class="collector-hud rounded-2xl p-4 sm:p-5" novalidate autocomplete="off">
+        <input type="hidden" id="f_id" />
+
+        <!-- identity -->
+        <section class="vault-sect">
+          <div class="sect-head"><span class="sect-no">01</span> Identity <span class="sect-hint">what it is</span></div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <label class="vfield sm:col-span-3">
+              <span class="vlabel">Title <b>*</b></span>
+              <input id="f_title" type="text" maxlength="120" placeholder="'92 Dodge Viper RT/10" required />
+            </label>
+
+            <label class="vfield">
+              <span class="vlabel">Category</span>
+              <select id="f_category">
+                <option value="Hotwheels" selected>Hotwheels</option>
+                <option value="Car Tuned">Car Tuned</option>
+                <option value="Matchbox">Matchbox</option>
+                <option value="Pink Slips">Pink Slips</option>
+                <option value="Jada">Jada</option>
+                <option value="Action Figures">Action Figures</option>
+                <option value="VHS">VHS</option>
+                <option value="McDonalds">McDonalds</option>
+                <option value="Homies">Homies</option>
+                <option value="Legos">Legos</option>
+                <option value="Funko">Funko</option>
+                <option value="Kaido">Kaido</option>
+              </select>
+            </label>
+
+            <label class="vfield">
+              <span class="vlabel">SKU</span>
+              <input id="f_sku" type="text" maxlength="40" placeholder="JJM01" inputmode="text" />
+              <span id="dupBox" class="dupe-note hidden"></span>
+            </label>
+
+            <label class="vfield">
+              <span class="vlabel">Qty</span>
+              <input id="f_qty" type="text" maxlength="12" placeholder="1" value="1" />
+            </label>
+          </div>
+        </section>
+
+        <!-- release data -->
+        <section class="vault-sect">
+          <div class="sect-head"><span class="sect-no">02</span> Release data <span class="sect-hint">catalog tags</span></div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <label class="vfield">
+              <span class="vlabel">Release year</span>
+              <input id="f_year" type="number" min="1968" max="2035" step="1" placeholder="2026" />
+            </label>
+
+            <label class="vfield col-span-2 sm:col-span-1">
+              <span class="vlabel">Series</span>
+              <input id="f_series" type="text" maxlength="80" placeholder="Drop Tops" list="seriesList" />
+              <datalist id="seriesList"></datalist>
+            </label>
+
+            <label class="vfield">
+              <span class="vlabel">Series #</span>
+              <input id="f_seriesNo" type="text" maxlength="12" placeholder="2/5" />
+            </label>
+
+            <label class="vfield">
+              <span class="vlabel">Collector #</span>
+              <input id="f_coll" type="text" maxlength="12" placeholder="29/250" />
+            </label>
+
+            <label class="vfield">
+              <span class="vlabel">Case code</span>
+              <input id="f_case" type="text" maxlength="6" placeholder="N" />
+            </label>
+          </div>
+        </section>
+
+        <!-- flags -->
+        <section class="vault-sect">
+          <div class="sect-head"><span class="sect-no">03</span> Vault flags <span class="sect-hint">rarity markers</span></div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <label class="flag-chip" id="chip_chase">
+              <input id="f_chase" type="checkbox" class="sr-only" />
+              <span class="flag-dot" aria-hidden="true"></span>
+              <span>Chase</span>
+            </label>
+            <label class="flag-chip" id="chip_th">
+              <input id="f_th" type="checkbox" class="sr-only" />
+              <span class="flag-dot" aria-hidden="true"></span>
+              <span>Treasure Hunt</span>
+            </label>
+            <label class="flag-chip gold" id="chip_sth">
+              <input id="f_sth" type="checkbox" class="sr-only" />
+              <span class="flag-dot" aria-hidden="true"></span>
+              <span>Super T-Hunt</span>
+            </label>
+          </div>
+        </section>
+
+        <!-- photos -->
+        <section class="vault-sect">
+          <div class="sect-head"><span class="sect-no">04</span> Photos <span id="photoHint" class="sect-hint">gallery attachments</span></div>
+
+          <div id="dropZone" class="dropzone" tabindex="0" role="button" aria-label="Add photos to this record">
+            <div class="dz-icon" aria-hidden="true">＋</div>
+            <div class="dz-main">Drop photos or click to browse</div>
+            <div class="dz-sub">JPG / PNG · up to 6 · auto-resized to 1600 px</div>
+          </div>
+          <input id="fileInput" type="file" accept="image/*" multiple class="hidden" />
+          <div id="thumbs" class="thumb-grid" hidden></div>
+        </section>
+
+        <!-- actions -->
+        <div class="mt-5 pt-4 border-t border-cyan-500/25 flex flex-col sm:flex-row-reverse items-stretch sm:items-center gap-2">
+          <button type="submit" id="saveBtn"
+                  class="cyber-btn px-5 py-2.5 rounded-lg text-cyan-100 font-mono-tech text-[11px] tracking-[0.2em] uppercase flex items-center justify-center gap-2">
+            <span id="saveBtnLabel">＋ Save to vault</span>
+          </button>
+          <button type="button" id="resetBtn"
+                  class="cyber-btn px-4 py-2.5 rounded-lg text-purple-200 font-mono-tech text-[10px] tracking-[0.2em] uppercase">
+            Reset form
+          </button>
+          <span class="sm:mr-auto font-mono-tech text-[9px] tracking-[0.12em] uppercase text-purple-400">⌘ / ctrl + enter to save</span>
+        </div>
+
+        <div id="formMsg" class="form-msg" role="status" aria-live="polite"></div>
+      </form>
+
+      <!-- ---------------- PREVIEW / HELP ---------------- -->
+      <aside class="lg:sticky lg:top-24 space-y-4">
+        <div>
+          <div class="font-mono-tech text-[9px] tracking-[0.28em] text-cyan-300 mb-2">LIVE PREVIEW</div>
+          <div class="pv-card">
+            <div class="pv-img">
+              <img id="pvImg" alt="" hidden />
+              <div id="pvEmpty" class="pv-empty">No photo<br />attached yet</div>
+              <span id="pvCategory" class="pv-cat">Hotwheels</span>
+              <span id="pvFlags" class="pv-flags"></span>
+            </div>
+            <div class="pv-body">
+              <div id="pvTitle" class="pv-title">Untitled diecast</div>
+              <div id="pvSeries" class="pv-series">—</div>
+              <div class="pv-meta">
+                <span id="pvYear">YEAR —</span>
+                <span id="pvSku">SKU —</span>
+                <span id="pvColl"># —</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="collector-hud rounded-xl p-3.5">
+          <div class="font-mono-tech text-[9px] tracking-[0.28em] text-cyan-300 mb-1.5">FIELD GUIDE</div>
+          <ul class="guide-list">
+            <li><b>Series #</b><span>Position inside its series — <code>2/5</code></span></li>
+            <li><b>Collector #</b><span>Number in the year's mainline — <code>29/250</code></span></li>
+            <li><b>Case code</b><span>Assortment letter stamped on the case — <code>N</code></span></li>
+            <li><b>Qty</b><span>How many you actually own</span></li>
+          </ul>
+        </div>
+
+        <p id="asideNote" class="font-mono-tech text-[9px] leading-relaxed tracking-[0.08em] text-purple-400/90 uppercase">
+          Saved straight to the <span class="text-cyan-300">Hotwheels</span> table in NocoDB.
+          The catalog reads the same table, so the card appears on the next load.
+        </p>
+      </aside>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="relative z-20 w-full border-t border-purple-500/30 bg-[#05010f]/90 py-4 text-center font-mono-tech text-xs text-purple-300">
+    FRESH COLLECTIBLES CYBER VAULT // 1982–2026 ARCHIVE // EST. 1982
+  </footer>
+
+  <script src="gate-audio.js?v=5"></script>
+  <script>
+    // =====================================================================
+    // VAULT INTAKE — add-item.html
+    // Writes to the NocoDB "Hotwheels" table (mygbijn9x2f7xxl) through
+    // /diecast-api/, which injects the API token server-side. Reads are
+    // public; POST/PATCH/DELETE and the upload endpoint need the vault
+    // credentials collected by the gate.
+    // =====================================================================
+    const API = "/diecast-api";
+    const UPLOAD = "/diecast-upload";
+    const AUTH_CHECK = "/vault-auth";
+    const MAX_FILES = 6;
+    const MAX_EDGE = 1600;
+    const DEFAULT_CATEGORY = "Hotwheels";
+    const DEFAULT_YEAR = String(new Date().getFullYear());
+
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+    }[c]));
+
+    let auth = null;
+    let busy = false;
+    let dirty = false;
+    let index = [];
+    const files = [];
+
+    /* ?edit=<Id> turns this page into an editor for one existing record. The
+       page still sits behind the login gate, so nothing can be written (and
+       the record's photos are not shown) until the vault accepts the login. */
+    let EDIT_ID = (() => {
+      const raw = new URLSearchParams(location.search).get("edit");
+      const n = parseInt(String(raw || ""), 10);
+      return Number.isFinite(n) && n > 0 ? n : null;
+    })();
+    let existingGallery = [];   // attachments already on the record
+    let editOriginal = null;    // snapshot used by "undo changes"
+    let editLoaded = false;
+
+    const attachmentUrl = (a) => {
+      const p = String((a && (a.path || a.url)) || "").trim();
+      if (!p) return "";
+      if (/^https?:\/\//i.test(p) || p.startsWith("//")) return p;
+      return "/nocodb/" + p.replace(/^\/+/, "");
+    };
+
+    const authHeaders = (extra = {}) =>
+      auth ? Object.assign({ Authorization: auth.header }, extra) : Object.assign({}, extra);
+
+    /* ------------------------------------------------------------ messages */
+    function showMsg(text, kind) {
+      const el = $("formMsg");
+      el.textContent = text || "";
+      el.className = "form-msg" + (kind ? " is-" + kind : "");
+    }
+
+    /* --------------------------------------------------------- live preview */
+    function syncPreview() {
+      const title = $("f_title").value.trim();
+      const series = $("f_series").value.trim();
+      const seriesNo = $("f_seriesNo").value.trim();
+      const sku = $("f_sku").value.trim().toUpperCase();
+      const coll = $("f_coll").value.trim();
+      const year = $("f_year").value.trim();
+
+      $("pvTitle").textContent = title || "Untitled diecast";
+      $("pvCategory").textContent = $("f_category").value || DEFAULT_CATEGORY;
+      $("pvSeries").textContent = series ? `${series}${seriesNo ? " #" + seriesNo : ""}` : "—";
+      $("pvYear").textContent = year ? "YEAR " + year : "YEAR —";
+      $("pvSku").textContent = sku ? "SKU " + sku : "SKU —";
+      $("pvColl").textContent = coll ? "# " + coll : "# —";
+
+      const flags = [];
+      if ($("f_chase").checked) flags.push('<span class="pv-flag">Chase</span>');
+      if ($("f_th").checked) flags.push('<span class="pv-flag th">T-Hunt</span>');
+      if ($("f_sth").checked) flags.push('<span class="pv-flag super">Super</span>');
+      $("pvFlags").innerHTML = flags.join("");
+
+      const first = files[0] ? files[0].url : (existingGallery[0] ? attachmentUrl(existingGallery[0]) : "");
+      $("pvImg").hidden = !first;
+      $("pvEmpty").hidden = !!first;
+      if (first) $("pvImg").src = first;
+    }
+
+    function syncFlagChips() {
+      [["chip_chase", "f_chase"], ["chip_th", "f_th"], ["chip_sth", "f_sth"]].forEach(([chip, box]) => {
+        $(chip).classList.toggle("is-on", $(box).checked);
+      });
+    }
+
+    /* -------------------------------------------------------------- photos */
+    function addFiles(list) {
+      Array.from(list || []).forEach((file) => {
+        if (!/^image\//.test(file.type)) return;
+        if (files.length >= MAX_FILES) return;
+        files.push({
+          id: "f" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+          file,
+          url: URL.createObjectURL(file),
+        });
+        dirty = true;
+      });
+      if (list && list.length && files.length >= MAX_FILES) {
+        // only complain when something was actually dropped
+        if (Array.from(list).some((f) => /^image\//.test(f.type)) && files.length === MAX_FILES) {
+          showMsg(`PHOTO LIMIT IS ${MAX_FILES} — EXTRA FILES IGNORED`, "err");
+        }
+      }
+      renderThumbs();
+      syncPreview();
+      $("fileInput").value = "";
+    }
+
+    function removeFile(id) {
+      const at = files.findIndex((f) => f.id === id);
+      if (at < 0) return;
+      URL.revokeObjectURL(files[at].url);
+      files.splice(at, 1);
+      renderThumbs();
+      syncPreview();
+    }
+
+    function renderThumbs() {
+      const wrap = $("thumbs");
+      const saved = existingGallery.map((g) => (
+        `<div class="thumb is-saved"><img src="${esc(attachmentUrl(g))}" alt="${esc(g.title || "saved photo")}">` +
+        `<button type="button" data-rmx="${esc(g.key)}" title="Remove photo from this record" aria-label="Remove ${esc(g.title || "photo")}">✕</button></div>`
+      )).join("");
+      const pending = files.map((f) => (
+        `<div class="thumb"><img src="${f.url}" alt="${esc(f.file.name)}">` +
+        `<button type="button" data-rm="${f.id}" title="Remove photo" aria-label="Remove ${esc(f.file.name)}">✕</button></div>`
+      )).join("");
+      wrap.innerHTML = saved + pending;
+      wrap.hidden = existingGallery.length + files.length === 0;
+    }
+
+    function removeExisting(key) {
+      const at = existingGallery.findIndex((g) => g.key === key);
+      if (at < 0) return;
+      existingGallery.splice(at, 1);
+      dirty = true;
+      renderThumbs();
+      syncPreview();
+    }
+
+    function fileToBlob(file) {
+      return new Promise((resolve) => {
+        const done = (out) => resolve(out || file);
+        if (!/^image\//.test(file.type)) return done(file);
+        const img = new Image();
+        img.onload = () => {
+          try {
+            const edge = Math.max(img.naturalWidth, img.naturalHeight);
+            const scale = Math.min(1, MAX_EDGE / edge);
+            if (scale === 1 && file.size < 900 * 1024) return done(file);
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.max(1, Math.round(img.naturalWidth * scale));
+            canvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            canvas.toBlob(
+              (blob) => done(blob ? new File([blob], file.name.replace(/\.[^.]+$/, "") + ".jpg", { type: "image/jpeg" }) : file),
+              "image/jpeg",
+              0.86
+            );
+          } catch (err) {
+            done(file);
+          }
+        };
+        img.onerror = () => done(file);
+        img.src = URL.createObjectURL(file);
+      });
+    }
+
+    async function uploadOne(file) {
+      const blob = await fileToBlob(file);
+      const fd = new FormData();
+      fd.append("file", blob, blob.name || file.name);
+      const res = await fetch(UPLOAD, { method: "POST", body: fd, headers: authHeaders() });
+      if (res.status === 401 || res.status === 403) throw new Error("AUTH");
+      if (!res.ok) throw new Error(`UPLOAD ${res.status}`);
+      const data = await res.json();
+      const item = Array.isArray(data) ? data[0] : data;
+      if (!item || !(item.path || item.url)) throw new Error("UPLOAD RETURNED NO PATH");
+      return {
+        url: item.path || item.url,
+        title: item.title || blob.name || file.name,
+        mimetype: item.mimetype || blob.type || "image/jpeg",
+        size: item.size || blob.size,
+      };
+    }
+
+    /* ------------------------------------------------------------ edit mode */
+    function galleryEntries(rec) {
+      return (rec.Gallery || []).map((g, i) => ({
+        key: "x" + i,
+        path: g.path || g.url || "",
+        title: g.title || "",
+        mimetype: g.mimetype || "image/jpeg",
+        size: g.size || 0,
+      }));
+    }
+
+    function fillForm(rec) {
+      $("f_id").value = rec.Id;
+      $("f_title").value = rec.Title || "";
+      const cat = String(rec.Category || DEFAULT_CATEGORY);
+      const known = Array.from($("f_category").options).some((o) => o.value === cat);
+      $("f_category").value = known ? cat : DEFAULT_CATEGORY;
+      $("f_sku").value = rec.SKU || "";
+      $("f_qty").value = rec.Qty == null ? "" : String(rec.Qty);
+      $("f_year").value = rec["Release Year"] || "";
+      $("f_series").value = rec.Series || "";
+      $("f_seriesNo").value = rec["Series Number"] || "";
+      $("f_coll").value = rec["Collector Number"] || "";
+      $("f_case").value = rec["Case Code"] || "";
+      $("f_chase").checked = rec.Chase === 1 || rec.Chase === true;
+      $("f_th").checked = rec.Treasurehunt === 1 || rec.Treasurehunt === true;
+      $("f_sth").checked = rec["Super Treasurehunt"] === 1 || rec["Super Treasurehunt"] === true;
+      files.splice(0).forEach((f) => URL.revokeObjectURL(f.url));
+      existingGallery = galleryEntries(rec);
+      renderThumbs();
+      syncFlagChips();
+      syncPreview();
+      dirty = false;
+    }
+
+    function applyModeCopy(isEdit) {
+      if (isEdit) {
+        document.title = `Fresh Collectibles // Edit Record #${EDIT_ID}`;
+        $("pageKicker").textContent = `VAULT INTAKE // EDIT RECORD #${EDIT_ID}`;
+        $("pageTitle").textContent = "EDIT THIS RECORD";
+        $("saveBtnLabel").textContent = "✓ Save changes";
+        $("resetBtn").textContent = "Undo changes";
+        $("photoHint").textContent = "saved photos first — ✕ removes";
+        $("asideNote").innerHTML =
+          'Changes write straight to the <span class="text-cyan-300">Hotwheels</span> table in NocoDB. ' +
+          "The catalog reads the same table, so the card updates on the next load.";
+        return;
+      }
+      document.title = "Fresh Collectibles // Vault Intake";
+      $("pageKicker").textContent = "VAULT INTAKE // NEW RECORD";
+      $("pageTitle").textContent = "ADD TO COLLECTION";
+      $("saveBtnLabel").textContent = "＋ Save to vault";
+      $("resetBtn").textContent = "Reset form";
+      $("photoHint").textContent = "gallery attachments";
+      $("asideNote").innerHTML =
+        'Saved straight to the <span class="text-cyan-300">Hotwheels</span> table in NocoDB. ' +
+        "The catalog reads the same table, so the card appears on the next load.";
+    }
+
+    async function loadEditRecord() {
+      if (!EDIT_ID || editLoaded) return;
+      showMsg(`READING RECORD #${EDIT_ID}…`, "busy");
+      try {
+        const res = await fetch(`${API}/records/${EDIT_ID}`, { cache: "no-store", headers: authHeaders() });
+        if (res.status === 404) throw new Error("MISSING");
+        if (res.status === 401 || res.status === 403) throw new Error("AUTH");
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const rec = await res.json();
+        editOriginal = rec;
+        fillForm(rec);
+        editLoaded = true;
+        showMsg(`EDITING RECORD #${EDIT_ID} — CHANGE WHAT YOU NEED, THEN SAVE.`, "ok");
+      } catch (err) {
+        if (err.message === "AUTH") {
+          lockApp("SESSION EXPIRED — SIGN IN AGAIN");
+          return;
+        }
+        const missingId = EDIT_ID;
+        const gone = err.message === "MISSING";
+        EDIT_ID = null;
+        editOriginal = null;
+        applyModeCopy(false);
+        resetForm();
+        showMsg(
+          gone
+            ? `RECORD #${missingId} NO LONGER EXISTS — SWITCHED TO A NEW RECORD FORM`
+            : `COULD NOT READ RECORD #${missingId} (${String(err.message).toUpperCase()}) — SWITCHED TO A NEW RECORD FORM`,
+          "err"
+        );
+      }
+    }
+
+    async function refreshEditRecord() {
+      if (!EDIT_ID) return;
+      try {
+        const res = await fetch(`${API}/records/${EDIT_ID}`, { cache: "no-store", headers: authHeaders() });
+        if (!res.ok) return;
+        const rec = await res.json();
+        editOriginal = rec;
+        fillForm(rec);
+      } catch (err) {
+        /* the save already succeeded — keep the typed values on screen */
+      }
+    }
+
+    /* ------------------------------------------------------- duplicate SKU */
+    /* Same SKU means the same item is already in the vault, so saving raises
+       that record's Qty instead of creating a second row. A different case
+       letter lives in the SKU suffix (…N9C0F vs …N9C0G), so the same casting
+       from another case still gets its own row. */
+    function qtyOf(v) {
+      const n = parseInt(String(v == null ? "" : v).replace(/[^0-9-]/g, ""), 10);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function dupFor(sku, excludeId) {
+      if (!sku) return null;
+      const key = String(sku).trim().toUpperCase();
+      return index.find((r) => r.sku && r.sku.toUpperCase() === key && r.id !== excludeId) || null;
+    }
+
+    function checkDuplicate() {
+      const box = $("dupBox");
+      const hit = dupFor($("f_sku").value, EDIT_ID);
+      if (!hit) {
+        box.classList.add("hidden");
+        return;
+      }
+      if (EDIT_ID) {
+        box.innerHTML = `Another record already uses this SKU: <b>${esc(hit.title)}</b> — saving still updates <b>this</b> record, no qty change.`;
+      } else {
+        const from = qtyOf(hit.qty);
+        const to = from + Math.max(1, qtyOf($("f_qty").value) || 1);
+        box.innerHTML = `Already logged as <b>${esc(hit.title)}</b> — saving will raise Qty ${from} → ${to}, not create a second record.`;
+      }
+      box.classList.remove("hidden");
+    }
+
+    /* -------------------------------------------------------------- submit */
+    function collect() {
+      const rec = {
+        Title: $("f_title").value.trim(),
+        Category: $("f_category").value,
+        SKU: $("f_sku").value.trim().toUpperCase(),
+        Qty: $("f_qty").value.trim(),
+        "Release Year": $("f_year").value ? Number($("f_year").value) : null,
+        Series: $("f_series").value.trim(),
+        "Series Number": $("f_seriesNo").value.trim(),
+        "Collector Number": $("f_coll").value.trim(),
+        "Case Code": $("f_case").value.trim().toUpperCase(),
+        Chase: $("f_chase").checked ? 1 : 0,
+        Treasurehunt: $("f_th").checked ? 1 : 0,
+        "Super Treasurehunt": $("f_sth").checked ? 1 : 0,
+      };
+      const out = {};
+      Object.keys(rec).forEach((k) => {
+        const v = rec[k];
+        if (v === null || v === "" || v === 0) return;
+        out[k] = v;
+      });
+      return out;
+    }
+
+    function setBusy(state) {
+      busy = state;
+      $("saveBtn").disabled = state;
+      $("resetBtn").disabled = state;
+      $("saveBtnLabel").textContent = state ? "◌ Saving…" : (EDIT_ID ? "✓ Save changes" : "＋ Save to vault");
+    }
+
+    async function save(ev) {
+      if (ev) ev.preventDefault();
+      if (busy) return;
+
+      const rec = collect();
+      if (!rec.Title) {
+        showMsg("A TITLE IS REQUIRED", "err");
+        $("f_title").focus();
+        return;
+      }
+      if (rec["Release Year"] && (rec["Release Year"] < 1968 || rec["Release Year"] > 2035)) {
+        showMsg("RELEASE YEAR LOOKS WRONG — EXPECTED 1968–2035", "err");
+        $("f_year").focus();
+        return;
+      }
+
+      setBusy(true);
+      showMsg("PREPARING…", "busy");
+      try {
+        if (EDIT_ID) {
+          /* Editing: photos already on file are kept by path, new ones are
+             uploaded first, and the whole Gallery array is written back so a
+             removed photo really disappears. Qty is written as typed — never
+             bumped, because this is the same row. */
+          const gallery = existingGallery.map((g) => ({
+            url: g.path,
+            title: g.title,
+            mimetype: g.mimetype,
+            size: g.size,
+          }));
+          for (let i = 0; i < files.length; i++) {
+            showMsg(`UPLOADING PHOTO ${i + 1} / ${files.length}…`, "busy");
+            gallery.push(await uploadOne(files[i].file));
+          }
+
+          showMsg("SAVING CHANGES TO NOCODB…", "busy");
+          const body = Object.assign({}, rec, {
+            Id: EDIT_ID,
+            SKU: rec.SKU || null,
+            Qty: rec.Qty || null,
+            "Release Year": rec["Release Year"] || null,
+            Series: rec.Series || null,
+            "Series Number": rec["Series Number"] || null,
+            "Collector Number": rec["Collector Number"] || null,
+            "Case Code": rec["Case Code"] || null,
+            Chase: rec.Chase ? 1 : 0,
+            Treasurehunt: rec.Treasurehunt ? 1 : 0,
+            "Super Treasurehunt": rec["Super Treasurehunt"] ? 1 : 0,
+            Gallery: gallery,
+          });
+
+          const res = await fetch(`${API}/records`, {
+            method: "PATCH",
+            headers: authHeaders({ "Content-Type": "application/json" }),
+            body: JSON.stringify([body]),
+          });
+          if (res.status === 401 || res.status === 403) throw new Error("AUTH");
+          if (!res.ok) throw new Error(`NOCODB SAID ${res.status}`);
+          await refreshEditRecord();
+          onSaved(EDIT_ID, rec, { edited: true });
+          return;
+        }
+
+        /* Same SKU already on file: raise that row's Qty. Nothing else on the
+           record is touched, and the photos stay with the original row. */
+        const dup = dupFor(rec.SKU);
+        if (dup) {
+          const from = qtyOf(dup.qty);
+          const add = Math.max(1, qtyOf(rec.Qty) || 1);
+          const to = from + add;
+          showMsg("SAME SKU ON FILE — UPDATING QTY…", "busy");
+          const res = await fetch(`${API}/records`, {
+            method: "PATCH",
+            headers: authHeaders({ "Content-Type": "application/json" }),
+            body: JSON.stringify([{ Id: dup.id, Qty: String(to) }]),
+          });
+          if (res.status === 401 || res.status === 403) throw new Error("AUTH");
+          if (!res.ok) throw new Error(`NOCODB SAID ${res.status}`);
+          dup.qty = String(to);
+          onSaved(dup.id, rec, { bumped: true, from: from, to: to, photosSkipped: files.length });
+          return;
+        }
+
+        const gallery = [];
+        for (let i = 0; i < files.length; i++) {
+          showMsg(`UPLOADING PHOTO ${i + 1} / ${files.length}…`, "busy");
+          gallery.push(await uploadOne(files[i].file));
+        }
+
+        showMsg("SAVING RECORD TO NOCODB…", "busy");
+        if (gallery.length) rec.Gallery = gallery;
+
+        const res = await fetch(`${API}/records`, {
+          method: "POST",
+          headers: authHeaders({ "Content-Type": "application/json" }),
+          body: JSON.stringify([rec]),
+        });
+        if (res.status === 401 || res.status === 403) throw new Error("AUTH");
+        if (!res.ok) throw new Error(`NOCODB SAID ${res.status}`);
+        const data = await res.json();
+        const first = Array.isArray(data) ? data[0] : data;
+        onSaved(first && first.Id, rec);
+      } catch (err) {
+        if (err.message === "AUTH") {
+          lockApp("SESSION EXPIRED — SIGN IN AGAIN");
+          return;
+        }
+        console.error(err);
+        showMsg(`SAVE FAILED — ${String(err.message).toUpperCase()}`, "err");
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    function onSaved(id, rec, info) {
+      const bumped = !!(info && info.bumped);
+      const edited = !!(info && info.edited);
+      const box = $("successBox");
+      const head = bumped
+        ? `RECORD #${esc(id)} QTY UPDATED`
+        : edited
+          ? `RECORD #${esc(id)} UPDATED`
+          : `RECORD #${esc(id)} SAVED`;
+      const note = bumped
+        ? `<div class="font-mono-tech text-[9px] tracking-[0.24em] uppercase mt-1" style="color:#ffd166">QTY ${esc(info.from)} → ${esc(info.to)}` +
+          (info.photosSkipped ? " · PHOTO NOT ADDED, EXISTING RECORD KEPT" : "") +
+          `</div>`
+        : "";
+      box.innerHTML =
+        '<div class="flex flex-wrap items-center justify-between gap-3">' +
+          '<div class="min-w-0">' +
+            `<div class="font-mono-tech text-[9px] tracking-[0.28em] uppercase" style="color:#6effc8">${head}</div>` +
+            `<div class="chrome-text text-sm font-black uppercase mt-0.5">${esc(rec.Title)}</div>` +
+            note +
+          '</div>' +
+          '<div class="flex items-center gap-2">' +
+            '<a href="homepage.html" class="cyber-btn px-3 py-2 rounded-lg text-cyan-200 font-mono-tech text-[10px] tracking-widest uppercase no-underline">View catalog</a>' +
+            `<button type="button" id="againBtn" class="cyber-btn px-3 py-2 rounded-lg text-cyan-200 font-mono-tech text-[10px] tracking-widest uppercase">${edited ? "Keep editing" : "Add another"}</button>` +
+          '</div>' +
+        '</div>';
+      box.classList.remove("hidden");
+      box.scrollIntoView({ behavior: "smooth", block: "center" });
+      $("againBtn").addEventListener("click", () => {
+        box.classList.add("hidden");
+        if (!edited) resetForm();
+        $("f_title").focus();
+      });
+
+      if (edited) {
+        dirty = false;
+        showMsg(`“${rec.Title}” UPDATED IN THE VAULT.`, "ok");
+        loadIndex().catch(() => {});
+        return;
+      }
+
+      resetForm();
+      showMsg(
+        bumped
+          ? `“${rec.Title}” ALREADY IN THE VAULT — QTY NOW ${info.to}.`
+          : `“${rec.Title}” ADDED TO THE VAULT.`,
+        "ok"
+      );
+      loadIndex().catch(() => {});
+    }
+
+    function resetForm() {
+      if (EDIT_ID && editOriginal) {
+        /* edit mode: "Undo changes" puts the stored record back on screen */
+        fillForm(editOriginal);
+        $("dupBox").classList.add("hidden");
+        dirty = false;
+        return;
+      }
+      files.splice(0).forEach((f) => URL.revokeObjectURL(f.url));
+      existingGallery = [];
+      renderThumbs();
+      $("addForm").reset();
+      $("f_category").value = DEFAULT_CATEGORY;
+      $("f_year").value = DEFAULT_YEAR;
+      $("f_qty").value = "1";
+      $("dupBox").classList.add("hidden");
+      syncFlagChips();
+      syncPreview();
+      dirty = false;
+    }
+
+    /* ------------------------------------------------------------ index API */
+    async function loadIndex() {
+      $("vaultCount").textContent = "READING VAULT…";
+      let res = await fetch(`${API}/records?limit=1000&fields=Id,Title,SKU,Series,Category,Qty`, { cache: "no-store" });
+      if (!res.ok) res = await fetch(`${API}/records?limit=1000`, { cache: "no-store" });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      index = (data.list || []).map((r) => ({
+        id: r.Id,
+        title: String(r.Title || ""),
+        sku: String(r.SKU || "").trim(),
+        series: String(r.Series || ""),
+        qty: String(r.Qty == null ? "" : r.Qty),
+      }));
+      const series = Array.from(new Set(index.map((r) => r.series).filter(Boolean))).sort((a, b) => a.localeCompare(b));
+      $("seriesList").innerHTML = series.map((s) => `<option value="${esc(s)}"></option>`).join("");
+      $("vaultCount").textContent = `${index.length} RECORDS IN VAULT`;
+    }
+
+    /* ----------------------------------------------------------- login gate */
+    const SESSION_KEY = "fresh.vault.session.v1";
+    const USER_KEY = "fresh.vault.user";
+
+    function basicToken(user, pass) {
+      const bytes = new TextEncoder().encode(`${user}:${pass}`);
+      let bin = "";
+      for (const b of bytes) bin += String.fromCharCode(b);
+      return btoa(bin);
+    }
+
+    function readSession() {
+      try {
+        const raw = sessionStorage.getItem(SESSION_KEY);
+        if (!raw) return null;
+        const s = JSON.parse(raw);
+        if (!s || !s.u || !s.p) return null;
+        return { user: String(s.u), header: "Basic " + String(s.p) };
+      } catch (err) {
+        return null;
+      }
+    }
+
+    function writeSession(user, token) {
+      try { sessionStorage.setItem(SESSION_KEY, JSON.stringify({ u: user, p: token })); } catch (err) {}
+      try { localStorage.setItem(USER_KEY, user); } catch (err) {}
+    }
+
+    async function probeHeader(header) {
+      const res = await fetch(AUTH_CHECK, {
+        headers: { Authorization: header, Accept: "image/gif" },
+        cache: "no-store",
+      });
+      return res.status;
+    }
+
+    function gateStatus(text, mode) {
+      const el = $("gateStatus");
+      el.textContent = "STATUS: " + text;
+      el.dataset.mode = mode || "locked";
+    }
+
+    function gateError(message) {
+      const box = $("gateError");
+      box.textContent = message || "";
+      box.classList.toggle("is-on", !!message);
+    }
+
+    function gateBusy(state) {
+      $("gateSubmit").disabled = state;
+      $("gateSubmit").textContent = state ? "▣ VERIFYING…" : "▶ ENTER VAULT";
+      $("loginUser").disabled = state;
+      $("loginPass").disabled = state;
+      $("gateShow").disabled = state;
+    }
+
+    function lockApp(message) {
+      auth = null;
+      try { sessionStorage.removeItem(SESSION_KEY); } catch (err) {}
+      gateBusy(false);
+      gateError(message || "");
+      gateStatus("LOCKED", "locked");
+      $("loginPass").value = "";
+      $("loginGate").classList.remove("is-gone");
+      document.body.classList.add("locked");
+      if (!$("loginUser").value) {
+        try { $("loginUser").value = localStorage.getItem(USER_KEY) || ""; } catch (err) {}
+      }
+      const target = $("loginUser").value ? $("loginPass") : $("loginUser");
+      setTimeout(() => {
+        try { target.focus(); if (target.select) target.select(); } catch (err) {}
+      }, 80);
+    }
+
+    async function unlockApp() {
+      writeSession(auth.user, auth.header.replace(/^Basic\s+/, ""));
+      gateStatus("GRANTED", "ok");
+      gateError("");
+      document.body.classList.remove("locked");
+      $("loginGate").classList.add("is-gone");
+      syncPreview();
+      try {
+        await loadIndex();
+      } catch (err) {
+        $("vaultCount").textContent = "VAULT OFFLINE";
+        showMsg("COULD NOT READ THE VAULT — THE FORM STILL WORKS, SUBMIT WILL RETRY", "err");
+      }
+      try {
+        await loadEditRecord();
+      } catch (err) {
+        showMsg("COULD NOT LOAD THE RECORD — TRY RELOADING", "err");
+      }
+    }
+
+    async function signIn(user, pass) {
+      if (!user || !pass) {
+        gateStatus("DENIED", "err");
+        gateError("Enter both operator and access code");
+        (user ? $("loginPass") : $("loginUser")).focus();
+        return;
+      }
+      gateBusy(true);
+      gateError("");
+      gateStatus("VERIFYING…", "busy");
+      const token = basicToken(user, pass);
+      let status = 0;
+      try {
+        status = await probeHeader("Basic " + token);
+      } catch (err) {
+        gateBusy(false);
+        gateStatus("OFFLINE", "err");
+        gateError("Cannot reach the vault — check your connection");
+        return;
+      }
+      if (status === 200) {
+        auth = { user, header: "Basic " + token };
+        await unlockApp();
+        gateBusy(false);
+        return;
+      }
+      gateBusy(false);
+      gateStatus("DENIED", "err");
+      gateError(status === 401 || status === 403
+        ? "Access denied — wrong operator or code"
+        : `Vault error ${status} — try again`);
+      $("loginPass").value = "";
+      $("loginPass").focus();
+    }
+
+    function bindGate() {
+      $("loginForm").addEventListener("submit", (ev) => {
+        ev.preventDefault();
+        signIn($("loginUser").value.trim(), $("loginPass").value);
+      });
+      $("gateShow").addEventListener("click", () => {
+        const input = $("loginPass");
+        const reveal = input.type === "password";
+        input.type = reveal ? "text" : "password";
+        $("gateShow").textContent = reveal ? "HIDE" : "SHOW";
+        $("gateShow").setAttribute("aria-pressed", reveal ? "true" : "false");
+        input.focus();
+      });
+    }
+
+    async function startGate() {
+      bindGate();
+      const saved = readSession();
+      if (!saved) {
+        lockApp("");
+        return;
+      }
+      document.body.classList.add("locked");
+      $("loginGate").classList.remove("is-gone");
+      gateBusy(true);
+      gateStatus("RESTORING…", "busy");
+      let status = 0;
+      try { status = await probeHeader(saved.header); } catch (err) { status = 0; }
+      if (status === 200) {
+        auth = saved;
+        await unlockApp();
+        gateBusy(false);
+        return;
+      }
+      lockApp(status === 401 || status === 403
+        ? "SESSION EXPIRED — SIGN IN AGAIN"
+        : "CANNOT REACH THE VAULT — CHECK YOUR CONNECTION");
+    }
+
+    /* ------------------------------------------------------------- bindings */
+    function bindForm() {
+      const form = $("addForm");
+
+      form.addEventListener("input", (ev) => {
+        dirty = true;
+        if (ev.target.id === "f_sku" || ev.target.id === "f_qty") checkDuplicate();
+        syncFlagChips();
+        syncPreview();
+      });
+      form.addEventListener("change", () => {
+        syncFlagChips();
+        syncPreview();
+      });
+      form.addEventListener("submit", save);
+
+      $("resetBtn").addEventListener("click", () => {
+        resetForm();
+        showMsg(EDIT_ID ? "CHANGES DISCARDED — SHOWING THE SAVED RECORD" : "FORM CLEARED", "ok");
+        $("f_title").focus();
+      });
+
+      const dz = $("dropZone");
+      dz.addEventListener("click", () => $("fileInput").click());
+      dz.addEventListener("keydown", (ev) => {
+        if (ev.key === "Enter" || ev.key === " ") {
+          ev.preventDefault();
+          $("fileInput").click();
+        }
+      });
+      ["dragenter", "dragover"].forEach((type) =>
+        dz.addEventListener(type, (ev) => { ev.preventDefault(); dz.classList.add("is-over"); })
+      );
+      ["dragleave", "dragend", "drop"].forEach((type) =>
+        dz.addEventListener(type, (ev) => { ev.preventDefault(); dz.classList.remove("is-over"); })
+      );
+      dz.addEventListener("drop", (ev) => addFiles(ev.dataTransfer && ev.dataTransfer.files));
+      $("fileInput").addEventListener("change", (ev) => addFiles(ev.target.files));
+
+      $("thumbs").addEventListener("click", (ev) => {
+        const saved = ev.target.closest("[data-rmx]");
+        if (saved) {
+          removeExisting(saved.getAttribute("data-rmx"));
+          dirty = true;
+          return;
+        }
+        const btn = ev.target.closest("[data-rm]");
+        if (btn) removeFile(btn.getAttribute("data-rm"));
+      });
+
+      document.addEventListener("keydown", (ev) => {
+        if ((ev.metaKey || ev.ctrlKey) && ev.key === "Enter") {
+          ev.preventDefault();
+          save();
+        }
+      });
+
+      // phone photo-paste / screenshot workflow
+      document.addEventListener("paste", (ev) => {
+        const items = ev.clipboardData && ev.clipboardData.files;
+        if (items && items.length) addFiles(items);
+      });
+
+      window.addEventListener("beforeunload", (ev) => {
+        if (files.length || (dirty && $("f_title").value.trim())) {
+          ev.preventDefault();
+          ev.returnValue = "";
+        }
+      });
+    }
+
+    /* ----------------------------------------------------------------- boot */
+    applyModeCopy(!!EDIT_ID);
+    $("f_year").value = EDIT_ID ? "" : DEFAULT_YEAR;
+    $("f_qty").value = EDIT_ID ? "" : "1";
+    bindForm();
+    syncPreview();
+    startGate();
+  </script>
+</body>
+</html>

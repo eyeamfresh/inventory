@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRESH COLLECTIBLES — 1:64 N MORE</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Authentic 8x8 & Arcade Bitmap Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --sega-blue: #0055ff;
+            --sega-cyan: #00f0ff;
+            --sega-pink: #ff0077;
+            --sega-gold: #ffcc00;
+            --sega-dark: #060814;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: var(--sega-dark);
+            font-family: 'Press Start 2P', monospace;
+            color: #ffffff;
+        }
+
+        /* Crisp 320x224 Native Sega Canvas Upscaling */
+        #cyberCanvas {
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-crisp-edges;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        /* Toggleable CRT Scanlines & Aperture Grille Overlay */
+        .crt-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 50;
+            background: 
+                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.36) 50%),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.015), rgba(0, 0, 255, 0.04));
+            background-size: 100% 3px, 4px 100%;
+            box-shadow: inset 0 0 70px rgba(0, 0, 0, 0.9);
+            transition: opacity 0.2s steps(2);
+        }
+
+        .crt-off {
+            opacity: 0 !important;
+        }
+
+        /* Hard 16/32-Bit Arcade Pixel Drop Shadows */
+        .pixel-shadow {
+            text-shadow: 2px 2px 0px #000000, -1px -1px 0px #000000, 1px -1px 0px #000000, -1px 1px 0px #000000;
+        }
+
+        .pixel-shadow-lg {
+            text-shadow: 4px 4px 0px #000000, -2px -2px 0px #000000, 2px -2px 0px #000000, -2px 2px 0px #000000;
+        }
+
+        /* Sega 32X Chrome & Neon Bitmap Title */
+        .sega-logo-top {
+            background: linear-gradient(180deg, #ffffff 0%, #7ceeff 45%, #0066ff 52%, #002266 56%, #00f0ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(3px 3px 0px #000000) drop-shadow(-1px -1px 0px #000000);
+        }
+
+        .sega-logo-bottom {
+            background: linear-gradient(180deg, #ffffff 0%, #ff99cc 45%, #ff0066 52%, #550022 56%, #ff4499 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(3px 3px 0px #000000) drop-shadow(-1px -1px 0px #000000);
+        }
+
+        /* Beveled 16/32-Bit Arcade HUD Frame & Buttons */
+        .sega-bevel-box {
+            background-color: #0b1026;
+            border: 3px solid #00f0ff;
+            box-shadow: 
+                inset 2px 2px 0px #7ceeff,
+                inset -2px -2px 0px #004488,
+                3px 3px 0px #000000;
+        }
+
+        .sega-btn-pink {
+            background-color: #26081c;
+            border: 3px solid #ff0077;
+            box-shadow: 
+                inset 2px 2px 0px #ff77bb,
+                inset -2px -2px 0px #770033,
+                3px 3px 0px #000000;
+        }
+
+        .sega-btn-pink:hover, .sega-btn-pink:active {
+            background-color: #ff0077;
+            color: #ffffff;
+            transform: translate(1px, 1px);
+            box-shadow: inset 2px 2px 0px #ffffff, 2px 2px 0px #000000;
+        }
+
+        .sega-cta-btn {
+            background: linear-gradient(180deg, #0044cc 0%, #001a66 100%);
+            border: 4px solid #ffffff;
+            box-shadow: 
+                inset 3px 3px 0px #00f0ff,
+                inset -3px -3px 0px #001133,
+                0 0 0 3px #000000,
+                6px 6px 0px #ff0077;
+            transition: transform 0.08s steps(2);
+        }
+
+        .sega-cta-btn:hover {
+            background: linear-gradient(180deg, #ff0077 0%, #880033 100%);
+            box-shadow: 
+                inset 3px 3px 0px #ffcc00,
+                inset -3px -3px 0px #440011,
+                0 0 0 3px #000000,
+                6px 6px 0px #00f0ff;
+            transform: scale(1.03);
+        }
+
+        .sega-cta-btn:active {
+            transform: translate(3px, 3px);
+            box-shadow: 0 0 0 3px #000000, 2px 2px 0px #00f0ff;
+        }
+
+        /* Stepped 8-Bit Blink Animation */
+        @keyframes stepBlink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+        .arcade-blink {
+            animation: stepBlink 0.9s infinite;
+        }
+
+        /* Stepped Equalizer Bars */
+        @keyframes stepEq1 { 0%, 100% { height: 4px; } 50% { height: 14px; } }
+        @keyframes stepEq2 { 0%, 100% { height: 12px; } 50% { height: 4px; } }
+        @keyframes stepEq3 { 0%, 100% { height: 6px; } 50% { height: 16px; } }
+        @keyframes stepEq4 { 0%, 100% { height: 14px; } 50% { height: 6px; } }
+
+        .eq-playing .eq-bar:nth-child(1) { animation: stepEq1 0.35s steps(3) infinite; }
+        .eq-playing .eq-bar:nth-child(2) { animation: stepEq2 0.28s steps(3) infinite; }
+        .eq-playing .eq-bar:nth-child(3) { animation: stepEq3 0.40s steps(3) infinite; }
+        .eq-playing .eq-bar:nth-child(4) { animation: stepEq4 0.32s steps(3) infinite; }
+        .eq-bar {
+            height: 4px;
+        }
+
+        /* Custom Pixel Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #060814;
+            border-left: 2px solid #00f0ff;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ff0077;
+            border: 2px solid #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Native 320x224 Sega Genesis / 32X Pixel Canvas -->
+    <canvas id="cyberCanvas" width="320" height="224" class="fixed inset-0 w-full h-full block cursor-pointer"></canvas>
+
+    <!-- Toggleable CRT Scanlines & Aperture Grille -->
+    <div id="crtOverlay" class="crt-overlay"></div>
+
+    <!-- Top 16/32-Bit Arcade Telemetry & Control Bar -->
+    <header class="fixed top-0 left-0 right-0 z-30 flex flex-col gap-2 p-2.5 sm:p-4 pointer-events-none">
+        <!-- Classic Sega Arcade Score / Credit Strip -->
+        <div class="flex flex-wrap items-center justify-between gap-2 text-[9px] sm:text-xs tracking-wider pixel-shadow">
+            <div class="flex items-center gap-3 sm:gap-5">
+                <span class="text-cyan-300">1UP <span id="scoreDisplay" class="text-white">001982</span></span>
+                <span class="text-pink-400 hidden sm:inline">HI-SCORE <span class="text-yellow-300">198200</span></span>
+            </div>
+            <div class="text-yellow-300 hidden md:block">STAGE 01: NEO-TOKYO</div>
+            <div class="flex items-center gap-3">
+                <span class="text-emerald-300">32X-CD</span>
+                <span class="text-cyan-300">CREDIT <span class="text-white">01</span></span>
+            </div>
+        </div>
+
+        <!-- Interactive Arcade Hardware Toggles -->
+        <div class="flex flex-wrap items-center justify-between gap-2 pointer-events-auto">
+            <div class="flex items-center gap-2">
+                <!-- CRT Scanline Toggle -->
+                <button id="crtToggleBtn"
+                    class="sega-bevel-box px-2.5 py-1.5 text-[9px] sm:text-[10px] text-cyan-200 hover:text-white cursor-pointer pixel-shadow">
+                    CRT: ON
+                </button>
+
+                <!-- Rain Weather Toggle -->
+                <button id="rainToggleBtn"
+                    class="sega-bevel-box px-2.5 py-1.5 text-[9px] sm:text-[10px] text-slate-200 hover:text-cyan-300 cursor-pointer pixel-shadow">
+                    RAIN: HEAVY
+                </button>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <!-- High-Beams Toggle -->
+                <button id="lightsToggleBtn"
+                    class="sega-bevel-box px-2.5 py-1.5 text-[9px] sm:text-[10px] text-yellow-300 hover:text-white cursor-pointer pixel-shadow">
+                    BEAMS: ON
+                </button>
+
+                <!-- Background sound lives in the floating dock (bottom-left). -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Splashscreen Foreground Overlay -->
+    <main id="splashOverlay" class="relative z-20 flex flex-col items-center justify-between h-full w-full px-3 pt-20 pb-[62px] sm:pt-24 sm:pb-6 pointer-events-none transition-opacity duration-300">
+        
+        <!-- Upper Brand Logo & Title Cluster -->
+        <div class="flex flex-col items-center text-center pointer-events-auto">
+            <!-- FRESH COLLECTIBLES 32X Chrome Emblem -->
+            <div id="logoTrigger" class="relative inline-flex flex-col items-center cursor-pointer active:translate-y-0.5">
+                <div class="relative flex items-center justify-center">
+                    <h1 class="text-xl sm:text-4xl md:text-5xl font-normal tracking-wider leading-none uppercase">
+                        <span class="sega-logo-top block">FRESH</span>
+                        <span class="sega-logo-bottom block mt-1.5">COLLECTIBLES</span>
+                    </h1>
+                    <!-- Chunky Pixel Lightning Bolt SVG -->
+                    <svg class="w-8 h-12 sm:w-11 sm:h-16 -ml-1 -mt-4 drop-shadow-[3px_3px_0px_#000000]" viewBox="0 0 16 24" shape-rendering="crispEdges">
+                        <polygon points="9,1 3,13 8,13 6,23 13,11 8,11" fill="#ff0077"/>
+                        <polygon points="9,2 4,12 8,12 7,20 12,11 8,11" fill="#ff77bb"/>
+                        <polygon points="9,2 6,10 8,10" fill="#ffffff"/>
+                    </svg>
+                </div>
+
+                <!-- Beveled Sega Badge Subtitle -->
+                <div class="mt-2.5 px-3.5 py-1 bg-black/85 border-2 border-cyan-400 shadow-[3px_3px_0px_#ff0077]">
+                    <p class="text-[10px] sm:text-xs tracking-[0.25em] text-cyan-200 uppercase">
+                        1:64 N MORE
+                    </p>
+                </div>
+            </div>
+
+            <!-- Established Year Tagline -->
+            <div class="mt-3 sm:mt-4">
+                <p class="text-[10px] sm:text-xs text-yellow-300 tracking-widest pixel-shadow">
+                    EST. 1982
+                </p>
+            </div>
+
+            <!-- Primary Arcade CTA: ENTER THE GRID -->
+            <div class="mt-4 sm:mt-5 flex flex-col items-center">
+                <a id="enterGridBtn" href="welcome.html" class="sega-cta-btn inline-block px-5 py-3 sm:px-8 sm:py-3.5 text-xs sm:text-base text-white tracking-widest cursor-pointer pixel-shadow no-underline">
+                    ENTER THE GRID
+                </a>
+                <span class="arcade-blink text-[10px] sm:text-xs text-yellow-300 mt-3 tracking-widest pixel-shadow">
+                    PRESS START
+                </span>
+                <a href="welcome.html" class="mt-2 text-[9px] sm:text-[10px] text-cyan-300 hover:text-yellow-300 underline tracking-wider pixel-shadow">
+                    SKIP INTRO &rarr; MAIN MENU
+                </a>
+            </div>
+        </div>
+
+        <!-- Bottom Interactive Arcade Controls (Steer Left/Right + Rev Turbo V8) -->
+        <div class="w-full flex flex-col items-center gap-2 pointer-events-auto">
+            <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+                <button id="steerLeftBtn" aria-label="Steer Left"
+                    class="sega-bevel-box px-3 py-2 text-[10px] sm:text-xs text-cyan-300 hover:text-white active:translate-y-0.5 cursor-pointer pixel-shadow">
+                    &lt; STEER
+                </button>
+
+                <button id="revEngineBtn"
+                    class="sega-btn-pink px-4 py-2 text-[10px] sm:text-xs text-yellow-300 hover:text-white cursor-pointer pixel-shadow flex items-center gap-2">
+                    <span class="inline-block w-2 h-2 bg-yellow-300 animate-ping"></span>
+                    <span>REV TURBO V8</span>
+                </button>
+
+                <button id="steerRightBtn" aria-label="Steer Right"
+                    class="sega-bevel-box px-3 py-2 text-[10px] sm:text-xs text-cyan-300 hover:text-white active:translate-y-0.5 cursor-pointer pixel-shadow">
+                    STEER &gt;
+                </button>
+            </div>
+            <div class="text-[8px] sm:text-[10px] text-cyan-200/90 tracking-wider pixel-shadow text-center">
+                [ARROWS / MOUSE: STEER LANES] &bull; [SPACE / CLICK CAR: TURBO REV]
+            </div>
+        </div>
+    </main>
+
+    <!-- Sega 32X Car-Select Style Archive Modal ("ENTER THE GRID") -->
+    <section id="gridShowcaseModal" class="fixed inset-0 z-40 hidden opacity-0 transition-opacity duration-200 bg-[#050817]/95 overflow-y-auto">
+        <div class="min-h-full max-w-6xl mx-auto px-3 sm:px-6 py-20 sm:py-24 flex flex-col justify-between">
+            
+            <!-- 32X Car Select Top Banner -->
+            <div class="sega-bevel-box p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <div class="text-[9px] sm:text-[10px] text-yellow-300 tracking-widest uppercase pixel-shadow">
+                        FRESH COLLECTIBLES // 1:64 N MORE
+                    </div>
+                    <h2 class="text-lg sm:text-2xl md:text-3xl text-cyan-300 tracking-wider mt-1.5 pixel-shadow-lg">
+                        SELECT YOUR MACHINE
+                    </h2>
+                </div>
+
+                <button id="returnSplashBtn"
+                    class="self-start sm:self-auto sega-btn-pink px-4 py-2.5 text-[10px] sm:text-xs text-white tracking-wider cursor-pointer pixel-shadow">
+                    &lt; RETURN TO SPLASH
+                </button>
+            </div>
+
+            <!-- 32-Bit Rotating / Animated Diecast Car Cards -->
+            <div id="diecastCardsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-5 my-6">
+                <!-- Populated dynamically with live pixel-art rotating canvases & YM2612 rev triggers -->
+            </div>
+
+            <!-- Arcade Footer Telemetry -->
+            <div class="sega-bevel-box px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-[9px] sm:text-[10px] text-cyan-200 pixel-shadow">
+                <span>YM2612 FM + 32X PWM SOUND CHIP ACTIVE</span>
+                <a href="welcome.html" class="text-yellow-300 hover:text-white underline">&#171; RETURN TO MAIN MENU</a>
+            </div>
+        </div>
+    </section>
+
+    <script src="audio-vault.js?v=5"></script>
+    <script>
+        /**
+         * ============================================================================
+         * 1. YAMAHA YM2612 FM SYNTHESIS + 32X PWM WEB AUDIO ENGINE
+         * ============================================================================
+         * Authentically emulates Sega Genesis / 32X sound hardware:
+         * - 2-Operator FM Slap Bass (Modulator -> Carrier frequency modulation)
+         * - Brassy 80s FM Synth Lead & Arpeggios
+         * - Lo-Fi 32X PWM Gated Snare & Punchy Kick Drums
+         * - Crunchy FM Twin-Turbo V8 Engine Idle/Rev + Blow-Off Valve
+         * - Classic Sega-Style Coin / Start Chime
+         */
+        class SegaYM2612Engine {
+            constructor() {
+                this.ctx = null;
+                this.masterGain = null;
+                this.musicGain = null;
+                this.sfxGain = null;
+                this.isPlaying = false;
+                this.stepIndex = 0;
+                this.tempo = 126; // Classic OutRunners / Virtua Racing Arcade Tempo
+                this.schedulerTimer = null;
+                this.nextNoteTime = 0;
+
+                // Driving 16-bit Outrun FM Slap Bassline (D Minor -> Bb -> C -> D)
+                this.bassNotes = [
+                    73.42, 73.42, 146.83, 73.42, 130.81, 146.83, 73.42, 146.83,
+                    87.31, 87.31, 174.61, 87.31, 155.56, 174.61, 87.31, 174.61,
+                    58.27, 58.27, 116.54, 58.27, 103.83, 116.54, 58.27, 116.54,
+                    65.41, 65.41, 130.81, 65.41, 116.54, 130.81, 98.00, 130.81
+                ];
+
+                // Brassy FM Lead / Arp Hook
+                this.leadNotes = [
+                    587.33, 0, 523.25, 587.33, 698.46, 0, 659.25, 523.25,
+                    587.33, 0, 440.00, 0, 523.25, 587.33, 659.25, 0,
+                    698.46, 0, 659.25, 587.33, 523.25, 0, 466.16, 523.25,
+                    587.33, 659.25, 698.46, 880.00, 783.99, 0, 659.25, 0
+                ];
+            }
+
+            init() {
+                if (this.ctx) {
+                    if (this.ctx.state === 'suspended') {
+                        this.ctx.resume();
+                    }
+                    return;
+                }
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                this.ctx = new AudioCtx();
+
+                this.masterGain = this.ctx.createGain();
+                this.masterGain.gain.value = 0.55;
+                this.masterGain.connect(this.ctx.destination);
+
+                this.musicGain = this.ctx.createGain();
+                this.musicGain.gain.value = 0.44;
+                this.musicGain.connect(this.masterGain);
+
+                this.sfxGain = this.ctx.createGain();
+                this.sfxGain.gain.value = 0.72;
+                this.sfxGain.connect(this.masterGain);
+            }
+
+            toggleMusic() {
+                this.init();
+                if (this.isPlaying) {
+                    this.stopMusic();
+                } else {
+                    this.startMusic();
+                }
+                return this.isPlaying;
+            }
+
+            startMusic() {
+                this.init();
+                if (this.isPlaying) return;
+                this.isPlaying = true;
+                this.stepIndex = 0;
+                this.nextNoteTime = this.ctx.currentTime + 0.04;
+                this.scheduleLoop();
+            }
+
+            stopMusic() {
+                this.isPlaying = false;
+                if (this.schedulerTimer) {
+                    clearTimeout(this.schedulerTimer);
+                    this.schedulerTimer = null;
+                }
+            }
+
+            scheduleLoop() {
+                if (!this.isPlaying) return;
+                const secondsPerBeat = 60.0 / this.tempo;
+                const sixteenthNote = secondsPerBeat / 4;
+
+                while (this.nextNoteTime < this.ctx.currentTime + 0.12) {
+                    this.triggerStep(this.stepIndex, this.nextNoteTime, sixteenthNote);
+                    this.nextNoteTime += sixteenthNote;
+                    this.stepIndex = (this.stepIndex + 1) % 32;
+                }
+                this.schedulerTimer = setTimeout(() => this.scheduleLoop(), 25);
+            }
+
+            // 2-Operator YM2612 FM Patch Generator
+            triggerFMNote(freq, time, duration, modRatio, modIndex, carrierType, gainLevel, dest) {
+                if (!this.ctx || freq <= 0) return;
+
+                const carrier = this.ctx.createOscillator();
+                const modulator = this.ctx.createOscillator();
+                const modGain = this.ctx.createGain();
+                const env = this.ctx.createGain();
+
+                carrier.type = carrierType;
+                carrier.frequency.setValueAtTime(freq, time);
+
+                modulator.type = 'sine';
+                modulator.frequency.setValueAtTime(freq * modRatio, time);
+
+                // FM Modulation Index envelope gives that iconic metallic Sega "twang"
+                modGain.gain.setValueAtTime(freq * modIndex, time);
+                modGain.gain.exponentialRampToValueAtTime(Math.max(1, freq * 0.15), time + duration * 0.85);
+
+                env.gain.setValueAtTime(0.001, time);
+                env.gain.linearRampToValueAtTime(gainLevel, time + 0.008);
+                env.gain.exponentialRampToValueAtTime(0.001, time + duration * 0.96);
+
+                modulator.connect(modGain);
+                modGain.connect(carrier.frequency);
+                carrier.connect(env);
+                env.connect(dest);
+
+                carrier.start(time);
+                modulator.start(time);
+                carrier.stop(time + duration);
+                modulator.stop(time + duration);
+            }
+
+            triggerStep(step, time, duration) {
+                if (!this.ctx) return;
+
+                // 1. YM2612 Metallic FM Slap Bass (Ratio 2.0, High Mod Index)
+                const bassFreq = this.bassNotes[step];
+                this.triggerFMNote(bassFreq, time, duration * 0.95, 2.0, 4.2, 'sine', 0.42, this.musicGain);
+
+                // 2. YM2612 Brassy FM Synth Lead
+                const leadFreq = this.leadNotes[step];
+                if (leadFreq > 0) {
+                    this.triggerFMNote(leadFreq, time, duration * 1.7, 1.0, 2.8, 'triangle', 0.22, this.musicGain);
+                }
+
+                // 3. 32X PWM Punchy Kick (Steps 0, 4, 8, 12...)
+                if (step % 4 === 0) {
+                    const kickOsc = this.ctx.createOscillator();
+                    const kickEnv = this.ctx.createGain();
+                    kickOsc.type = 'triangle';
+                    kickOsc.frequency.setValueAtTime(150, time);
+                    kickOsc.frequency.exponentialRampToValueAtTime(38, time + 0.11);
+
+                    kickEnv.gain.setValueAtTime(0.68, time);
+                    kickEnv.gain.exponentialRampToValueAtTime(0.001, time + 0.14);
+
+                    kickOsc.connect(kickEnv);
+                    kickEnv.connect(this.musicGain);
+                    kickOsc.start(time);
+                    kickOsc.stop(time + 0.15);
+                }
+
+                // 4. 32X Lo-Fi Bitcrushed Noise Snare (Steps 4, 12, 20, 28)
+                if (step % 8 === 4) {
+                    this.triggerPWMSnare(time);
+                }
+            }
+
+            triggerPWMSnare(time) {
+                const sampleRate = this.ctx.sampleRate;
+                const length = Math.floor(sampleRate * 0.16);
+                const buffer = this.ctx.createBuffer(1, length, sampleRate);
+                const data = buffer.getChannelData(0);
+
+                // Sample-and-hold 8-bit style white noise for authentic Sega drum grit
+                let hold = 0;
+                for (let i = 0; i < length; i++) {
+                    if (i % 6 === 0) {
+                        hold = Math.random() > 0.5 ? 0.8 : -0.8;
+                    }
+                    data[i] = hold;
+                }
+
+                const noise = this.ctx.createBufferSource();
+                noise.buffer = buffer;
+
+                const filter = this.ctx.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.setValueAtTime(1650, time);
+                filter.Q.value = 0.7;
+
+                const env = this.ctx.createGain();
+                env.gain.setValueAtTime(0.34, time);
+                env.gain.exponentialRampToValueAtTime(0.001, time + 0.15);
+
+                noise.connect(filter);
+                filter.connect(env);
+                env.connect(this.musicGain);
+                noise.start(time);
+            }
+
+            // Classic Sega Coin / Cursor Blip
+            playArcadeBlip(high = false) {
+                this.init();
+                const now = this.ctx.currentTime;
+                const f1 = high ? 987.77 : 587.33; // B5 or D5
+                const f2 = high ? 1318.51 : 880.00; // E6 or A5
+                this.triggerFMNote(f1, now, 0.06, 1.0, 1.2, 'square', 0.18, this.sfxGain);
+                this.triggerFMNote(f2, now + 0.055, 0.14, 1.0, 1.2, 'square', 0.18, this.sfxGain);
+            }
+
+            // Crunchy YM2612 FM Twin-Turbo V8 Engine Rev + Blow-Off Valve
+            playEngineRev(pitchMultiplier = 1.0) {
+                this.init();
+                const now = this.ctx.currentTime;
+                const duration = 1.05;
+
+                // Carrier + Modulator FM Engine Growl
+                const carrier = this.ctx.createOscillator();
+                const modulator = this.ctx.createOscillator();
+                const modGain = this.ctx.createGain();
+                const env = this.ctx.createGain();
+
+                carrier.type = 'sawtooth';
+                modulator.type = 'square';
+
+                const baseFreq = 48 * pitchMultiplier;
+                carrier.frequency.setValueAtTime(baseFreq, now);
+                carrier.frequency.exponentialRampToValueAtTime(baseFreq * 3.3, now + 0.38);
+                carrier.frequency.exponentialRampToValueAtTime(baseFreq * 1.2, now + duration);
+
+                modulator.frequency.setValueAtTime(baseFreq * 1.5, now);
+                modulator.frequency.exponentialRampToValueAtTime(baseFreq * 4.95, now + 0.38);
+                modulator.frequency.exponentialRampToValueAtTime(baseFreq * 1.8, now + duration);
+
+                modGain.gain.setValueAtTime(140, now);
+                modGain.gain.exponentialRampToValueAtTime(480, now + 0.38);
+                modGain.gain.exponentialRampToValueAtTime(90, now + duration);
+
+                env.gain.setValueAtTime(0.001, now);
+                env.gain.linearRampToValueAtTime(0.36, now + 0.06);
+                env.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+                modulator.connect(modGain);
+                modGain.connect(carrier.frequency);
+                carrier.connect(env);
+                env.connect(this.sfxGain);
+
+                carrier.start(now);
+                modulator.start(now);
+                carrier.stop(now + duration);
+                modulator.stop(now + duration);
+
+                // 16-bit Square Wave Turbo Spool Whistle
+                const turbo = this.ctx.createOscillator();
+                const turboEnv = this.ctx.createGain();
+                turbo.type = 'square';
+                turbo.frequency.setValueAtTime(1200 * pitchMultiplier, now + 0.05);
+                turbo.frequency.exponentialRampToValueAtTime(3600 * pitchMultiplier, now + 0.38);
+                turbo.frequency.exponentialRampToValueAtTime(1600 * pitchMultiplier, now + 0.68);
+
+                turboEnv.gain.setValueAtTime(0.001, now + 0.05);
+                turboEnv.gain.linearRampToValueAtTime(0.07, now + 0.37);
+                turboEnv.gain.exponentialRampToValueAtTime(0.001, now + 0.70);
+
+                turbo.connect(turboEnv);
+                turboEnv.connect(this.sfxGain);
+                turbo.start(now + 0.05);
+                turbo.stop(now + 0.72);
+            }
+
+            // Sega 32X Start / Grid Warp Fanfare Arpeggio
+            playGridStartFanfare() {
+                this.init();
+                const now = this.ctx.currentTime;
+                const notes = [293.66, 369.99, 440.00, 587.33, 739.99, 880.00, 1174.66];
+                notes.forEach((freq, idx) => {
+                    this.triggerFMNote(freq, now + idx * 0.065, 0.28, 2.0, 2.5, 'square', 0.22, this.sfxGain);
+                });
+            }
+        }
+
+        const synth = new SegaYM2612Engine();
+
+        /**
+         * ============================================================================
+         * 2. NATIVE 320x224 SEGA GENESIS / 32X SUPER-SCALER PIXEL RENDERER
+         * ============================================================================
+         * Renders strictly at 320x224 integer coordinates with:
+         * - 2x2 & 4x4 Bayer/Checkerboard Dithering patterns (zero muddy blur gradients)
+         * - Pseudo-3D Sega Super-Scaler raster scanline road with striped curbs
+         * - Scaled roadside pixel sprites ('RAMEN', 'ARCADE', 'FC-1982', 'TURBO', Cyber-Palms)
+         * - Detailed 32-bit pixel-art gullwing diecast supercar with lane steering & exhaust fire
+         */
+        const canvas = document.getElementById('cyberCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
+
+        const NATIVE_W = 320;
+        const NATIVE_H = 224;
+        const HORIZON_Y = 114;
+
+        // Precompute Crisp 4x4 Bayer / Checkerboard Dither Patterns for Sega Aesthetic
+        function createDitherPattern(colorA, colorB, mode = 'checker') {
+            const pCanvas = document.createElement('canvas');
+            pCanvas.width = 4;
+            pCanvas.height = 4;
+            const pCtx = pCanvas.getContext('2d');
+            pCtx.fillStyle = colorA;
+            pCtx.fillRect(0, 0, 4, 4);
+            pCtx.fillStyle = colorB;
+
+            if (mode === 'checker') {
+                for (let y = 0; y < 4; y++) {
+                    for (let x = 0; x < 4; x++) {
+                        if ((x + y) % 2 === 0) pCtx.fillRect(x, y, 1, 1);
+                    }
+                }
+            } else if (mode === 'sparse') {
+                pCtx.fillRect(0, 0, 1, 1);
+                pCtx.fillRect(2, 2, 1, 1);
+            } else if (mode === 'dense') {
+                pCtx.fillRect(0, 0, 4, 4);
+                pCtx.fillStyle = colorA;
+                pCtx.fillRect(1, 1, 1, 1);
+                pCtx.fillRect(3, 3, 1, 1);
+            }
+            return ctx.createPattern(pCanvas, 'repeat');
+        }
+
+        const dithers = {
+            skyTop: createDitherPattern('#040716', '#0a1438', 'checker'),
+            skyMid: createDitherPattern('#0a1438', '#1b164a', 'checker'),
+            skyLow: createDitherPattern('#1b164a', '#441259', 'checker'),
+            horizonGlow: createDitherPattern('#441259', '#881166', 'sparse'),
+            asphaltDark: '#0b0e1e',
+            asphaltLight: '#131933',
+            underglowCyan: createDitherPattern('#00f0ff', '#ff0077', 'checker'),
+            beamDither: createDitherPattern('#00f0ff', '#131933', 'sparse')
+        };
+
+        // Interactive Arcade State
+        const state = {
+            carX: 0,              // -1.0 (left lane) to +1.0 (right lane)
+            targetCarX: 0,
+            steerInput: 0,        // -1, 0, +1
+            roadZ: 0,
+            revIntensity: 0,
+            warpSpeed: 0,
+            highBeams: true,
+            heavyRain: true,
+            crtOn: true,
+            carHovered: false,
+            score: 1982,
+            time: 0
+        };
+
+        // Pixel Rain Streaks
+        const rainDrops = Array.from({ length: 75 }, () => ({
+            x: Math.floor(Math.random() * NATIVE_W),
+            y: Math.floor(Math.random() * NATIVE_H),
+            len: 4 + Math.floor(Math.random() * 5),
+            speed: 3 + Math.random() * 3,
+            color: Math.random() > 0.35 ? '#38bdf8' : '#f472b6'
+        }));
+
+        // Neon Exhaust Spark Particles (triggered on Turbo Rev)
+        const sparks = [];
+
+        function spawnSparks(originX, originY, count = 24) {
+            const palette = ['#ffffff', '#ffcc00', '#00f0ff', '#ff0077'];
+            for (let i = 0; i < count; i++) {
+                sparks.push({
+                    x: originX + (Math.random() * 14 - 7),
+                    y: originY + (Math.random() * 4 - 2),
+                    vx: (Math.random() - 0.5) * 4.5,
+                    vy: -1.5 - Math.random() * 2.5,
+                    life: 16 + Math.floor(Math.random() * 18),
+                    color: palette[Math.floor(Math.random() * palette.length)]
+                });
+            }
+        }
+
+        // Parallax Skyline Towers
+        const skylineTowers = [
+            { x: 6, w: 22, h: 46, color: '#09112b', neon: '#ff0077' },
+            { x: 32, w: 18, h: 34, color: '#0d183d', neon: '#00f0ff' },
+            { x: 54, w: 26, h: 52, color: '#070d24', neon: '#ffcc00' },
+            { x: 86, w: 16, h: 28, color: '#101d47', neon: '#ff0077' },
+            { x: 214, w: 20, h: 32, color: '#0d183d', neon: '#00f0ff' },
+            { x: 238, w: 28, h: 54, color: '#070d24', neon: '#ff0077' },
+            { x: 270, w: 22, h: 42, color: '#09112b', neon: '#00f0ff' },
+            { x: 295, w: 22, h: 36, color: '#101d47', neon: '#ffcc00' }
+        ];
+
+        // Roadside Super-Scaler Cyberpunk Signs
+        const propTypes = [
+            { label: 'RAMEN', bg: '#220011', border: '#ff0055', text: '#ffcc00', side: -1 },
+            { label: 'ARCADE', bg: '#001829', border: '#00f0ff', text: '#ffffff', side: 1 },
+            { label: 'FC-1982', bg: '#001144', border: '#0088ff', text: '#00f0ff', side: -1 },
+            { label: 'TURBO', bg: '#240029', border: '#ff00aa', text: '#00f0ff', side: 1 },
+            { label: '1:64', bg: '#002222', border: '#00ffaa', text: '#ffffff', side: -1 },
+            { label: '1982', bg: '#291100', border: '#ffaa00', text: '#ffffff', side: 1 }
+        ];
+
+        const roadsideObjects = Array.from({ length: 12 }, (_, idx) => ({
+            z: idx * 8.5,
+            type: propTypes[idx % propTypes.length]
+        }));
+
+        /**
+         * Draw Sky, Outrun Striped Sun & Parallax Pixel Skyline
+         */
+        function drawSkyAndCity() {
+            // Dithered Sega Sky Bands
+            ctx.fillStyle = '#040716';
+            ctx.fillRect(0, 0, NATIVE_W, 30);
+
+            ctx.fillStyle = dithers.skyTop;
+            ctx.fillRect(0, 30, NATIVE_W, 24);
+
+            ctx.fillStyle = dithers.skyMid;
+            ctx.fillRect(0, 54, NATIVE_W, 24);
+
+            ctx.fillStyle = dithers.skyLow;
+            ctx.fillRect(0, 78, NATIVE_W, 22);
+
+            ctx.fillStyle = dithers.horizonGlow;
+            ctx.fillRect(0, 100, NATIVE_W, 14);
+
+            // Retro Outrun Striped Sun centered at horizon
+            const sunX = Math.floor(NATIVE_W / 2 - state.carX * 8);
+            const sunY = HORIZON_Y - 6;
+            const sunR = 26;
+
+            for (let dy = -sunR; dy <= 6; dy++) {
+                // Horizontal scanline cutouts in lower half of sun
+                if (dy > -4 && (dy % 4 === 0 || (dy > 2 && dy % 3 === 0))) continue;
+                const span = Math.floor(Math.sqrt(Math.max(0, sunR * sunR - dy * dy)));
+                ctx.fillStyle = dy < -10 ? '#ffdd33' : (dy < 0 ? '#ff6622' : '#ff0077');
+                ctx.fillRect(sunX - span, sunY + dy, span * 2, 1);
+            }
+
+            // Parallax Pixel Skyline
+            const parallaxShift = Math.floor(state.carX * 14);
+            skylineTowers.forEach((b) => {
+                const bx = b.x - parallaxShift;
+                const by = HORIZON_Y - b.h;
+                ctx.fillStyle = b.color;
+                ctx.fillRect(bx, by, b.w, b.h);
+
+                // 1px dark outline & neon roof trim
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(bx, by, b.w, 1);
+                ctx.fillStyle = b.neon;
+                ctx.fillRect(bx + 1, by + 1, b.w - 2, 1);
+
+                // Pixel Window Grid
+                for (let wy = by + 5; wy < HORIZON_Y - 4; wy += 5) {
+                    for (let wx = bx + 3; wx < bx + b.w - 4; wx += 4) {
+                        const lit = ((wx * 7 + wy * 13) % 5) !== 0;
+                        ctx.fillStyle = lit ? ((wx + wy) % 3 === 0 ? '#00f0ff' : '#fde047') : '#05091a';
+                        ctx.fillRect(wx, wy, 2, 2);
+                    }
+                }
+            });
+
+            // Horizon Neon Magenta/Cyan Laser Line
+            ctx.fillStyle = '#ff0077';
+            ctx.fillRect(0, HORIZON_Y - 1, NATIVE_W, 1);
+            ctx.fillStyle = '#00f0ff';
+            ctx.fillRect(0, HORIZON_Y, NATIVE_W, 1);
+        }
+
+        /**
+         * Draw Sega Super-Scaler Pseudo-3D Raster Highway
+         */
+        function drawSuperScalerRoad() {
+            const roadRows = NATIVE_H - HORIZON_Y;
+
+            for (let row = 0; row < roadRows; row++) {
+                const y = HORIZON_Y + row;
+                // Perspective depth Z (0 at bottom -> infinity at horizon)
+                const perspective = (row + 1) / roadRows; // 0..1 from horizon to bottom
+                const z = 1.0 / (perspective + 0.04);
+                const stripePhase = Math.floor((z * 2.6 + state.roadZ) % 2);
+                const isAlt = stripePhase === 0;
+
+                // Outer Cyber-Grid Ground
+                ctx.fillStyle = isAlt ? '#070b1c' : '#0b1029';
+                ctx.fillRect(0, y, NATIVE_W, 1);
+
+                // Horizontal cyber-grid line on ground
+                if (isAlt && row % 3 === 0) {
+                    ctx.fillStyle = '#181038';
+                    ctx.fillRect(0, y, NATIVE_W, 1);
+                }
+
+                // Road width & center offset with player steering perspective
+                const roadHalfW = Math.floor(14 + perspective * 144);
+                const roadCenter = Math.floor(NATIVE_W / 2 - state.carX * perspective * 52);
+                const leftEdge = roadCenter - roadHalfW;
+                const rightEdge = roadCenter + roadHalfW;
+
+                // Striped Cyan / Magenta Arcade Curbs
+                const curbW = Math.max(2, Math.floor(perspective * 10));
+                ctx.fillStyle = isAlt ? '#00f0ff' : '#ff0077';
+                ctx.fillRect(leftEdge - curbW, y, curbW, 1);
+                ctx.fillRect(rightEdge, y, curbW, 1);
+
+                // Road Asphalt Scanline
+                ctx.fillStyle = isAlt ? dithers.asphaltDark : dithers.asphaltLight;
+                ctx.fillRect(leftEdge, y, roadHalfW * 2, 1);
+
+                // White Outer Shoulder Lines
+                const lineW = Math.max(1, Math.floor(perspective * 2));
+                ctx.fillStyle = '#e2e8f0';
+                ctx.fillRect(leftEdge + 2, y, lineW, 1);
+                ctx.fillRect(rightEdge - 2 - lineW, y, lineW, 1);
+
+                // Dashed Center Lane Divider
+                if (isAlt) {
+                    const dashW = Math.max(1, Math.floor(perspective * 3));
+                    ctx.fillStyle = '#ffcc00';
+                    ctx.fillRect(roadCenter - Math.floor(dashW / 2), y, dashW, 1);
+                }
+            }
+        }
+
+        /**
+         * Draw Scaled Roadside Pixel Billboards ('RAMEN', 'ARCADE', 'FC-1982', 'TURBO')
+         */
+        function drawRoadsideProps() {
+            // Sort far-to-near so closer signs overlap distant ones properly
+            const sorted = [...roadsideObjects].sort((a, b) => b.z - a.z);
+
+            sorted.forEach((obj) => {
+                // Convert Z (0..102) into screen row
+                const normZ = obj.z / 102; // 0 = near bottom, 1 = horizon
+                const perspective = Math.max(0.02, 1.0 - normZ);
+                const y = Math.floor(HORIZON_Y + perspective * (NATIVE_H - HORIZON_Y));
+                if (y <= HORIZON_Y + 2 || y > NATIVE_H + 20) return;
+
+                const roadHalfW = Math.floor(14 + perspective * 144);
+                const roadCenter = Math.floor(NATIVE_W / 2 - state.carX * perspective * 52);
+
+                const scale = perspective;
+                const signW = Math.max(8, Math.floor(42 * scale));
+                const signH = Math.max(5, Math.floor(18 * scale));
+                const poleH = Math.max(4, Math.floor(24 * scale));
+
+                const offsetFromRoad = Math.floor(10 * scale) + Math.floor(signW * 0.55);
+                const sx = obj.type.side < 0
+                    ? roadCenter - roadHalfW - offsetFromRoad - Math.floor(signW / 2)
+                    : roadCenter + roadHalfW + offsetFromRoad - Math.floor(signW / 2);
+                const sy = y - poleH - signH;
+
+                // Support Pylon Pole
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(sx + Math.floor(signW / 2) - 1, sy + signH, 2, poleH);
+
+                // Billboard Frame
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(sx - 1, sy - 1, signW + 2, signH + 2);
+                ctx.fillStyle = obj.type.border;
+                ctx.fillRect(sx, sy, signW, signH);
+                ctx.fillStyle = obj.type.bg;
+                if (signW > 4 && signH > 4) {
+                    ctx.fillRect(sx + 1, sy + 1, signW - 2, signH - 2);
+                }
+
+                // Crisp Pixel Text when close enough
+                if (scale > 0.34) {
+                    ctx.save();
+                    ctx.font = `${Math.max(5, Math.floor(7 * scale))}px "Press Start 2P", monospace`;
+                    ctx.fillStyle = obj.type.text;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(obj.type.label, sx + Math.floor(signW / 2), sy + Math.floor(signH / 2) + 1);
+                    ctx.restore();
+                }
+            });
+        }
+
+        /**
+         * Draw Detailed 32-Bit Pixel-Art Gullwing Cyberpunk Diecast Supercar
+         */
+        function drawDiecastSupercar() {
+            const carCenterX = Math.floor(NATIVE_W / 2 + state.carX * 72);
+            const bounce = Math.floor(Math.sin(state.time * 0.35) * (1 + state.revIntensity * 1.5));
+            const carBaseY = 198 + bounce;
+            const lean = Math.round(state.steerInput * 3);
+
+            // 1. High-Beam Forward Projection Cones
+            if (state.highBeams) {
+                ctx.fillStyle = dithers.beamDither;
+                ctx.beginPath();
+                ctx.moveTo(carCenterX - 24, carBaseY - 12);
+                ctx.lineTo(carCenterX - 42, HORIZON_Y + 6);
+                ctx.lineTo(carCenterX - 10, HORIZON_Y + 6);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.moveTo(carCenterX + 24, carBaseY - 12);
+                ctx.lineTo(carCenterX + 10, HORIZON_Y + 6);
+                ctx.lineTo(carCenterX + 42, HORIZON_Y + 6);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            // 2. Pulsing Cyan / Magenta Neon Underglow Shadow
+            const glowW = 76 + Math.floor(state.revIntensity * 12);
+            ctx.fillStyle = state.revIntensity > 0.2 ? dithers.underglowCyan : '#00f0ff';
+            ctx.fillRect(carCenterX - Math.floor(glowW / 2), carBaseY + 1, glowW, 4);
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(carCenterX - 34, carBaseY, 68, 3);
+
+            // 3. Wide Rear Tires with Animated Tread Pixels
+            const treadShift = Math.floor(state.roadZ * 4) % 2;
+            // Left Tire
+            ctx.fillStyle = '#090d16';
+            ctx.fillRect(carCenterX - 36, carBaseY - 14, 11, 15);
+            ctx.fillStyle = treadShift ? '#334155' : '#1e293b';
+            ctx.fillRect(carCenterX - 35, carBaseY - 12, 9, 2);
+            ctx.fillRect(carCenterX - 35, carBaseY - 7, 9, 2);
+            ctx.fillRect(carCenterX - 35, carBaseY - 3, 9, 2);
+
+            // Right Tire
+            ctx.fillStyle = '#090d16';
+            ctx.fillRect(carCenterX + 25, carBaseY - 14, 11, 15);
+            ctx.fillStyle = treadShift ? '#334155' : '#1e293b';
+            ctx.fillRect(carCenterX + 26, carBaseY - 12, 9, 2);
+            ctx.fillRect(carCenterX + 26, carBaseY - 7, 9, 2);
+            ctx.fillRect(carCenterX + 26, carBaseY - 3, 9, 2);
+
+            // 4. Lower Chassis & Rear Diffuser
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(carCenterX - 33, carBaseY - 18, 66, 15);
+            ctx.fillStyle = '#475569';
+            ctx.fillRect(carCenterX - 32, carBaseY - 17, 64, 13);
+            // Metallic Zamac Chrome Highlight Strip
+            ctx.fillStyle = '#cbd5e1';
+            ctx.fillRect(carCenterX - 30, carBaseY - 16, 60, 3);
+
+            // 5. Cabin & Sloped Gullwing Roofline (shifts slightly when steering)
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(carCenterX - 24 + lean, carBaseY - 28, 48, 11);
+            ctx.fillStyle = '#94a3b8';
+            ctx.fillRect(carCenterX - 23 + lean, carBaseY - 27, 46, 10);
+            // Roof Chrome Highlight
+            ctx.fillStyle = '#f8fafc';
+            ctx.fillRect(carCenterX - 18 + lean, carBaseY - 27, 36, 2);
+
+            // Rear Louvered Windshield
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(carCenterX - 19 + lean, carBaseY - 24, 38, 6);
+            ctx.fillStyle = '#00f0ff';
+            ctx.fillRect(carCenterX - 17 + lean, carBaseY - 23, 34, 1);
+            ctx.fillRect(carCenterX - 18 + lean, carBaseY - 21, 36, 1);
+
+            // 6. Roof-Mounted Twin-Turbo Supercharger Intake & Flux Coils
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(carCenterX - 9 + lean, carBaseY - 32, 18, 5);
+            ctx.fillStyle = '#e2e8f0';
+            ctx.fillRect(carCenterX - 8 + lean, carBaseY - 31, 16, 3);
+            ctx.fillStyle = '#ff0077';
+            ctx.fillRect(carCenterX - 6 + lean, carBaseY - 30, 4, 2);
+            ctx.fillRect(carCenterX + 2 + lean, carBaseY - 30, 4, 2);
+
+            // 7. Iconic 1980s Cyberpunk Rear Wing Spoiler
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(carCenterX - 34 + lean, carBaseY - 22, 68, 4);
+            ctx.fillStyle = '#e2e8f0';
+            ctx.fillRect(carCenterX - 33 + lean, carBaseY - 21, 66, 2);
+            ctx.fillStyle = '#00f0ff';
+            ctx.fillRect(carCenterX - 33 + lean, carBaseY - 21, 3, 2);
+            ctx.fillRect(carCenterX + 30 + lean, carBaseY - 21, 3, 2);
+
+            // 8. Glowing Red & Amber Pixel Tail Light Bar
+            ctx.fillStyle = '#1e1b4b';
+            ctx.fillRect(carCenterX - 30, carBaseY - 14, 60, 5);
+            // Left Tail Cluster
+            ctx.fillStyle = '#ff0033';
+            ctx.fillRect(carCenterX - 29, carBaseY - 13, 16, 3);
+            ctx.fillStyle = '#ffaa00';
+            ctx.fillRect(carCenterX - 29, carBaseY - 13, 4, 3);
+            // Right Tail Cluster
+            ctx.fillStyle = '#ff0033';
+            ctx.fillRect(carCenterX + 13, carBaseY - 13, 16, 3);
+            ctx.fillStyle = '#ffaa00';
+            ctx.fillRect(carCenterX + 25, carBaseY - 13, 4, 3);
+
+            // Center Vanity License Plate ("FC-82")
+            ctx.fillStyle = '#00f0ff';
+            ctx.fillRect(carCenterX - 8, carBaseY - 13, 16, 4);
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(carCenterX - 6, carBaseY - 12, 12, 2);
+
+            // 9. Twin Exhaust Pipes & Animated Turbo Flames
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(carCenterX - 22, carBaseY - 6, 6, 4);
+            ctx.fillRect(carCenterX + 16, carBaseY - 6, 6, 4);
+
+            if (state.revIntensity > 0.08 || state.warpSpeed > 0.1) {
+                const flameLen = Math.floor(4 + (state.revIntensity + state.warpSpeed) * 10 + Math.random() * 4);
+                // Left Exhaust Flame
+                ctx.fillStyle = '#ff0077';
+                ctx.fillRect(carCenterX - 22, carBaseY - 5, 6, flameLen);
+                ctx.fillStyle = '#00f0ff';
+                ctx.fillRect(carCenterX - 21, carBaseY - 5, 4, Math.max(2, flameLen - 3));
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(carCenterX - 20, carBaseY - 5, 2, Math.max(1, flameLen - 6));
+
+                // Right Exhaust Flame
+                ctx.fillStyle = '#ff0077';
+                ctx.fillRect(carCenterX + 16, carBaseY - 5, 6, flameLen);
+                ctx.fillStyle = '#00f0ff';
+                ctx.fillRect(carCenterX + 17, carBaseY - 5, 4, Math.max(2, flameLen - 3));
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(carCenterX + 18, carBaseY - 5, 2, Math.max(1, flameLen - 6));
+            }
+        }
+
+        /**
+         * Draw Pixel Rain & Turbo Spark Particles
+         */
+        function drawWeatherAndParticles() {
+            if (state.heavyRain) {
+                rainDrops.forEach((drop) => {
+                    ctx.fillStyle = drop.color;
+                    ctx.fillRect(Math.floor(drop.x), Math.floor(drop.y), 1, drop.len);
+                });
+            }
+
+            for (let i = sparks.length - 1; i >= 0; i--) {
+                const s = sparks[i];
+                ctx.fillStyle = s.color;
+                ctx.fillRect(Math.floor(s.x), Math.floor(s.y), 2, 2);
+                s.x += s.vx;
+                s.y += s.vy;
+                s.vy += 0.18;
+                s.life--;
+                if (s.life <= 0) sparks.splice(i, 1);
+            }
+        }
+
+        /**
+         * Update Simulation Physics & State
+         */
+        function updateSimulation() {
+            state.time++;
+
+            // Apply keyboard/button steer input
+            if (state.steerInput !== 0) {
+                state.targetCarX = Math.max(-1, Math.min(1, state.targetCarX + state.steerInput * 0.045));
+            }
+            state.carX += (state.targetCarX - state.carX) * 0.14;
+
+            // Advance Super-Scaler Road & Roadside Props
+            const baseSpeed = 0.24 + state.revIntensity * 0.42 + state.warpSpeed * 0.85;
+            state.roadZ += baseSpeed;
+
+            roadsideObjects.forEach((obj) => {
+                obj.z -= baseSpeed * 3.2;
+                if (obj.z < 0) {
+                    obj.z += 102;
+                }
+            });
+
+            // Decay Rev & Warp bursts smoothly
+            state.revIntensity = Math.max(0, state.revIntensity - 0.016);
+            state.warpSpeed = Math.max(0, state.warpSpeed - 0.02);
+
+            // Spawn occasional sparks while revving
+            if (state.revIntensity > 0.25 && state.time % 3 === 0) {
+                const carCenterX = Math.floor(NATIVE_W / 2 + state.carX * 72);
+                spawnSparks(carCenterX, 196, 4);
+            }
+
+            // Update Rain Streaks
+            if (state.heavyRain) {
+                rainDrops.forEach((drop) => {
+                    drop.y += drop.speed + state.revIntensity * 3;
+                    drop.x -= 0.6 + state.carX * 0.8;
+                    if (drop.y > NATIVE_H) {
+                        drop.y = -drop.len;
+                        drop.x = Math.random() * NATIVE_W;
+                    }
+                    if (drop.x < 0) drop.x += NATIVE_W;
+                    if (drop.x >= NATIVE_W) drop.x -= NATIVE_W;
+                });
+            }
+        }
+
+        /**
+         * Main 60fps Render Loop
+         */
+        function gameLoop() {
+            updateSimulation();
+            ctx.clearRect(0, 0, NATIVE_W, NATIVE_H);
+            drawSkyAndCity();
+            drawSuperScalerRoad();
+            drawRoadsideProps();
+            drawDiecastSupercar();
+            drawWeatherAndParticles();
+            requestAnimationFrame(gameLoop);
+        }
+
+        /**
+         * ============================================================================
+         * 3. INTERACTIVE CONTROLS, ENGINE REV & 32X GARAGE SHOWCASE
+         * ============================================================================
+         */
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        function addScore(pts) {
+            state.score += pts;
+            scoreDisplay.textContent = String(state.score).padStart(6, '0');
+        }
+
+        function triggerTurboRev(pitch = 1.0) {
+            state.revIntensity = 1.0;
+            const carCenterX = Math.floor(NATIVE_W / 2 + state.carX * 72);
+            spawnSparks(carCenterX, 196, 26);
+            synth.playEngineRev(pitch);
+            addScore(100);
+        }
+
+        // Canvas Click (Rev Engine) & Mouse Move (Steer Lanes)
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const normX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+            state.targetCarX = Math.max(-1, Math.min(1, normX * 1.15));
+            triggerTurboRev(1.0);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const normX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+            state.targetCarX = Math.max(-1, Math.min(1, normX * 1.15));
+        });
+
+        // Keyboard Controls (ArrowLeft/ArrowRight to Steer, Spacebar to Rev, Enter to Launch)
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+                state.steerInput = -1;
+            } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+                state.steerInput = 1;
+            } else if (e.code === 'Space') {
+                e.preventDefault();
+                triggerTurboRev(1.0);
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                launchToHomepage();
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if ((e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') && state.steerInput === -1) {
+                state.steerInput = 0;
+            } else if ((e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') && state.steerInput === 1) {
+                state.steerInput = 0;
+            }
+        });
+
+        // On-Screen Steer Left / Right Buttons (Supports Mouse & Touch Hold)
+        const steerLeftBtn = document.getElementById('steerLeftBtn');
+        const steerRightBtn = document.getElementById('steerRightBtn');
+
+        ['mousedown', 'touchstart'].forEach((evt) => {
+            steerLeftBtn.addEventListener(evt, (e) => {
+                e.preventDefault();
+                state.steerInput = -1;
+                synth.playArcadeBlip(false);
+            });
+            steerRightBtn.addEventListener(evt, (e) => {
+                e.preventDefault();
+                state.steerInput = 1;
+                synth.playArcadeBlip(false);
+            });
+        });
+
+        ['mouseup', 'mouseleave', 'touchend'].forEach((evt) => {
+            steerLeftBtn.addEventListener(evt, () => { if (state.steerInput === -1) state.steerInput = 0; });
+            steerRightBtn.addEventListener(evt, () => { if (state.steerInput === 1) state.steerInput = 0; });
+        });
+
+        // Rev Turbo V8 Button
+        document.getElementById('revEngineBtn').addEventListener('click', () => {
+            triggerTurboRev(1.05);
+        });
+
+        // Logo Emblem Click Easter Egg
+        document.getElementById('logoTrigger').addEventListener('click', () => {
+            synth.playArcadeBlip(true);
+            state.warpSpeed = 0.8;
+            addScore(1982);
+        });
+
+        // CRT Scanline Toggle
+        const crtOverlay = document.getElementById('crtOverlay');
+        const crtToggleBtn = document.getElementById('crtToggleBtn');
+        crtToggleBtn.addEventListener('click', () => {
+            state.crtOn = !state.crtOn;
+            crtOverlay.classList.toggle('crt-off', !state.crtOn);
+            crtToggleBtn.textContent = state.crtOn ? 'CRT: ON' : 'CRT: OFF';
+            synth.playArcadeBlip(state.crtOn);
+        });
+
+        // Rain Weather Toggle
+        const rainToggleBtn = document.getElementById('rainToggleBtn');
+        rainToggleBtn.addEventListener('click', () => {
+            state.heavyRain = !state.heavyRain;
+            rainToggleBtn.textContent = state.heavyRain ? 'RAIN: HEAVY' : 'RAIN: CLEAR';
+            synth.playArcadeBlip(state.heavyRain);
+        });
+
+        // High-Beams Toggle
+        const lightsToggleBtn = document.getElementById('lightsToggleBtn');
+        lightsToggleBtn.addEventListener('click', () => {
+            state.highBeams = !state.highBeams;
+            lightsToggleBtn.textContent = state.highBeams ? 'BEAMS: ON' : 'BEAMS: OFF';
+            synth.playArcadeBlip(state.highBeams);
+        });
+
+        // Background music is the shared audio-vault.js engine; its floating dock
+        // (bottom-left) is the only sound control. The local YM2612 engine stays
+        // for arcade SFX only.
+
+        // Enter The Grid -> YM2612 Power-Up Sweep + Warp-Speed Hyperspace Redirect to welcome.html
+        const enterGridBtn = document.getElementById('enterGridBtn');
+        const returnSplashBtn = document.getElementById('returnSplashBtn');
+        const gridShowcaseModal = document.getElementById('gridShowcaseModal');
+        const splashOverlay = document.getElementById('splashOverlay');
+        let isRedirecting = false;
+
+        function launchToHomepage() {
+            if (isRedirecting) return;
+            isRedirecting = true;
+
+            state.warpSpeed = 1.4;
+            state.revIntensity = 1.0;
+            const carCenterX = Math.floor(NATIVE_W / 2 + state.carX * 72);
+            spawnSparks(carCenterX, 196, 40);
+
+            synth.playGridStartFanfare();
+            // The shared engine carries the visitor's on/off + track choice into
+            // the next page, so don't override an explicit mute here.
+            addScore(500);
+
+            enterGridBtn.textContent = 'WARPING...';
+            splashOverlay.classList.add('opacity-0', 'pointer-events-none');
+
+            setTimeout(() => {
+                window.location.href = 'welcome.html';
+            }, 680);
+        }
+
+        enterGridBtn.addEventListener('mouseenter', () => {
+            if (synth.ctx) synth.playArcadeBlip(false);
+        });
+
+        enterGridBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            launchToHomepage();
+        });
+
+        returnSplashBtn.addEventListener('click', () => {
+            synth.playArcadeBlip(false);
+            gridShowcaseModal.classList.add('opacity-0');
+            setTimeout(() => {
+                gridShowcaseModal.classList.add('hidden');
+                splashOverlay.classList.remove('opacity-0', 'pointer-events-none');
+            }, 200);
+        });
+
+        // Populate 32-Bit Car Select Archive Cards with Live Pixel Turntable Canvases & Stat Bars
+        const diecastModels = [
+            {
+                id: 'NO.01',
+                name: 'DMC-82 FLUX',
+                scale: '1:64 ZAMAC CHROME',
+                bodyColor: '#94a3b8',
+                trimColor: '#00f0ff',
+                pitch: 1.0,
+                stats: { SPEED: 88, WEIGHT: 92, CHROME: 96, TURBO: 90 },
+                edition: 'SERIAL #0412/1982'
+            },
+            {
+                id: 'NO.02',
+                name: 'LP-500 VIPER',
+                scale: '1:64 HOT MAGENTA',
+                bodyColor: '#ff0077',
+                trimColor: '#ffcc00',
+                pitch: 1.25,
+                stats: { SPEED: 96, WEIGHT: 78, CHROME: 84, TURBO: 94 },
+                edition: 'SERIAL #0188/1982'
+            },
+            {
+                id: 'NO.03',
+                name: 'TR-82 OUTRUN',
+                scale: '1:64 COBALT BLUE',
+                bodyColor: '#0066ff',
+                trimColor: '#ff0077',
+                pitch: 0.85,
+                stats: { SPEED: 92, WEIGHT: 86, CHROME: 90, TURBO: 88 },
+                edition: 'SERIAL #0804/1982'
+            }
+        ];
+
+        const diecastCardsContainer = document.getElementById('diecastCardsContainer');
+        const turntableCanvases = [];
+
+        diecastModels.forEach((car, index) => {
+            const card = document.createElement('div');
+            card.className = 'sega-bevel-box p-4 flex flex-col justify-between cursor-pointer hover:border-yellow-300 transition-transform active:translate-y-0.5';
+
+            const statsHtml = Object.entries(car.stats).map(([label, val]) => `
+                <div class="mt-2">
+                    <div class="flex justify-between text-[8px] sm:text-[9px] text-cyan-200 mb-1">
+                        <span>${label}</span>
+                        <span class="text-yellow-300">${val}</span>
+                    </div>
+                    <div class="w-full h-2.5 bg-black border border-cyan-500 p-0.5">
+                        <div class="h-full bg-gradient-to-r from-cyan-400 to-pink-500" style="width: ${val}%"></div>
+                    </div>
+                </div>
+            `).join('');
+
+            card.innerHTML = `
+                <div>
+                    <div class="flex items-center justify-between text-[9px] text-yellow-300 mb-2">
+                        <span>${car.id}</span>
+                        <span>${car.edition}</span>
+                    </div>
+                    <div class="w-full bg-[#040714] border-2 border-pink-500 p-1">
+                        <canvas width="120" height="64" class="turntable-canvas w-full h-28 block"></canvas>
+                    </div>
+                    <h3 class="text-sm sm:text-base text-white mt-3 tracking-wider pixel-shadow">${car.name}</h3>
+                    <p class="text-[9px] text-pink-400 mt-1">${car.scale}</p>
+                    <div class="mt-3">${statsHtml}</div>
+                </div>
+                <button class="mt-4 w-full sega-btn-pink py-2 text-[9px] sm:text-[10px] text-yellow-300 tracking-wider cursor-pointer pixel-shadow">
+                    DYNO TEST EXHAUST
+                </button>
+            `;
+
+            card.addEventListener('click', () => {
+                synth.playEngineRev(car.pitch);
+                addScore(250);
+            });
+
+            diecastCardsContainer.appendChild(card);
+            const tCanvas = card.querySelector('.turntable-canvas');
+            const tCtx = tCanvas.getContext('2d');
+            tCtx.imageSmoothingEnabled = false;
+            turntableCanvases.push({ ctx: tCtx, car, phase: index * 2.1 });
+        });
+
+        // Animate Mini 32X Rotating Turntable Cars inside the Garage Modal
+        function animateTurntables() {
+            turntableCanvases.forEach((item) => {
+                const { ctx: c, car } = item;
+                item.phase += 0.04;
+                c.clearRect(0, 0, 120, 64);
+
+                // Grid backdrop
+                c.fillStyle = '#060a1f';
+                c.fillRect(0, 0, 120, 64);
+
+                // Rotating Isometric Pedestal Disc
+                const cx = 60;
+                const cy = 48;
+                c.fillStyle = '#00f0ff';
+                c.fillRect(cx - 42, cy, 84, 3);
+                c.fillStyle = '#ff0077';
+                c.fillRect(cx - 34, cy + 3, 68, 2);
+
+                // Rotating Spokes on Turntable
+                const spokeX = Math.floor(Math.sin(item.phase) * 34);
+                c.fillStyle = '#ffffff';
+                c.fillRect(cx + spokeX - 1, cy, 3, 3);
+
+                // Pixel Side-Profile 1:64 Diecast Supercar
+                const bob = Math.round(Math.sin(item.phase * 2));
+                const by = 42 + bob;
+
+                // Body Base
+                c.fillStyle = car.bodyColor;
+                c.fillRect(24, by - 11, 72, 10);
+                // Wedge Nose
+                c.fillRect(16, by - 7, 10, 6);
+                // Cabin Roof
+                c.fillRect(42, by - 18, 34, 7);
+                // Windshield & Side Window
+                c.fillStyle = '#0f172a';
+                c.fillRect(36, by - 16, 10, 5);
+                c.fillRect(48, by - 16, 22, 5);
+                // Neon Accent Stripe
+                c.fillStyle = car.trimColor;
+                c.fillRect(18, by - 6, 76, 2);
+                // Rear Wing
+                c.fillStyle = car.bodyColor;
+                c.fillRect(88, by - 16, 8, 5);
+                // Wheels
+                c.fillStyle = '#000000';
+                c.fillRect(26, by - 5, 13, 11);
+                c.fillRect(78, by - 5, 13, 11);
+                c.fillStyle = '#e2e8f0';
+                c.fillRect(29, by - 2, 7, 5);
+                c.fillRect(81, by - 2, 7, 5);
+            });
+            requestAnimationFrame(animateTurntables);
+        }
+
+        // Background audio autostart (and the suspended-context unlock) is
+        // handled by audio-vault.js, shared by every page.
+
+        // Start Both Animation Loops Immediately on Window Load
+        window.addEventListener('load', () => {
+            gameLoop();
+            animateTurntables();
+        });
+    </script>
+</body>
+</html>

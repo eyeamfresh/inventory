@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fresh Collectibles // Top 10 This Week</title>
+  <meta name="description" content="Fresh Collectibles — the Hot Wheels Top 10, a weekly read on new castings, drops and news from the diecast world." />
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Permanent+Marker&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --neon-cyan: #00f3ff;
+      --neon-magenta: #ff007f;
+      --electric-purple: #9d00ff;
+      --synth-yellow: #ffe600;
+      --bg-dark: #070212;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100vh;
+      background-color: var(--bg-dark);
+      font-family: 'Orbitron', sans-serif;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    /* CRT Scanline & Chromatic Vignette Overlay */
+    .crt-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 60;
+      background:
+        linear-gradient(
+          rgba(18, 16, 16, 0) 50%,
+          rgba(0, 0, 0, 0.35) 50%
+        ),
+        linear-gradient(
+          90deg,
+          rgba(255, 0, 0, 0.04),
+          rgba(0, 255, 0, 0.01),
+          rgba(0, 0, 255, 0.04)
+        );
+      background-size: 100% 3px, 6px 100%;
+      box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.85);
+    }
+
+    @keyframes crtFlicker {
+      0% { opacity: 0.97; }
+      50% { opacity: 1; }
+      100% { opacity: 0.98; }
+    }
+    .crt-flicker { animation: crtFlicker 0.15s infinite; }
+
+    /* Ambient synthwave backdrop */
+    .bg-scene {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 55% at 50% -12%, rgba(157, 0, 255, 0.38), transparent 62%),
+        radial-gradient(circle at 88% 18%, rgba(0, 243, 255, 0.14), transparent 42%),
+        radial-gradient(circle at 8% 70%, rgba(255, 0, 127, 0.12), transparent 46%);
+    }
+    .bg-grid {
+      position: fixed;
+      left: -20%;
+      right: -20%;
+      bottom: -8%;
+      height: 46vh;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.5;
+      background-image:
+        linear-gradient(rgba(0, 243, 255, 0.16) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.16) 1px, transparent 1px);
+      background-size: 52px 52px;
+      transform: perspective(340px) rotateX(62deg);
+      transform-origin: center bottom;
+      -webkit-mask-image: linear-gradient(to top, #000 5%, transparent 72%);
+      mask-image: linear-gradient(to top, #000 5%, transparent 72%);
+    }
+
+    /* Roaming car canvas */
+    #roamingCarCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.45;
+    }
+
+    /* 1980s Metallic Chrome Typography */
+    .chrome-text {
+      background: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #a3e4ff 22%,
+        #1a3b70 48%,
+        #090418 50%,
+        #ff4db8 54%,
+        #ff9ce3 78%,
+        #ffffff 100%
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 14px rgba(0, 243, 255, 0.45)) drop-shadow(0 4px 0px #2b064d);
+      letter-spacing: 0.06em;
+    }
+
+    .font-mono-tech { font-family: 'Share Tech Mono', monospace; }
+    .font-marker { font-family: 'Permanent Marker', cursive; }
+
+    /* Small-size brand mark: the full chrome gradient muddies at 20px, so this
+       uses a brighter white-to-cyan ramp that stays readable in the header. */
+    .brand-mark {
+      background: linear-gradient(180deg, #ffffff 0%, #d8f8ff 38%, #7fe0ff 60%, #ffffff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 8px rgba(0, 243, 255, 0.55)) drop-shadow(0 2px 0 #2b064d);
+      letter-spacing: 0.06em;
+    }
+
+    /* Diecast Collector Blister HUD Frame */
+    .collector-hud {
+      border: 1px solid rgba(0, 243, 255, 0.28);
+      background: rgba(10, 4, 24, 0.82);
+      backdrop-filter: blur(10px);
+      box-shadow:
+        0 0 26px rgba(157, 0, 255, 0.22),
+        inset 0 0 18px rgba(0, 243, 255, 0.10);
+    }
+
+    .cyber-btn {
+      position: relative;
+      background: linear-gradient(135deg, #1b0736 0%, #3d0952 50%, #17062e 100%);
+      border: 1px solid var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .cyber-btn:hover {
+      border-color: #ffffff;
+      box-shadow: 0 0 20px rgba(0, 243, 255, 0.7), 0 0 30px rgba(255, 0, 127, 0.5);
+      transform: translateY(-1px);
+    }
+    .cyber-btn.sound-active {
+      border-color: var(--neon-magenta);
+      box-shadow: 0 0 14px rgba(255, 0, 127, 0.6), inset 0 0 8px rgba(255, 0, 127, 0.3);
+      color: #ff9ce3;
+    }
+
+    /* Primary "enter" button — magenta charge */
+    .cyber-btn-hot {
+      background: linear-gradient(135deg, #ff007f 0%, #b3005a 55%, #7a0040 100%);
+      border: 1px solid #ff9ce3;
+      box-shadow: 0 0 16px rgba(255, 0, 127, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      color: #fff;
+    }
+    .cyber-btn-hot:hover {
+      border-color: #fff;
+      box-shadow: 0 0 26px rgba(255, 0, 127, 0.75), 0 0 44px rgba(0, 243, 255, 0.35);
+    }
+
+    .nav-link {
+      position: relative;
+      padding: 0.45rem 0.15rem;
+      color: #c4b5fd;
+      text-decoration: none;
+      letter-spacing: 0.22em;
+      transition: color 0.2s;
+      white-space: nowrap;
+    }
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.25s ease;
+    }
+    .nav-link:hover { color: #fff; }
+    .nav-link:hover::after { transform: scaleX(1); }
+    .nav-link.active { color: #00f3ff; }
+    .nav-link.active::after { transform: scaleX(1); }
+
+    /* Category card */
+    .cat-card {
+      border-radius: 1rem;
+      isolation: isolate;
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s, box-shadow 0.25s;
+      will-change: transform;
+    }
+    .cat-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(0, 243, 255, 0.85);
+      box-shadow:
+        0 18px 48px rgba(0, 0, 0, 0.55),
+        0 0 30px rgba(0, 243, 255, 0.35),
+        0 0 60px rgba(255, 0, 127, 0.18);
+    }
+    .cat-card .cat-img {
+      transform: scale(1.02);
+      transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s;
+      filter: saturate(0.92) contrast(1.02);
+    }
+    .cat-card:hover .cat-img {
+      transform: scale(1.12);
+      filter: saturate(1.1) contrast(1.06);
+    }
+    .cat-card .cat-chip {
+      transition: background 0.25s, color 0.25s, transform 0.25s, border-color 0.25s;
+    }
+    .cat-card:hover .cat-chip {
+      background: var(--neon-magenta);
+      border-color: #ff9ce3;
+      color: #fff;
+      transform: rotate(45deg);
+    }
+    .cat-card .cat-rule {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta), var(--electric-purple));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.45s ease;
+    }
+    .cat-card:hover .cat-rule { transform: scaleX(1); }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.85); }
+    }
+    .pulse-dot { animation: pulseDot 1.8s ease-in-out infinite; }
+
+    @keyframes floatIn {
+      from { transform: translateY(18px); }
+      to { transform: translateY(0); }
+    }
+    .float-in { animation: floatIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .d1 { animation-delay: 0.05s; }
+    .d2 { animation-delay: 0.15s; }
+    .d3 { animation-delay: 0.25s; }
+    .d4 { animation-delay: 0.35s; }
+
+    ::selection { background: rgba(255, 0, 127, 0.45); color: #fff; }
+  </style>
+</head>
+<body class="relative min-h-screen flex flex-col">
+
+  <!-- CRT Scanline Overlay -->
+  <div class="crt-overlay crt-flicker"></div>
+
+  <!-- Ambient backdrop -->
+  <div class="bg-scene"></div>
+  <div class="bg-grid"></div>
+
+  <!-- Roaming Retro Car Canvas -->
+  <canvas id="roamingCarCanvas"></canvas>
+
+  <header class="relative z-20 w-full border-b border-cyan-500/30 bg-[#070212]/90 backdrop-blur-md sticky top-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-3.5 flex flex-wrap justify-between items-center gap-3">
+
+      <!-- Brand -->
+      <a href="welcome.html" class="flex items-center gap-3 no-underline group">
+        <div>
+          <div class="font-mono-tech text-[9px] sm:text-[10px] tracking-[0.32em] text-cyan-300">
+            1:64 &amp; MORE // EST. 1982
+          </div>
+          <h1 class="brand-mark text-xl sm:text-2xl font-black italic tracking-wider uppercase leading-none">
+            FRESH COLLECTIBLES
+          </h1>
+        </div>
+      </a>
+
+      <!-- Nav + actions -->
+      <div class="flex items-center gap-3 sm:gap-5 flex-wrap">
+        <nav class="flex items-center gap-3 sm:gap-5 font-mono-tech text-[10px] sm:text-[11px] uppercase">
+          <a href="welcome.html" class="nav-link">Home</a>
+          <a href="homepage.html" class="nav-link">Catalog</a>
+          <a href="welcome.html#categories" class="nav-link">Categories</a>
+          <a href="news.html" class="nav-link active">News</a>
+        </nav>
+
+        <div class="flex items-center gap-2">
+          <a id="addItemBtn" href="add-item.html"
+             class="cyber-btn px-3 py-2 rounded-lg text-cyan-300 font-mono-tech text-[10px] tracking-widest uppercase flex items-center gap-1.5"
+             title="Add a new item to the collection">
+            <span class="text-sm leading-none">+</span>
+            <span class="hidden sm:inline">ADD ITEM</span>
+            <span class="sm:hidden">ADD</span>
+          </a>
+          <!-- Background sound lives in the floating dock (bottom-left). -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="relative z-10 flex-1">
+
+    <!-- ============================================================
+         PAGE HEAD
+         ============================================================ -->
+    <section class="max-w-5xl mx-auto px-4 sm:px-8 pt-10 sm:pt-12 pb-6">
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5 border-b border-purple-500/25 pb-6">
+        <div class="min-w-0">
+          <p class="font-mono-tech text-[10px] sm:text-[11px] tracking-[0.28em] text-cyan-300 uppercase">
+            Hot Wheels wire &middot; updated <span id="hw-updated">Nov 16, 2026</span>
+          </p>
+          <h2 class="chrome-text mt-3 text-[1.9rem] leading-[0.95] sm:text-4xl md:text-5xl font-black uppercase italic">
+            Top 10 This Week
+          </h2>
+        </div>
+        <a href="homepage.html"
+           class="cyber-btn shrink-0 px-5 py-2.5 rounded-lg font-mono-tech text-[10px] sm:text-xs tracking-[0.22em] uppercase text-cyan-300 no-underline self-start sm:self-auto">
+          Open the Catalog
+        </a>
+      </div>
+
+      <p class="mt-4 max-w-2xl font-mono-tech text-xs sm:text-sm leading-relaxed text-purple-200/85">
+        Ten stories from the diecast world &mdash; new castings, drops and collector news,
+        ranked by how much they matter on the shelf. New list every Tuesday.
+      </p>
+    </section>
+
+    <!-- ============================================================
+         THE LIST
+         ============================================================ -->
+    <section class="max-w-5xl mx-auto px-4 sm:px-8 pb-20">
+      <ol id="hw-news-list" class="border-y border-purple-500/20 divide-y divide-purple-500/20"></ol>
+
+      <p class="mt-5 font-mono-tech text-[10px] sm:text-[11px] tracking-[0.18em] text-purple-300/70 uppercase">
+        Sources linked in each headline &middot; curated by Fresh Collectibles
+      </p>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="relative z-20 w-full border-t border-purple-500/30 bg-[#05010f]/90 py-4 text-center font-mono-tech text-[10px] sm:text-xs text-purple-300">
+    FRESH COLLECTIBLES CYBER VAULT // 1982&ndash;2026 ARCHIVE // EST. 1982
+  </footer>
+
+  <script src="audio-vault.js?v=6"></script>
+  <script>
+    /* =========================================================
+       ROAMING '80s RETRO DIECAST CAR  (same as catalog page)
+       ========================================================= */
+    (function initRoamingCar() {
+      const canvas = document.getElementById("roamingCarCanvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+
+      let width = canvas.width = window.innerWidth;
+      let height = canvas.height = window.innerHeight;
+
+      window.addEventListener("resize", () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+
+      const car = {
+        x: width * 0.72,
+        y: height * 0.3,
+        angle: Math.random() * Math.PI * 2,
+        targetAngle: Math.random() * Math.PI * 2,
+        speed: 2.0,
+        turnTimer: 0,
+        trail: []
+      };
+
+      function pickNewWaypointDirection() {
+        const margin = 90;
+        const targetX = margin + Math.random() * Math.max(100, width - margin * 2);
+        const targetY = margin + Math.random() * Math.max(100, height - margin * 2);
+        car.targetAngle = Math.atan2(targetY - car.y, targetX - car.x);
+        car.turnTimer = 90 + Math.floor(Math.random() * 140);
+      }
+
+      function normalizeAngle(a) {
+        while (a > Math.PI) a -= Math.PI * 2;
+        while (a < -Math.PI) a += Math.PI * 2;
+        return a;
+      }
+
+      function updateCar() {
+        car.turnTimer--;
+        const margin = 65;
+
+        if (car.x < margin || car.x > width - margin || car.y < margin || car.y > height - margin) {
+          const centerAngle = Math.atan2(height / 2 - car.y, width / 2 - car.x);
+          car.targetAngle = centerAngle + (Math.random() - 0.5) * 0.6;
+          car.turnTimer = 60;
+        } else if (car.turnTimer <= 0) {
+          pickNewWaypointDirection();
+        }
+
+        const diff = normalizeAngle(car.targetAngle - car.angle);
+        car.angle += diff * 0.035;
+
+        const turnSharpness = Math.abs(diff);
+        const currentSpeed = car.speed * (1 - Math.min(0.35, turnSharpness * 0.4));
+
+        car.x += Math.cos(car.angle) * currentSpeed;
+        car.y += Math.sin(car.angle) * currentSpeed;
+
+        const rearX = car.x - Math.cos(car.angle) * 16;
+        const rearY = car.y - Math.sin(car.angle) * 16;
+        car.trail.push({ x: rearX, y: rearY, angle: car.angle, life: 1.0 });
+        if (car.trail.length > 42) car.trail.shift();
+
+        for (let i = 0; i < car.trail.length; i++) car.trail[i].life -= 0.024;
+      }
+
+      function drawCar() {
+        ctx.clearRect(0, 0, width, height);
+
+        for (let i = 1; i < car.trail.length; i++) {
+          const p0 = car.trail[i - 1];
+          const p1 = car.trail[i];
+          if (p1.life <= 0) continue;
+
+          const perpX0 = -Math.sin(p0.angle) * 5.5;
+          const perpY0 = Math.cos(p0.angle) * 5.5;
+          const perpX1 = -Math.sin(p1.angle) * 5.5;
+          const perpY1 = Math.cos(p1.angle) * 5.5;
+
+          ctx.strokeStyle = `rgba(255, 0, 127, ${p1.life * 0.4})`;
+          ctx.lineWidth = 2;
+
+          ctx.beginPath();
+          ctx.moveTo(p0.x + perpX0, p0.y + perpY0);
+          ctx.lineTo(p1.x + perpX1, p1.y + perpY1);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(p0.x - perpX0, p0.y - perpY0);
+          ctx.lineTo(p1.x - perpX1, p1.y - perpY1);
+          ctx.stroke();
+        }
+
+        ctx.save();
+        ctx.translate(car.x, car.y);
+        ctx.rotate(car.angle);
+
+        const beamGrad = ctx.createLinearGradient(16, 0, 75, 0);
+        beamGrad.addColorStop(0, "rgba(0, 243, 255, 0.28)");
+        beamGrad.addColorStop(1, "rgba(0, 243, 255, 0)");
+        ctx.fillStyle = beamGrad;
+        ctx.beginPath();
+        ctx.moveTo(16, -6);
+        ctx.lineTo(75, -22);
+        ctx.lineTo(75, 22);
+        ctx.lineTo(16, 6);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.shadowColor = "#00f3ff";
+        ctx.shadowBlur = 12;
+
+        ctx.fillStyle = "#090318";
+        ctx.fillRect(-13, -10.5, 7, 2.5);
+        ctx.fillRect(6, -10.5, 7, 2.5);
+        ctx.fillRect(-13, 8, 7, 2.5);
+        ctx.fillRect(6, 8, 7, 2.5);
+
+        ctx.fillStyle = "#160730";
+        ctx.strokeStyle = "#00f3ff";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.rect(-17, -8.5, 34, 17);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#ff007f";
+        ctx.fillRect(4, -2, 11, 4);
+
+        ctx.fillStyle = "#00f3ff";
+        ctx.beginPath();
+        ctx.moveTo(2, -6.5);
+        ctx.lineTo(8, -5.5);
+        ctx.lineTo(8, 5.5);
+        ctx.lineTo(2, 6.5);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = "#ff007f";
+        ctx.fillRect(-18, -9.5, 3, 19);
+
+        ctx.shadowBlur = 6;
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(15.5, -7, 2, 3.5);
+        ctx.fillRect(15.5, 3.5, 2, 3.5);
+
+        ctx.shadowColor = "#ff007f";
+        ctx.fillStyle = "#ff007f";
+        ctx.fillRect(-17.5, -7, 1.5, 4);
+        ctx.fillRect(-17.5, 3, 1.5, 4);
+
+        ctx.restore();
+      }
+
+      function animate() {
+        updateCar();
+        drawCar();
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    })();
+
+    /* =========================================================
+       TOP 10 LIST
+       Update this array weekly to refresh the feed.
+       ========================================================= */
+    (function () {
+      const hwNewsData = [
+        {
+          date: "Nov 14, 2026",
+          tag: "Legends Tour",
+          title: "1979 Chevy El Camino 'SS Monte Mino' Wins 2026 Hot Wheels Legends Tour",
+          summary: "Tampa builder Matt McEntegart claimed the global title with a Corvette-powered, chassis-stretched 1979 El Camino, earning it a spot as a worldwide 1:64 die-cast.",
+          url: "https://corporate.mattel.com/news/hot-wheels-crowns-2026-legends-tour-winner-following-global-search-across-19-countries"
+        },
+        {
+          date: "Nov 16, 2026",
+          tag: "Mattel Creations",
+          title: "Disney x Formula 1 Collaboration Set for Nov 19 Drop",
+          summary: "Mattel Creations revealed a $25 Disney x F1 Collaboratory release featuring a custom livery and three interchangeable sets of Pirelli tires.",
+          url: "https://creations.mattel.com/pages/launch-calendar"
+        },
+        {
+          date: "Nov 16, 2026",
+          tag: "2027 Previews",
+          title: "29 New 2027 Mainline & Convention Models Previewed",
+          summary: "Post-convention previews spotlighted upcoming castings including a Claude Haldi-inspired Porsche 908-3, golden Pass'n Go, 1965 Honda RA272, and an F1 chase hint.",
+          url: "https://www.autoevolution.com/news/29-new-hot-wheels-to-start-hunting-for-soon-278518.html"
+        },
+        {
+          date: "Nov 13, 2026",
+          tag: "Pop Culture",
+          title: "2027 Pop Culture Mix 2 Lineup Leaked",
+          summary: "Early previews of next year's Pop Culture Mix 2 revealed themed castings featuring Deadpool, Doctor Doom, Rick and Morty's Jerry Smith, and a Gran Turismo Ford GT.",
+          url: "https://www.autoevolution.com/news/new-hot-wheels-pop-culture-set-brings-jerry-smith-doctor-doom-and-deadpool-together-278291.html"
+        },
+        {
+          date: "Nov 14, 2026",
+          tag: "Silver Series",
+          title: "5 New Toyota Models Joining 2027 Silver Series",
+          summary: "Mattel confirmed a dedicated 5-car Toyota wave arriving in the 2027 Silver Series lineup for JDM collectors.",
+          url: "https://www.autoevolution.com/newstag/Hot+Wheels/"
+        },
+        {
+          date: "Nov 10, 2026",
+          tag: "Elite 64",
+          title: "Elite 64 1979 Chevy C30 Crew Cab Dually 4x4 Hauler Launches",
+          summary: "Mattel Creations released its latest $65 Elite 64 heavy hauler, featuring detailed dual rear wheels and collector-grade tampo work.",
+          url: "https://www.autoevolution.com/news/new-hot-wheels-elite-64-hauler-is-a-1979-chevy-c30-crew-cab-dually-4x4-that-will-cost-65-278238.html"
+        },
+        {
+          date: "Nov 16, 2026",
+          tag: "Video Games",
+          title: "'Hot Wheels: Infinite Rush' Sales Trail Expectations Despite DLC Plans",
+          summary: "Embracer Group's Q2 report noted slower-than-expected launch sales for the open-world arcade racer, though a 44-car Vehicle Pass and Ferrari expansion remain on deck.",
+          url: "https://traxion.gg/hot-wheels-infinite-rushs-initial-sales-have-underperformed/"
+        },
+        {
+          date: "Nov 14, 2026",
+          tag: "Holiday Releases",
+          title: "New Holiday-Themed Brick Shop & Die-Cast Sets Arrive for Christmas",
+          summary: "Two new collectible releases hit shelves ahead of the holiday rush, pairing traditional die-cast appeal with buildable display sets.",
+          url: "https://www.autoevolution.com/news/2-new-hot-wheels-collectibles-that-will-make-some-happines-for-christmas-278421.html"
+        },
+        {
+          date: "Nov 9, 2026",
+          tag: "Mattel Brick Shop",
+          title: "Mattel Brick Shop Rolls Out Buildable Hot Wheels Racer Series",
+          summary: "Mattel expanded its Brick Shop construction line with Mix 1 of the buildable Hot Wheels Racer Series, including a Blue Victory Maserati MC12.",
+          url: "https://www.licenseglobal.com/keyword/hot-wheels"
+        },
+        {
+          date: "Nov 9, 2026",
+          tag: "Silver Series",
+          title: "Exclusive 2027 Ferrari 5-Pack Revealed for Silver Series",
+          summary: "Collector leaks confirmed an all-Ferrari 5-pack slated for the 2027 Silver Series, continuing Mattel's renewed Ferrari partnership.",
+          url: "https://t-hunted.blogspot.com/2026/11/um-inedito-pack-de-5-ferraris-da-silver.html"
+        }
+      ];
+
+      const listEl = document.getElementById("hw-news-list");
+      listEl.innerHTML = hwNewsData.map((item, index) => `
+        <li class="grid grid-cols-[2.25rem_1fr] sm:grid-cols-[3.5rem_1fr] gap-3 sm:gap-6 py-5 sm:py-6">
+          <div class="font-black leading-none pt-0.5 sm:pt-1 text-lg sm:text-2xl ${index === 0 ? "text-yellow-300" : "text-cyan-300/70"}">
+            ${String(index + 1).padStart(2, "0")}
+          </div>
+          <div class="min-w-0">
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono-tech text-[10px] sm:text-[11px] uppercase tracking-[0.2em]">
+              <span class="text-[#ff9ce3]">${item.tag}</span>
+              <span aria-hidden="true" class="inline-block w-4 h-px bg-purple-400/40"></span>
+              <span class="text-purple-300/70">${item.date}</span>
+            </div>
+            <h3 class="mt-2 text-base sm:text-xl font-black uppercase tracking-wide leading-snug">
+              <a href="${item.url}" target="_blank" rel="noopener noreferrer"
+                 class="text-white no-underline hover:text-cyan-300 transition-colors">${item.title}</a>
+            </h3>
+            <p class="mt-2 font-mono-tech text-xs sm:text-sm leading-relaxed text-purple-200/75">${item.summary}</p>
+          </div>
+        </li>
+      `).join("");
+    })();
+  </script>
+</body>
+</html>

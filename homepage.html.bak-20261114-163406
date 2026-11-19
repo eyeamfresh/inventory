@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fresh Collectibles // '82 Diecast Vault Showcase</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Permanent+Marker&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --neon-cyan: #00f3ff;
+      --neon-magenta: #ff007f;
+      --electric-purple: #9d00ff;
+      --synth-yellow: #ffe600;
+      --bg-dark: #070212;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100vh;
+      background-color: var(--bg-dark);
+      font-family: 'Orbitron', sans-serif;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    /* CRT Scanline & Chromatic Vignette Overlay */
+    .crt-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 50;
+      background:
+        linear-gradient(
+          rgba(18, 16, 16, 0) 50%,
+          rgba(0, 0, 0, 0.35) 50%
+        ),
+        linear-gradient(
+          90deg,
+          rgba(255, 0, 0, 0.04),
+          rgba(0, 255, 0, 0.01),
+          rgba(0, 0, 255, 0.04)
+        );
+      background-size: 100% 3px, 6px 100%;
+      box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.85);
+    }
+
+    @keyframes crtFlicker {
+      0% { opacity: 0.97; }
+      50% { opacity: 1; }
+      100% { opacity: 0.98; }
+    }
+    .crt-flicker {
+      animation: crtFlicker 0.15s infinite;
+    }
+
+    /* Roaming Car Canvas Layer */
+    #roamingCarCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 15;
+    }
+
+    /* 1980s Metallic Chrome Typography */
+    .chrome-text {
+      background: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #a3e4ff 22%,
+        #1a3b70 48%,
+        #090418 50%,
+        #ff4db8 54%,
+        #ff9ce3 78%,
+        #ffffff 100%
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 12px rgba(0, 243, 255, 0.5)) drop-shadow(0 4px 0px #2b064d);
+      letter-spacing: 0.08em;
+    }
+
+    /* Diecast Collector Blister HUD Frame */
+    .collector-hud {
+      border: 1px solid rgba(0, 243, 255, 0.35);
+      background: rgba(12, 5, 28, 0.85);
+      backdrop-filter: blur(8px);
+      box-shadow:
+        0 0 20px rgba(157, 0, 255, 0.25),
+        inset 0 0 15px rgba(0, 243, 255, 0.15);
+    }
+
+    .font-mono-tech {
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    /* Gallery Card Styling */
+    .diecast-card {
+      background: rgba(18, 8, 38, 0.85);
+      border: 1px solid rgba(0, 243, 255, 0.3);
+      border-radius: 0.75rem;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .diecast-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      border-color: var(--neon-cyan);
+      box-shadow:
+        0 0 25px rgba(0, 243, 255, 0.4),
+        0 0 45px rgba(255, 0, 127, 0.25);
+    }
+
+    .cyber-btn {
+      position: relative;
+      background: linear-gradient(135deg, #1b0736 0%, #3d0952 50%, #17062e 100%);
+      border: 1px solid var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .cyber-btn:hover {
+      border-color: #ffffff;
+      box-shadow: 0 0 20px rgba(0, 243, 255, 0.7), 0 0 30px rgba(255, 0, 127, 0.5);
+    }
+
+    .cyber-btn.sound-active {
+      border-color: var(--neon-magenta);
+      box-shadow: 0 0 14px rgba(255, 0, 127, 0.6), inset 0 0 8px rgba(255, 0, 127, 0.3);
+      color: #ff9ce3;
+    }
+
+    input, select {
+      background: rgba(7, 2, 18, 0.9);
+      border: 1px solid rgba(0, 243, 255, 0.4);
+      color: #ffffff;
+      padding: 0.6rem 1rem;
+      border-radius: 0.5rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus, select:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 12px rgba(0, 243, 255, 0.5);
+    }
+  </style>
+</head>
+<body class="relative min-h-screen flex flex-col justify-between">
+
+  <!-- CRT Scanline Overlay -->
+  <div class="crt-overlay crt-flicker"></div>
+
+  <!-- Roaming Retro Car Canvas -->
+  <canvas id="roamingCarCanvas"></canvas>
+
+  <!-- HEADER BAR -->
+  <header class="relative z-20 w-full border-b border-cyan-500/30 bg-[#070212]/90 backdrop-blur-md sticky top-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex flex-wrap justify-between items-center gap-4">
+
+      <!-- Brand Title -->
+      <div class="flex items-center gap-4">
+        <div>
+          <div class="font-mono-tech text-[10px] sm:text-xs tracking-[0.3em] text-cyan-300">
+            1:64 &amp; MORE // EST. 1982
+          </div>
+          <h1 class="chrome-text text-2xl sm:text-3xl font-black italic tracking-wider uppercase leading-none">
+            FRESH COLLECTIBLES
+          </h1>
+          <p id="itemCount" class="font-mono-tech text-xs text-purple-300 mt-1">Connecting to NocoDB vault...</p>
+        </div>
+      </div>
+
+      <!-- Controls, Sound Toggle & Add Car Button -->
+      <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+        <input type="text" id="searchInput" placeholder="SEARCH" oninput="filterRecords()" class="w-full sm:w-52" />
+        <select id="categoryFilter" onchange="filterRecords()" class="w-full sm:w-auto">
+          <option value="all" disabled selected hidden>CATEGORIES</option>
+          <option value="all">ALL ITEMS</option>
+        </select>
+
+        <!-- Retro Audio Toggle Button -->
+        <button id="soundToggleBtn" onclick="toggleRetroAudio()" class="cyber-btn px-3.5 py-2.5 rounded-lg text-cyan-300 font-mono-tech text-xs tracking-widest uppercase flex items-center justify-center gap-2" title="Toggle Retro Synth Audio">
+          <span id="soundIcon">🔊</span>
+          <span id="soundLabel">SOUND: ON</span>
+        </button>
+
+        <a href="http://192.168.1.64:8200/wcy3ur85/p3uce46l1dxom4u/interfaces/itfhbe5w2264en6eh/paglrxbkrtsofyjix" target="_blank" class="cyber-btn px-4 py-2.5 rounded-lg text-cyan-300 font-mono-tech text-xs tracking-widest uppercase flex items-center justify-center gap-2">
+          + ADD NEW CAR
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN GALLERY CONTENT -->
+  <main class="relative z-10 max-w-7xl w-full mx-auto px-4 sm:px-8 py-8 flex-1">
+    <div id="errorBox" class="hidden collector-hud bg-red-950/80 border-red-500 text-red-200 p-4 rounded-xl mb-6 font-mono-tech text-sm leading-relaxed"></div>
+    <div id="galleryGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="relative z-20 w-full border-t border-purple-500/30 bg-[#05010f]/90 py-4 text-center font-mono-tech text-xs text-purple-300">
+    FRESH COLLECTIBLES CYBER VAULT // 1982–2026 ARCHIVE // EST. 1982
+  </footer>
+
+  <!-- DETAIL MODAL (2:1 PORTRAIT RATIO) -->
+  <div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/85 backdrop-blur-sm p-4">
+    <div class="collector-hud w-72 sm:w-80 rounded-2xl overflow-hidden border border-cyan-400 flex flex-col">
+      <div class="relative w-full h-[360px] sm:h-[400px] bg-black/60 overflow-hidden group">
+        <img id="modalImage" alt="Diecast Model" class="w-full h-full object-cover cursor-pointer transition-transform duration-200 hover:scale-105" onclick="openCurrentImageInNewTab()" title="Click to open image in new tab" onerror="console.warn('MODAL IMG FAILED:', this.src); this.onerror=null; this.src='https://placehold.co/400x800/0f0524/00f3ff?text=FRESH+COLLECTIBLES'" />
+        <div class="absolute bottom-2 right-2 bg-black/70 border border-cyan-400/50 text-cyan-300 font-mono-tech text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition pointer-events-none">
+          🔍 OPEN IN NEW TAB
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#070212] via-transparent to-transparent pointer-events-none"></div>
+      </div>
+      <div class="p-5 flex flex-col justify-between flex-1">
+        <div>
+          <div class="flex justify-between items-center mb-1.5">
+            <span id="modalCategory" class="font-mono-tech text-[10px] font-bold text-[#ff007f] tracking-widest uppercase"></span>
+            <span id="modalSku" class="font-mono-tech text-[10px] font-bold text-[#00f3ff]"></span>
+          </div>
+          <h2 id="modalTitle" class="chrome-text text-lg sm:text-xl font-black uppercase mb-3 leading-tight"></h2>
+          <div class="grid grid-cols-2 gap-1.5 font-mono-tech text-[10px] text-purple-200 mb-4 bg-[#070212]/60 p-2.5 rounded-lg border border-purple-500/30">
+            <div>YEAR: <span id="modalYear" class="text-white font-bold"></span></div>
+            <div>SERIES #: <span id="modalSeriesNo" class="text-white font-bold"></span></div>
+            <div>COLLECTOR: <span id="modalCollectorNo" class="text-white font-bold"></span></div>
+            <div>CASE: <span id="modalCaseCode" class="text-white font-bold"></span></div>
+          </div>
+        </div>
+        <div class="flex justify-center">
+          <button onclick="closeModal()" class="collector-hud w-full py-2 rounded-xl font-mono-tech text-xs tracking-widest text-cyan-300 hover:text-white uppercase transition cursor-pointer text-center">
+            CLOSE VAULT
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const CONFIG = {
+      nocodbUrl: "http://192.168.1.64:8200",
+      apiToken: "nc_pat_yb7LZUMWwWG2GqJPnRdLPXl0L8gvil0UFiK3mhbc",
+      tableId: "mygbijn9x2f7xxl",
+      limit: 100,
+      fields: {
+        title: "Title",
+        category: "Category",
+        subline: "Series",
+        image: "Gallery",
+        sku: "SKU",
+        year: "Release Year",
+        seriesNo: "Series Number",
+        collectorNo: "Collector Number",
+        caseCode: "Case Code",
+        treasureHunt: "Treasurehunt",
+        superTreasureHunt: "Super Treasurehunt",
+        chase: "Chase"
+      }
+    };
+
+    const PLACEHOLDER_URL = (title) =>
+      `https://placehold.co/400x800/0f0524/00f3ff?text=${encodeURIComponent(String(title || "FRESH COLLECTIBLES").trim())}`;
+
+    let allRecords = [];
+    let currentModalImgUrl = "";
+
+    const MOCK_FALLBACK_RECORDS = [
+      {"Title":"'92 Dodge Viper RT/10","Category":"Hotwheels","Series":"Drop Tops","SKU":"JJM01-N7C5","Release Year":2025,"Series Number":"2/5","Collector Number":"29/250","Case Code":"N","Treasurehunt":0,"Super Treasurehunt":1},
+      {"Title":"Porsche 911 Carrera T","Category":"Hotwheels","Series":"Factory Fresh","SKU":"JJH33-N7C5","Release Year":2025,"Series Number":"1/5","Collector Number":"15/250","Case Code":"N","Treasurehunt":0,"Super Treasurehunt":0},
+      {"Title":"'84 Audi Sport Quattro","Category":"Hotwheels","Series":"Wild Widebody","SKU":"JBC33-N9C0P","Release Year":2025,"Series Number":"5/5","Collector Number":"246/250","Case Code":"N","Treasurehunt":1,"Super Treasurehunt":0},
+      {"Title":"TOONED Purple Passion","Category":"Hotwheels","Series":"HW Dream Garage","SKU":"JJH54-N9C0G","Release Year":2026,"Series Number":"5/5","Collector Number":"148/250","Case Code":"N","Treasurehunt":0,"Super Treasurehunt":0},
+      {"Title":"Cone Shaker","Category":"Hotwheels","Series":"HW Starting Grid","SKU":"JJM04-N9C0E","Release Year":2025,"Series Number":"8/10","Collector Number":"122/250","Case Code":"N","Treasurehunt":1,"Super Treasurehunt":0},
+      {"Title":"Avus Quattro","Category":"Hotwheels","Series":"Jet Age Canopy","SKU":"13868-0911","Release Year":1995,"Series Number":null,"Collector Number":"453","Case Code":null,"Treasurehunt":0,"Super Treasurehunt":0}
+    ];
+
+    function showError(msg) {
+      const box = document.getElementById("errorBox");
+      if (box) {
+        box.textContent = msg;
+        box.classList.remove("hidden");
+        box.style.display = "block";
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (c) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[c]));
+    }
+
+    function toAbsoluteUrl(value) {
+      if (!value) return null;
+      const s = String(value).trim();
+      if (!s) return null;
+      if (/^https?:\/\//i.test(s)) return s;
+      if (s.startsWith("//")) return `http:${s}`;
+      return `${CONFIG.nocodbUrl}/${s.replace(/^\/+/, "")}`;
+    }
+
+    function resolveImageUrl(imgField, title) {
+      try {
+        let value = imgField;
+        if (typeof value === "string") {
+          const s = value.trim();
+          if (!s) return PLACEHOLDER_URL(title);
+          if (s[0] === "[" || s[0] === "{") {
+            value = JSON.parse(s);
+          } else {
+            return toAbsoluteUrl(s) || PLACEHOLDER_URL(title);
+          }
+        }
+        const item = Array.isArray(value) ? value[0] : value;
+        if (!item) return PLACEHOLDER_URL(title);
+        if (typeof item === "string") return toAbsoluteUrl(item) || PLACEHOLDER_URL(title);
+
+        return toAbsoluteUrl(item.signedUrl || item.url || item.path || item.signedPath) ||
+               PLACEHOLDER_URL(title);
+      } catch (e) {
+        if (typeof imgField === "string") {
+          const match = imgField.match(/(https?:\/\/[^\s"')\]]+)/);
+          if (match) return match[1];
+        }
+        return PLACEHOLDER_URL(title);
+      }
+    }
+
+    function resolveThumbUrl(imgField, title) {
+      try {
+        let value = imgField;
+        if (typeof value === "string") {
+          const s = value.trim();
+          if (s[0] === "[" || s[0] === "{") value = JSON.parse(s);
+        }
+        const item = Array.isArray(value) ? value[0] : value;
+        const cover = item && item.thumbnails && item.thumbnails.card_cover;
+        const path = cover && (cover.signedPath || cover.path || cover.signedUrl || cover.url);
+        return toAbsoluteUrl(path) || resolveImageUrl(imgField, title);
+      } catch (e) {
+        return resolveImageUrl(imgField, title);
+      }
+    }
+
+    function sublineOf(row) {
+      const raw = row[CONFIG.fields.subline] || row[CONFIG.fields.category] || "LIMITED EDITION";
+      return String(raw).trim();
+    }
+
+    function categoryOf(row) {
+      const raw = row[CONFIG.fields.category] || "UNCLASSIFIED";
+      return String(raw).trim();
+    }
+
+    async function fetchRecords() {
+      try {
+        const endpoint = `${CONFIG.nocodbUrl}/api/v2/tables/${CONFIG.tableId}/records?limit=${CONFIG.limit}`;
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2500);
+
+        const response = await fetch(endpoint, {
+          headers: {
+            "xc-token": CONFIG.apiToken,
+            "Content-Type": "application/json"
+          },
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        allRecords = data.list || data.rows || (Array.isArray(data) ? data : []);
+
+        if (!allRecords || allRecords.length === 0) {
+          throw new Error("Zero records returned.");
+        }
+
+        document.getElementById("itemCount").textContent = `SHOWING ${allRecords.length} ITEMS`;
+        populateCategories(allRecords);
+        renderCards(allRecords);
+      } catch (err) {
+        console.warn("NocoDB live fetch skipped/failed, loading offline fallback records:", err.message);
+        showError(`Notice: Live NocoDB connection unreachable. Loaded offline vault dataset.`);
+        allRecords = MOCK_FALLBACK_RECORDS;
+        document.getElementById("itemCount").textContent = `SHOWING ${allRecords.length} ITEMS`;
+        populateCategories(allRecords);
+        renderCards(allRecords);
+      }
+    }
+
+    function populateCategories(records) {
+      const select = document.getElementById("categoryFilter");
+      if (!select) return;
+      select.innerHTML = `
+        <option value="all" disabled selected hidden>CATEGORIES</option>
+        <option value="all">ALL ITEMS</option>
+      `;
+      const categories = new Set();
+      records.forEach(row => {
+        const cat = categoryOf(row);
+        if (cat) categories.add(cat);
+      });
+      Array.from(categories).sort().forEach(cat => {
+        const option = document.createElement("option");
+        option.value = cat;
+        option.textContent = cat;
+        select.appendChild(option);
+      });
+    }
+
+    function renderCards(records) {
+      const grid = document.getElementById("galleryGrid");
+      if (!grid) return;
+      grid.innerHTML = "";
+
+      if (records.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-16 font-mono-tech text-cyan-300">NO DIECAST MODELS FOUND IN VAULT.</div>`;
+        return;
+      }
+
+      records.forEach(row => {
+        const title = String(row[CONFIG.fields.title] || "Untitled Diecast").trim();
+        const sku = String(row[CONFIG.fields.sku] || "").trim();
+        const subline = sublineOf(row);
+        const collectorNo = row[CONFIG.fields.collectorNo] || "";
+        const year = row[CONFIG.fields.year] || "";
+        const isSuper = row[CONFIG.fields.superTreasureHunt] === 1;
+        const isTh = row[CONFIG.fields.treasureHunt] === 1;
+
+        const imgUrl = resolveImageUrl(row[CONFIG.fields.image], title);
+        const thumbUrl = resolveThumbUrl(row[CONFIG.fields.image], title);
+
+        const card = document.createElement("div");
+        card.className = "diecast-card";
+        card.onclick = () => openModal(row, imgUrl);
+
+        card.innerHTML = `
+          <div class="w-full h-48 bg-[#090318] overflow-hidden relative">
+            <img src="${escapeHtml(thumbUrl)}" alt="${escapeHtml(title)}" loading="lazy" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" onerror="this.onerror=null; this.src='${PLACEHOLDER_URL(title)}'" />
+            ${isSuper ? '<span class="absolute top-2 right-2 bg-yellow-500 text-black font-extrabold text-[9px] px-2 py-0.5 rounded shadow">STH</span>' : ''}
+            ${!isSuper && isTh ? '<span class="absolute top-2 right-2 bg-green-500 text-black font-extrabold text-[9px] px-2 py-0.5 rounded shadow">TH</span>' : ''}
+          </div>
+          <div class="p-4 flex flex-col flex-1 justify-between">
+            <div>
+              <div class="flex justify-between items-center mb-1.5">
+                <span class="font-mono-tech text-[10px] text-[#ff007f] tracking-wider uppercase font-bold">${escapeHtml(subline)}</span>
+                <span class="font-mono-tech text-xs font-bold text-[#00f3ff]">${escapeHtml(sku)}</span>
+              </div>
+              <h3 class="font-bold text-base text-white tracking-wide uppercase line-clamp-1 mb-1">${escapeHtml(title)}</h3>
+              <p class="font-mono-tech text-xs text-purple-200">COLLECTOR: ${escapeHtml(collectorNo || 'N/A')} | YEAR: ${escapeHtml(year || 'N/A')}</p>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterRecords() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const selectedCategory = document.getElementById("categoryFilter").value;
+
+      const filtered = allRecords.filter(row => {
+        const title = String(row[CONFIG.fields.title] || "").toLowerCase();
+        const sku = String(row[CONFIG.fields.sku] || "").toLowerCase();
+        const cat = categoryOf(row);
+        return (title.includes(query) || sku.includes(query)) &&
+               (selectedCategory === "all" || cat === selectedCategory);
+      });
+
+      renderCards(filtered);
+    }
+
+    function openModal(row, imgUrl) {
+      currentModalImgUrl = imgUrl;
+      const title = String(row[CONFIG.fields.title] || "Untitled Diecast").trim();
+      const modalImage = document.getElementById("modalImage");
+      modalImage.src = imgUrl;
+      modalImage.alt = title;
+
+      document.getElementById("modalTitle").textContent = title;
+      document.getElementById("modalSku").textContent = String(row[CONFIG.fields.sku] || "NO SKU").trim();
+      document.getElementById("modalCategory").textContent = categoryOf(row);
+      document.getElementById("modalYear").textContent = row[CONFIG.fields.year] || "N/A";
+      document.getElementById("modalSeriesNo").textContent = row[CONFIG.fields.seriesNo] || "N/A";
+      document.getElementById("modalCollectorNo").textContent = row[CONFIG.fields.collectorNo] || "N/A";
+      document.getElementById("modalCaseCode").textContent = row[CONFIG.fields.caseCode] || "N/A";
+
+      document.getElementById("detailModal").style.display = "flex";
+    }
+
+    function openCurrentImageInNewTab() {
+      if (currentModalImgUrl) {
+        window.open(currentModalImgUrl, '_blank');
+      }
+    }
+
+    function closeModal() {
+      document.getElementById("detailModal").style.display = "none";
+    }
+
+    document.getElementById("detailModal").addEventListener("click", (e) => {
+      if (e.target.id === "detailModal") closeModal();
+    });
+
+    // =========================================================
+    // 1. ROAMING '80s RETRO DIECAST CAR
+    // =========================================================
+    (function initRoamingCar() {
+      const canvas = document.getElementById("roamingCarCanvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+
+      let width = canvas.width = window.innerWidth;
+      let height = canvas.height = window.innerHeight;
+
+      window.addEventListener("resize", () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+
+      const car = {
+        x: width * 0.25,
+        y: height * 0.35,
+        angle: Math.random() * Math.PI * 2,
+        targetAngle: Math.random() * Math.PI * 2,
+        speed: 2.3,
+        turnTimer: 0,
+        trail: []
+      };
+
+      function pickNewWaypointDirection() {
+        const margin = 90;
+        const targetX = margin + Math.random() * Math.max(100, width - margin * 2);
+        const targetY = margin + Math.random() * Math.max(100, height - margin * 2);
+        car.targetAngle = Math.atan2(targetY - car.y, targetX - car.x);
+        car.turnTimer = 90 + Math.floor(Math.random() * 140);
+      }
+
+      function normalizeAngle(a) {
+        while (a > Math.PI) a -= Math.PI * 2;
+        while (a < -Math.PI) a += Math.PI * 2;
+        return a;
+      }
+
+      function updateCar() {
+        car.turnTimer--;
+        const margin = 65;
+
+        if (car.x < margin || car.x > width - margin || car.y < margin || car.y > height - margin) {
+          const centerAngle = Math.atan2(height / 2 - car.y, width / 2 - car.x);
+          car.targetAngle = centerAngle + (Math.random() - 0.5) * 0.6;
+          car.turnTimer = 60;
+        } else if (car.turnTimer <= 0) {
+          pickNewWaypointDirection();
+        }
+
+        const diff = normalizeAngle(car.targetAngle - car.angle);
+        car.angle += diff * 0.035;
+
+        const turnSharpness = Math.abs(diff);
+        const currentSpeed = car.speed * (1 - Math.min(0.35, turnSharpness * 0.4));
+
+        car.x += Math.cos(car.angle) * currentSpeed;
+        car.y += Math.sin(car.angle) * currentSpeed;
+
+        const rearX = car.x - Math.cos(car.angle) * 16;
+        const rearY = car.y - Math.sin(car.angle) * 16;
+        car.trail.push({ x: rearX, y: rearY, angle: car.angle, life: 1.0 });
+        if (car.trail.length > 42) car.trail.shift();
+
+        for (let i = 0; i < car.trail.length; i++) {
+          car.trail[i].life -= 0.024;
+        }
+      }
+
+      function drawCar() {
+        ctx.clearRect(0, 0, width, height);
+
+        for (let i = 1; i < car.trail.length; i++) {
+          const p0 = car.trail[i - 1];
+          const p1 = car.trail[i];
+          if (p1.life <= 0) continue;
+
+          const perpX0 = -Math.sin(p0.angle) * 5.5;
+          const perpY0 = Math.cos(p0.angle) * 5.5;
+          const perpX1 = -Math.sin(p1.angle) * 5.5;
+          const perpY1 = Math.cos(p1.angle) * 5.5;
+
+          ctx.strokeStyle = `rgba(255, 0, 127, ${p1.life * 0.45})`;
+          ctx.lineWidth = 2;
+
+          ctx.beginPath();
+          ctx.moveTo(p0.x + perpX0, p0.y + perpY0);
+          ctx.lineTo(p1.x + perpX1, p1.y + perpY1);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(p0.x - perpX0, p0.y - perpY0);
+          ctx.lineTo(p1.x - perpX1, p1.y - perpY1);
+          ctx.stroke();
+        }
+
+        ctx.save();
+        ctx.translate(car.x, car.y);
+        ctx.rotate(car.angle);
+
+        const beamGrad = ctx.createLinearGradient(16, 0, 75, 0);
+        beamGrad.addColorStop(0, "rgba(0, 243, 255, 0.35)");
+        beamGrad.addColorStop(1, "rgba(0, 243, 255, 0)");
+        ctx.fillStyle = beamGrad;
+        ctx.beginPath();
+        ctx.moveTo(16, -6);
+        ctx.lineTo(75, -22);
+        ctx.lineTo(75, 22);
+        ctx.lineTo(16, 6);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.shadowColor = "#00f3ff";
+        ctx.shadowBlur = 12;
+
+        ctx.fillStyle = "#090318";
+        ctx.fillRect(-13, -10.5, 7, 2.5);
+        ctx.fillRect(6, -10.5, 7, 2.5);
+        ctx.fillRect(-13, 8, 7, 2.5);
+        ctx.fillRect(6, 8, 7, 2.5);
+
+        ctx.fillStyle = "#160730";
+        ctx.strokeStyle = "#00f3ff";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.rect(-17, -8.5, 34, 17);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#ff007f";
+        ctx.fillRect(4, -2, 11, 4);
+
+        ctx.fillStyle = "#00f3ff";
+        ctx.beginPath();
+        ctx.moveTo(2, -6.5);
+        ctx.lineTo(8, -5.5);
+        ctx.lineTo(8, 5.5);
+        ctx.lineTo(2, 6.5);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = "#ff007f";
+        ctx.fillRect(-18, -9.5, 3, 19);
+
+        ctx.shadowBlur = 6;
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(15.5, -7, 2, 3.5);
+        ctx.fillRect(15.5, 3.5, 2, 3.5);
+
+        ctx.shadowColor = "#ff007f";
+        ctx.fillStyle = "#ff007f";
+        ctx.fillRect(-17.5, -7, 1.5, 4);
+        ctx.fillRect(-17.5, 3, 1.5, 4);
+
+        ctx.restore();
+      }
+
+      function animate() {
+        updateCar();
+        drawCar();
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    })();
+
+    // =========================================================
+    // 2. RETRO 1980s SYNTHWAVE WEB AUDIO ENGINE
+    // =========================================================
+    let audioCtx = null;
+    let isSoundOn = false;
+    let sequencerTimer = null;
+    let autoStopTimer = null;
+    let stepIndex = 0;
+
+    const BASS_SEQUENCE = [
+      65.41, 65.41, 130.81, 65.41,
+      65.41, 65.41, 130.81, 65.41,
+      51.91, 51.91, 103.83, 51.91,
+      58.27, 58.27, 116.54, 58.27
+    ];
+
+    const ARP_SEQUENCE = [
+      261.63, 311.13, 392.00, 523.25,
+      392.00, 311.13, 261.63, 196.00,
+      207.65, 261.63, 311.13, 415.30,
+      233.08, 293.66, 349.23, 466.16
+    ];
+
+    function playSynthStep(step) {
+      if (!audioCtx || !isSoundOn) return;
+      try {
+        const now = audioCtx.currentTime;
+
+        const bassOsc = audioCtx.createOscillator();
+        const bassFilter = audioCtx.createBiquadFilter();
+        const bassGain = audioCtx.createGain();
+
+        bassOsc.type = "sawtooth";
+        bassOsc.frequency.setValueAtTime(BASS_SEQUENCE[step % BASS_SEQUENCE.length], now);
+
+        bassFilter.type = "lowpass";
+        bassFilter.frequency.setValueAtTime(480, now);
+        bassFilter.frequency.exponentialRampToValueAtTime(110, now + 0.16);
+
+        bassGain.gain.setValueAtTime(0.14, now);
+        bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.17);
+
+        bassOsc.connect(bassFilter);
+        bassFilter.connect(bassGain);
+        bassGain.connect(audioCtx.destination);
+
+        bassOsc.start(now);
+        bassOsc.stop(now + 0.18);
+
+        const arpOsc = audioCtx.createOscillator();
+        const arpGain = audioCtx.createGain();
+
+        arpOsc.type = "triangle";
+        arpOsc.frequency.setValueAtTime(ARP_SEQUENCE[step % ARP_SEQUENCE.length], now);
+
+        arpGain.gain.setValueAtTime(0.055, now);
+        arpGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+        arpOsc.connect(arpGain);
+        arpGain.connect(audioCtx.destination);
+
+        arpOsc.start(now);
+        arpOsc.stop(now + 0.16);
+
+        const beatPos = step % 16;
+        if (beatPos % 4 === 0) {
+          const kickOsc = audioCtx.createOscillator();
+          const kickGain = audioCtx.createGain();
+          kickOsc.type = "sine";
+          kickOsc.frequency.setValueAtTime(135, now);
+          kickOsc.frequency.exponentialRampToValueAtTime(38, now + 0.12);
+          kickGain.gain.setValueAtTime(0.22, now);
+          kickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.13);
+          kickOsc.connect(kickGain);
+          kickGain.connect(audioCtx.destination);
+          kickOsc.start(now);
+          kickOsc.stop(now + 0.14);
+        }
+
+        if (beatPos === 4 || beatPos === 12) {
+          const bufferSize = audioCtx.sampleRate * 0.12;
+          const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+          const output = noiseBuffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            output[i] = Math.random() * 2 - 1;
+          }
+          const whiteNoise = audioCtx.createBufferSource();
+          whiteNoise.buffer = noiseBuffer;
+
+          const snareFilter = audioCtx.createBiquadFilter();
+          snareFilter.type = "highpass";
+          snareFilter.frequency.setValueAtTime(900, now);
+
+          const snareGain = audioCtx.createGain();
+          snareGain.gain.setValueAtTime(0.09, now);
+          snareGain.gain.exponentialRampToValueAtTime(0.001, now + 0.11);
+
+          whiteNoise.connect(snareFilter);
+          snareFilter.connect(snareGain);
+          snareGain.connect(audioCtx.destination);
+          whiteNoise.start(now);
+        }
+      } catch (e) {
+        console.warn("Audio step playback error:", e);
+      }
+    }
+
+    function startRetroAudio() {
+      try {
+        if (!audioCtx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          audioCtx = new AudioContextClass();
+        }
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+
+        isSoundOn = true;
+        const btn = document.getElementById("soundToggleBtn");
+        const icon = document.getElementById("soundIcon");
+        const label = document.getElementById("soundLabel");
+
+        if (btn) btn.classList.add("sound-active");
+        if (icon) icon.textContent = "🔊";
+        if (label) label.textContent = "SOUND: ON";
+
+        if (!sequencerTimer) {
+          playSynthStep(stepIndex++);
+          sequencerTimer = setInterval(() => {
+            playSynthStep(stepIndex++);
+          }, 130);
+        }
+
+        if (autoStopTimer) clearTimeout(autoStopTimer);
+        autoStopTimer = setTimeout(() => {
+          stopRetroAudio();
+        }, 45000);
+      } catch (e) {
+        console.warn("Audio autoplay blocked or failed:", e);
+        stopRetroAudio();
+      }
+    }
+
+    function stopRetroAudio() {
+      isSoundOn = false;
+      if (sequencerTimer) {
+        clearInterval(sequencerTimer);
+        sequencerTimer = null;
+      }
+      if (autoStopTimer) {
+        clearTimeout(autoStopTimer);
+        autoStopTimer = null;
+      }
+      const btn = document.getElementById("soundToggleBtn");
+      const icon = document.getElementById("soundIcon");
+      const label = document.getElementById("soundLabel");
+
+      if (btn) btn.classList.remove("sound-active");
+      if (icon) icon.textContent = "🔇";
+      if (label) label.textContent = "SOUND: OFF";
+    }
+
+    function toggleRetroAudio() {
+      if (isSoundOn) {
+        stopRetroAudio();
+      } else {
+        startRetroAudio();
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      fetchRecords();
+      startRetroAudio();
+
+      const unlockAudio = () => {
+        if (audioCtx && audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+        window.removeEventListener("pointerdown", unlockAudio);
+        window.removeEventListener("keydown", unlockAudio);
+      };
+      window.addEventListener("pointerdown", unlockAudio);
+      window.addEventListener("keydown", unlockAudio);
+    });
+  </script>
+</body>
+</html>

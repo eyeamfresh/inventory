@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fresh Collectibles // '82 Diecast Vault Showcase</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Permanent+Marker&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --neon-cyan: #00f3ff;
+      --neon-magenta: #ff007f;
+      --electric-purple: #9d00ff;
+      --synth-yellow: #ffe600;
+      --bg-dark: #070212;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100vh;
+      background-color: var(--bg-dark);
+      font-family: 'Orbitron', sans-serif;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    /* CRT Scanline & Chromatic Vignette Overlay */
+    .crt-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 50;
+      background:
+        linear-gradient(
+          rgba(18, 16, 16, 0) 50%,
+          rgba(0, 0, 0, 0.35) 50%
+        ),
+        linear-gradient(
+          90deg,
+          rgba(255, 0, 0, 0.04),
+          rgba(0, 255, 0, 0.01),
+          rgba(0, 0, 255, 0.04)
+        );
+      background-size: 100% 3px, 6px 100%;
+      box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.85);
+    }
+
+    @keyframes crtFlicker {
+      0% { opacity: 0.97; }
+      50% { opacity: 1; }
+      100% { opacity: 0.98; }
+    }
+    .crt-flicker {
+      animation: crtFlicker 0.15s infinite;
+    }
+
+    /* Ambient synthwave backdrop (matches welcome.html) */
+    .bg-scene {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 55% at 50% -12%, rgba(157, 0, 255, 0.38), transparent 62%),
+        radial-gradient(circle at 88% 18%, rgba(0, 243, 255, 0.14), transparent 42%),
+        radial-gradient(circle at 8% 70%, rgba(255, 0, 127, 0.12), transparent 46%);
+    }
+    .bg-grid {
+      position: fixed;
+      left: -20%;
+      right: -20%;
+      bottom: -8%;
+      height: 46vh;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.5;
+      background-image:
+        linear-gradient(rgba(0, 243, 255, 0.16) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.16) 1px, transparent 1px);
+      background-size: 52px 52px;
+      transform: perspective(340px) rotateX(62deg);
+      transform-origin: center bottom;
+      -webkit-mask-image: linear-gradient(to top, #000 5%, transparent 72%);
+      mask-image: linear-gradient(to top, #000 5%, transparent 72%);
+    }
+
+    /* Roaming Car Canvas Layer */
+    #roamingCarCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.45;
+    }
+
+    /* 1980s Metallic Chrome Typography */
+    .chrome-text {
+      background: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #a3e4ff 22%,
+        #1a3b70 48%,
+        #090418 50%,
+        #ff4db8 54%,
+        #ff9ce3 78%,
+        #ffffff 100%
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 12px rgba(0, 243, 255, 0.5)) drop-shadow(0 4px 0px #2b064d);
+      letter-spacing: 0.08em;
+    }
+
+    /* Small-size brand mark — same treatment as welcome.html, because the full
+       chrome gradient turns muddy at header sizes. */
+    .brand-mark {
+      background: linear-gradient(180deg, #ffffff 0%, #d8f8ff 38%, #7fe0ff 60%, #ffffff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 8px rgba(0, 243, 255, 0.55)) drop-shadow(0 2px 0 #2b064d);
+      letter-spacing: 0.06em;
+    }
+
+    /* Diecast Collector Blister HUD Frame */
+    .collector-hud {
+      border: 1px solid rgba(0, 243, 255, 0.35);
+      background: rgba(12, 5, 28, 0.85);
+      backdrop-filter: blur(8px);
+      box-shadow:
+        0 0 20px rgba(157, 0, 255, 0.25),
+        inset 0 0 15px rgba(0, 243, 255, 0.15);
+    }
+
+    .font-mono-tech {
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    /* Gallery Card Styling */
+    .diecast-card {
+      background: rgba(18, 8, 38, 0.85);
+      border: 1px solid rgba(0, 243, 255, 0.3);
+      border-radius: 0.75rem;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .diecast-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      border-color: var(--neon-cyan);
+      box-shadow:
+        0 0 25px rgba(0, 243, 255, 0.4),
+        0 0 45px rgba(255, 0, 127, 0.25);
+    }
+
+    .cyber-btn {
+      position: relative;
+      background: linear-gradient(135deg, #1b0736 0%, #3d0952 50%, #17062e 100%);
+      border: 1px solid var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .cyber-btn:hover {
+      border-color: #ffffff;
+      box-shadow: 0 0 20px rgba(0, 243, 255, 0.7), 0 0 30px rgba(255, 0, 127, 0.5);
+    }
+
+    .cyber-btn.sound-active {
+      border-color: var(--neon-magenta);
+      box-shadow: 0 0 14px rgba(255, 0, 127, 0.6), inset 0 0 8px rgba(255, 0, 127, 0.3);
+      color: #ff9ce3;
+    }
+
+    /* Header nav — same treatment as welcome.html */
+    .nav-link {
+      position: relative;
+      padding: 0.45rem 0.15rem;
+      color: #c4b5fd;
+      text-decoration: none;
+      letter-spacing: 0.22em;
+      transition: color 0.2s;
+      white-space: nowrap;
+    }
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.25s ease;
+    }
+    .nav-link:hover { color: #fff; }
+    .nav-link:hover::after { transform: scaleX(1); }
+    .nav-link.active { color: #00f3ff; }
+    .nav-link.active::after { transform: scaleX(1); }
+
+    input, select {
+      background: rgba(7, 2, 18, 0.9);
+      border: 1px solid rgba(0, 243, 255, 0.4);
+      color: #ffffff;
+      padding: 0.6rem 1rem;
+      border-radius: 0.5rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus, select:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 12px rgba(0, 243, 255, 0.5);
+    }
+  </style>
+</head>
+<body class="relative min-h-screen flex flex-col justify-between">
+
+  <!-- CRT Scanline Overlay -->
+  <div class="crt-overlay crt-flicker"></div>
+
+  <!-- Ambient backdrop -->
+  <div class="bg-scene"></div>
+  <div class="bg-grid"></div>
+
+  <!-- Roaming Retro Car Canvas -->
+  <canvas id="roamingCarCanvas"></canvas>
+
+  <!-- HEADER BAR -->
+  <header class="relative z-20 w-full border-b border-cyan-500/30 bg-[#070212]/90 backdrop-blur-md sticky top-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-3.5 flex flex-wrap justify-between items-center gap-3">
+
+      <!-- Brand Title (always returns to the vault home) -->
+      <div class="flex items-center gap-3">
+        <div>
+          <a href="welcome.html" class="block no-underline group" title="Back to Fresh Collectibles home">
+            <div class="font-mono-tech text-[9px] sm:text-[10px] tracking-[0.32em] text-cyan-300">
+              1:64 &amp; MORE // EST. 1982
+            </div>
+            <h1 class="brand-mark text-xl sm:text-2xl font-black italic tracking-wider uppercase leading-none transition-opacity duration-200 group-hover:opacity-85">
+              FRESH COLLECTIBLES
+            </h1>
+          </a>
+        </div>
+      </div>
+
+      <!-- Nav + actions (same order as welcome.html) -->
+      <div class="flex items-center gap-3 sm:gap-5 flex-wrap">
+        <nav class="flex items-center gap-3 sm:gap-5 font-mono-tech text-[10px] sm:text-[11px] uppercase">
+          <a href="welcome.html" class="nav-link">Home</a>
+          <a href="homepage.html" class="nav-link active">Catalog</a>
+          <a href="welcome.html#categories" class="nav-link">Categories</a>
+          <a href="news.html" class="nav-link">News</a>
+        </nav>
+
+        <div class="flex items-center gap-2">
+          <!-- Opens the themed intake form (add-item.html), which writes to the
+               same Hotwheels table through /diecast-api/ after a quick login. -->
+          <a id="addItemBtn" href="add-item.html"
+             class="cyber-btn px-3 py-2 rounded-lg text-cyan-300 font-mono-tech text-[10px] tracking-widest uppercase flex items-center justify-center gap-1.5"
+             title="Add a new item to the collection">
+            <span class="text-sm leading-none">+</span>
+            <span class="hidden sm:inline">ADD ITEM</span>
+            <span class="sm:hidden">ADD</span>
+          </a>
+          <!-- Background sound lives in the floating dock (bottom-left). -->
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN GALLERY CONTENT -->
+  <main class="relative z-10 max-w-7xl w-full mx-auto px-4 sm:px-8 py-8 flex-1">
+    <!-- Filter bar: search + category live just above the grid -->
+    <div class="mb-5 rounded-xl border border-cyan-500/25 bg-[#070212]/70 px-3 py-3 flex flex-col lg:flex-row lg:items-center gap-3">
+      <div class="flex flex-wrap items-center gap-2 flex-1">
+        <input type="text" id="searchInput" placeholder="SEARCH" oninput="filterRecords()" aria-label="Search collection" class="w-full sm:w-64 py-2 text-[10px] tracking-widest" />
+        <select id="categoryFilter" onchange="filterRecords()" aria-label="Filter by category" class="w-full sm:w-auto py-2 text-[10px] tracking-widest">
+          <option value="all" disabled selected hidden>CATEGORIES</option>
+          <option value="all">ALL ITEMS</option>
+        </select>
+      </div>
+      <div class="flex items-center justify-between lg:justify-end gap-3 font-mono-tech text-[10px] tracking-[0.18em] uppercase">
+        <p id="itemCount" class="text-purple-300">Connecting to NocoDB vault...</p>
+        <a href="welcome.html" class="text-cyan-400 hover:text-cyan-200 no-underline">&larr; MAIN MENU</a>
+      </div>
+    </div>
+    <div id="errorBox" class="hidden collector-hud bg-red-950/80 border-red-500 text-red-200 p-4 rounded-xl mb-6 font-mono-tech text-sm leading-relaxed"></div>
+    <div id="galleryGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 lg:gap-5"></div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="relative z-20 w-full border-t border-purple-500/30 bg-[#05010f]/90 py-4 text-center font-mono-tech text-xs text-purple-300">
+    FRESH COLLECTIBLES CYBER VAULT // 1982–2026 ARCHIVE // EST. 1982
+  </footer>
+
+  <!-- DETAIL MODAL (2:1 PORTRAIT RATIO) -->
+  <div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/85 backdrop-blur-sm p-4">
+    <div class="collector-hud w-72 sm:w-80 rounded-2xl overflow-hidden border border-cyan-400 flex flex-col">
+      <div class="relative w-full h-[360px] sm:h-[400px] bg-black/60 overflow-hidden group">
+        <img id="modalImage" alt="Diecast Model" class="w-full h-full object-cover cursor-pointer transition-transform duration-200 hover:scale-105" onclick="openCurrentImageInNewTab()" title="Click to open image in new tab" onerror="console.warn('MODAL IMG FAILED:', this.src); this.onerror=null; this.src='https://placehold.co/400x800/0f0524/00f3ff?text=FRESH+COLLECTIBLES'" />
+        <div class="absolute bottom-2 right-2 bg-black/70 border border-cyan-400/50 text-cyan-300 font-mono-tech text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition pointer-events-none">
+          🔍 OPEN IN NEW TAB
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#070212] via-transparent to-transparent pointer-events-none"></div>
+      </div>
+      <div class="p-5 flex flex-col justify-between flex-1">
+        <div>
+          <div class="flex justify-between items-center mb-1.5">
+            <span id="modalCategory" class="font-mono-tech text-[10px] font-bold text-[#ff007f] tracking-widest uppercase"></span>
+            <span id="modalSku" class="font-mono-tech text-[10px] font-bold text-[#00f3ff]"></span>
+          </div>
+          <h2 id="modalTitle" class="chrome-text text-lg sm:text-xl font-black uppercase mb-3 leading-tight"></h2>
+          <div class="grid grid-cols-2 gap-1.5 font-mono-tech text-[10px] text-purple-200 mb-4 bg-[#070212]/60 p-2.5 rounded-lg border border-purple-500/30">
+            <div>YEAR: <span id="modalYear" class="text-white font-bold"></span></div>
+            <div>SERIES #: <span id="modalSeriesNo" class="text-white font-bold"></span></div>
+            <div>COLLECTOR: <span id="modalCollectorNo" class="text-white font-bold"></span></div>
+            <div>CASE: <span id="modalCaseCode" class="text-white font-bold"></span></div>
+          </div>
+        </div>
+        <div class="flex flex-col gap-2">
+          <a id="modalEditLink" href="add-item.html" style="display: none"
+             class="collector-hud block w-full py-2 rounded-xl font-mono-tech text-xs tracking-widest text-cyan-200 hover:text-white uppercase transition cursor-pointer text-center no-underline">
+            ✎ EDIT RECORD
+          </a>
+          <button onclick="closeModal()" class="collector-hud w-full py-2 rounded-xl font-mono-tech text-xs tracking-widest text-cyan-300 hover:text-white uppercase transition cursor-pointer text-center">
+            CLOSE VAULT
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="audio-vault.js?v=5"></script>
+  <script>
+    const CONFIG = {
+      // Same-origin: nginx proxies /nocodb/ -> http://192.168.1.64:8200/ for
+      // attachment files, and /diecast-api/ -> the Hotwheels table. Neither
+      // needs a token in the page: nginx injects it server-side.
+      nocodbUrl: "/nocodb",
+      apiBase: "/diecast-api",
+      tableId: "mygbijn9x2f7xxl",
+      limit: 100,
+
+      fields: {
+        title: "Title",
+        category: "Category",
+        subline: "Series",
+        image: "Gallery",
+        sku: "SKU",
+        year: "Release Year",
+        seriesNo: "Series Number",
+        collectorNo: "Collector Number",
+        caseCode: "Case Code",
+        treasureHunt: "Treasurehunt",
+        superTreasureHunt: "Super Treasurehunt",
+        chase: "Chase"
+      }
+    };
+
+    const PLACEHOLDER_URL = (title) =>
+      `https://placehold.co/400x800/0f0524/00f3ff?text=${encodeURIComponent(String(title || "FRESH COLLECTIBLES").trim())}`;
+
+    let allRecords = [];
+    let currentModalImgUrl = "";
+
+    const MOCK_FALLBACK_RECORDS = [
+      {"Title":"'92 Dodge Viper RT/10","Category":"Hotwheels","Series":"Drop Tops","SKU":"JJM01-N7C5","Release Year":2025,"Series Number":"2/5","Collector Number":"29/250","Case Code":"N","Treasurehunt":0,"Super Treasurehunt":1},
+      {"Title":"Porsche 911 Carrera T","Category":"Hotwheels","Series":"Factory Fresh","SKU":"JJH33-N7C5","Release Year":2025,"Series Number":"1/5","Collector Number":"15/250","Case Code":"N","Treasurehunt":0,"Super Treasurehunt":0},
+      {"Title":"'84 Audi Sport Quattro","Category":"Hotwheels","Series":"Wild Widebody","SKU":"JBC33-N9C0P","Release Year":2025,"Series Number":"5/5","Collector Number":"246/250","Case Code":"N","Treasurehunt":1,"Super Treasurehunt":0},
+      {"Title":"TOONED Purple Passion","Category":"Hotwheels","Series":"HW Dream Garage","SKU":"JJH54-N9C0G","Release Year":2026,"Series Number":"5/5","Collector Number":"148/250","Case Code":"N","Treasurehunt":0,"Super Treasurehunt":0},
+      {"Title":"Cone Shaker","Category":"Hotwheels","Series":"HW Starting Grid","SKU":"JJM04-N9C0E","Release Year":2025,"Series Number":"8/10","Collector Number":"122/250","Case Code":"N","Treasurehunt":1,"Super Treasurehunt":0},
+      {"Title":"Avus Quattro","Category":"Hotwheels","Series":"Jet Age Canopy","SKU":"13868-0911","Release Year":1995,"Series Number":null,"Collector Number":"453","Case Code":null,"Treasurehunt":0,"Super Treasurehunt":0}
+    ];
+
+    function showError(msg) {
+      const box = document.getElementById("errorBox");
+      if (box) {
+        box.textContent = msg;
+        box.classList.remove("hidden");
+        box.style.display = "block";
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (c) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[c]));
+    }
+
+    function toAbsoluteUrl(value) {
+      if (!value) return null;
+      const s = String(value).trim();
+      if (!s) return null;
+      if (/^https?:\/\//i.test(s)) return s;
+      if (s.startsWith("//")) return `http:${s}`;
+      return `${CONFIG.nocodbUrl}/${s.replace(/^\/+/, "")}`;
+    }
+
+    function resolveImageUrl(imgField, title) {
+      try {
+        let value = imgField;
+        if (typeof value === "string") {
+          const s = value.trim();
+          if (!s) return PLACEHOLDER_URL(title);
+          if (s[0] === "[" || s[0] === "{") {
+            value = JSON.parse(s);
+          } else {
+            return toAbsoluteUrl(s) || PLACEHOLDER_URL(title);
+          }
+        }
+        const item = Array.isArray(value) ? value[0] : value;
+        if (!item) return PLACEHOLDER_URL(title);
+        if (typeof item === "string") return toAbsoluteUrl(item) || PLACEHOLDER_URL(title);
+
+        // Prefer the permanent path/url; signed links expire after ~an hour.
+        return toAbsoluteUrl(item.url || item.path || item.signedUrl || item.signedPath) ||
+               PLACEHOLDER_URL(title);
+      } catch (e) {
+        if (typeof imgField === "string") {
+          const match = imgField.match(/(https?:\/\/[^\s"')\]]+)/);
+          if (match) return match[1];
+        }
+        return PLACEHOLDER_URL(title);
+      }
+    }
+
+    function resolveThumbUrl(imgField, title) {
+      try {
+        let value = imgField;
+        if (typeof value === "string") {
+          const s = value.trim();
+          if (s[0] === "[" || s[0] === "{") value = JSON.parse(s);
+        }
+        const item = Array.isArray(value) ? value[0] : value;
+        const cover = item && item.thumbnails && item.thumbnails.card_cover;
+        const path = cover && (cover.signedPath || cover.path || cover.signedUrl || cover.url);
+        return toAbsoluteUrl(path) || resolveImageUrl(imgField, title);
+      } catch (e) {
+        return resolveImageUrl(imgField, title);
+      }
+    }
+
+    function sublineOf(row) {
+      const raw = row[CONFIG.fields.subline] || row[CONFIG.fields.category] || "LIMITED EDITION";
+      return String(raw).trim();
+    }
+
+    function categoryOf(row) {
+      const raw = row[CONFIG.fields.category] || "UNCLASSIFIED";
+      return String(raw).trim();
+    }
+
+    async function fetchRecords() {
+      try {
+        const endpoint = `${CONFIG.apiBase}/records?limit=${CONFIG.limit}`;
+        
+        const controller = new AbortController();
+        // Generous timeout: over the Cloudflare tunnel a cold NocoDB can take a
+        // few seconds, and aborting too early drops the page to the offline
+        // fallback dataset even though the database is reachable.
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+        const response = await fetch(endpoint, {
+          headers: { "Accept": "application/json" },
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        allRecords = data.list || data.rows || (Array.isArray(data) ? data : []);
+
+        if (!allRecords || allRecords.length === 0) {
+          throw new Error("Zero records returned.");
+        }
+
+        document.getElementById("itemCount").textContent = `SHOWING ${allRecords.length} ITEMS`;
+        populateCategories(allRecords);
+        renderCards(allRecords);
+        applyCategoryFromUrl();
+      } catch (err) {
+        console.warn("NocoDB live fetch skipped/failed, loading offline fallback records:", err.message);
+        showError(`Notice: Live NocoDB connection unreachable. Loaded offline vault dataset.`);
+        allRecords = MOCK_FALLBACK_RECORDS;
+        document.getElementById("itemCount").textContent = `SHOWING ${allRecords.length} ITEMS`;
+        populateCategories(allRecords);
+        renderCards(allRecords);
+        applyCategoryFromUrl();
+      }
+    }
+
+    function populateCategories(records) {
+      const select = document.getElementById("categoryFilter");
+      if (!select) return;
+      select.innerHTML = `
+        <option value="all" disabled selected hidden>CATEGORIES</option>
+        <option value="all">ALL ITEMS</option>
+      `;
+      const categories = new Set();
+      records.forEach(row => {
+        const cat = categoryOf(row);
+        if (cat) categories.add(cat);
+      });
+      Array.from(categories).sort().forEach(cat => {
+        const option = document.createElement("option");
+        option.value = cat;
+        option.textContent = cat;
+        select.appendChild(option);
+      });
+    }
+
+    function renderCards(records) {
+      const grid = document.getElementById("galleryGrid");
+      if (!grid) return;
+      grid.innerHTML = "";
+
+      if (records.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-16 font-mono-tech text-cyan-300">NO DIECAST MODELS FOUND IN VAULT.</div>`;
+        return;
+      }
+
+      records.forEach(row => {
+        const title = String(row[CONFIG.fields.title] || "Untitled Diecast").trim();
+        const sku = String(row[CONFIG.fields.sku] || "").trim();
+        const subline = sublineOf(row);
+        const collectorNo = row[CONFIG.fields.collectorNo] || "";
+        const year = row[CONFIG.fields.year] || "";
+        const isSuper = row[CONFIG.fields.superTreasureHunt] === 1;
+        const isTh = row[CONFIG.fields.treasureHunt] === 1;
+
+        const imgUrl = resolveImageUrl(row[CONFIG.fields.image], title);
+        const thumbUrl = resolveThumbUrl(row[CONFIG.fields.image], title);
+
+        const card = document.createElement("div");
+        card.className = "diecast-card";
+        card.onclick = () => openModal(row, imgUrl);
+
+        card.innerHTML = `
+          <div class="w-full h-40 bg-[#090318] overflow-hidden relative">
+            <img src="${escapeHtml(thumbUrl)}" alt="${escapeHtml(title)}" loading="lazy" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" onerror="this.onerror=null; this.src='${PLACEHOLDER_URL(title)}'" />
+            ${isSuper ? '<span class="absolute top-2 right-2 bg-yellow-500 text-black font-extrabold text-[9px] px-2 py-0.5 rounded shadow">STH</span>' : ''}
+            ${!isSuper && isTh ? '<span class="absolute top-2 right-2 bg-green-500 text-black font-extrabold text-[9px] px-2 py-0.5 rounded shadow">TH</span>' : ''}
+            ${row.Id ? `<a href="add-item.html?edit=${encodeURIComponent(row.Id)}" onclick="event.stopPropagation()" title="Edit this record (login required)" class="absolute top-2 left-2 bg-[#070212]/85 border border-cyan-400/70 text-cyan-300 hover:text-white hover:bg-[#ff007f] hover:border-[#ff007f] font-mono-tech text-[9px] font-bold px-2 py-1 rounded no-underline tracking-wider transition-colors">EDIT</a>` : ''}
+          </div>
+          <div class="p-3 flex flex-col flex-1 justify-between">
+            <div>
+              <div class="flex justify-between items-center gap-2 mb-1">
+                <span class="font-mono-tech text-[9px] text-[#ff007f] tracking-wider uppercase font-bold truncate">${escapeHtml(subline)}</span>
+                <span class="font-mono-tech text-[10px] font-bold text-[#00f3ff] shrink-0">${escapeHtml(sku)}</span>
+              </div>
+              <h3 class="font-bold text-sm text-white tracking-wide uppercase leading-tight line-clamp-2 min-h-[2.1rem] mb-1">${escapeHtml(title)}</h3>
+              <p class="font-mono-tech text-[10px] text-purple-200 truncate">COL: ${escapeHtml(collectorNo || 'N/A')} &middot; ${escapeHtml(year || 'N/A')}</p>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterRecords() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const selectedCategory = document.getElementById("categoryFilter").value;
+
+      const filtered = allRecords.filter(row => {
+        const title = String(row[CONFIG.fields.title] || "").toLowerCase();
+        const sku = String(row[CONFIG.fields.sku] || "").toLowerCase();
+        const cat = categoryOf(row);
+        return (title.includes(query) || sku.includes(query)) &&
+               (selectedCategory === "all" || cat === selectedCategory);
+      });
+
+      renderCards(filtered);
+
+      const countEl = document.getElementById("itemCount");
+      if (countEl) {
+        countEl.textContent = filtered.length === allRecords.length
+          ? `SHOWING ${allRecords.length} ITEMS`
+          : `SHOWING ${filtered.length} OF ${allRecords.length} ITEMS`;
+      }
+    }
+
+    // Category cards on welcome.html link here as homepage.html?category=Hotwheels
+    function applyCategoryFromUrl() {
+      const wanted = new URLSearchParams(location.search).get("category");
+      if (!wanted) return;
+      const select = document.getElementById("categoryFilter");
+      if (!select) return;
+      const match = Array.from(select.options).find(
+        opt => opt.value.toLowerCase() === wanted.toLowerCase()
+      );
+      if (!match) return;
+      select.value = match.value;
+      filterRecords();
+      console.log("[catalog] pre-filtered to", match.value);
+    }
+
+    function openModal(row, imgUrl) {
+      currentModalImgUrl = imgUrl;
+      const title = String(row[CONFIG.fields.title] || "Untitled Diecast").trim();
+      const modalImage = document.getElementById("modalImage");
+      modalImage.src = imgUrl;
+      modalImage.alt = title;
+
+      document.getElementById("modalTitle").textContent = title;
+      document.getElementById("modalSku").textContent = String(row[CONFIG.fields.sku] || "NO SKU").trim();
+      document.getElementById("modalCategory").textContent = categoryOf(row);
+      document.getElementById("modalYear").textContent = row[CONFIG.fields.year] || "N/A";
+      document.getElementById("modalSeriesNo").textContent = row[CONFIG.fields.seriesNo] || "N/A";
+      document.getElementById("modalCollectorNo").textContent = row[CONFIG.fields.collectorNo] || "N/A";
+      document.getElementById("modalCaseCode").textContent = row[CONFIG.fields.caseCode] || "N/A";
+
+      /* Editing is gated: the link lands on add-item.html, which asks for the
+         vault login before it shows or writes anything. */
+      const editLink = document.getElementById("modalEditLink");
+      if (editLink) {
+        if (row.Id) {
+          editLink.href = "add-item.html?edit=" + encodeURIComponent(row.Id);
+          editLink.style.display = "";
+        } else {
+          editLink.style.display = "none";
+        }
+      }
+
+      document.getElementById("detailModal").style.display = "flex";
+    }
+
+    function openCurrentImageInNewTab() {
+      if (currentModalImgUrl) {
+        window.open(currentModalImgUrl, '_blank');
+      }
+    }
+
+    function closeModal() {
+      document.getElementById("detailModal").style.display = "none";
+    }
+
+    document.getElementById("detailModal").addEventListener("click", (e) => {
+      if (e.target.id === "detailModal") closeModal();
+    });
+
+    // =========================================================
+    // 1. ROAMING '80s RETRO DIECAST CAR
+    // =========================================================
+    (function initRoamingCar() {
+      const canvas = document.getElementById("roamingCarCanvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+
+      let width = canvas.width = window.innerWidth;
+      let height = canvas.height = window.innerHeight;
+
+      window.addEventListener("resize", () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+
+      const car = {
+        x: width * 0.25,
+        y: height * 0.35,
+        angle: Math.random() * Math.PI * 2,
+        targetAngle: Math.random() * Math.PI * 2,
+        speed: 2.3,
+        turnTimer: 0,
+        trail: []
+      };
+
+      function pickNewWaypointDirection() {
+        const margin = 90;
+        const targetX = margin + Math.random() * Math.max(100, width - margin * 2);
+        const targetY = margin + Math.random() * Math.max(100, height - margin * 2);
+        car.targetAngle = Math.atan2(targetY - car.y, targetX - car.x);
+        car.turnTimer = 90 + Math.floor(Math.random() * 140);
+      }
+
+      function normalizeAngle(a) {
+        while (a > Math.PI) a -= Math.PI * 2;
+        while (a < -Math.PI) a += Math.PI * 2;
+        return a;
+      }
+
+      function updateCar() {
+        car.turnTimer--;
+        const margin = 65;
+
+        if (car.x < margin || car.x > width - margin || car.y < margin || car.y > height - margin) {
+          const centerAngle = Math.atan2(height / 2 - car.y, width / 2 - car.x);
+          car.targetAngle = centerAngle + (Math.random() - 0.5) * 0.6;
+          car.turnTimer = 60;
+        } else if (car.turnTimer <= 0) {
+          pickNewWaypointDirection();
+        }
+
+        const diff = normalizeAngle(car.targetAngle - car.angle);
+        car.angle += diff * 0.035;
+
+        const turnSharpness = Math.abs(diff);
+        const currentSpeed = car.speed * (1 - Math.min(0.35, turnSharpness * 0.4));
+
+        car.x += Math.cos(car.angle) * currentSpeed;
+        car.y += Math.sin(car.angle) * currentSpeed;
+
+        const rearX = car.x - Math.cos(car.angle) * 16;
+        const rearY = car.y - Math.sin(car.angle) * 16;
+        car.trail.push({ x: rearX, y: rearY, angle: car.angle, life: 1.0 });
+        if (car.trail.length > 42) car.trail.shift();
+
+        for (let i = 0; i < car.trail.length; i++) {
+          car.trail[i].life -= 0.024;
+        }
+      }
+
+      function drawCar() {
+        ctx.clearRect(0, 0, width, height);
+
+        for (let i = 1; i < car.trail.length; i++) {
+          const p0 = car.trail[i - 1];
+          const p1 = car.trail[i];
+          if (p1.life <= 0) continue;
+
+          const perpX0 = -Math.sin(p0.angle) * 5.5;
+          const perpY0 = Math.cos(p0.angle) * 5.5;
+          const perpX1 = -Math.sin(p1.angle) * 5.5;
+          const perpY1 = Math.cos(p1.angle) * 5.5;
+
+          ctx.strokeStyle = `rgba(255, 0, 127, ${p1.life * 0.45})`;
+          ctx.lineWidth = 2;
+
+          ctx.beginPath();
+          ctx.moveTo(p0.x + perpX0, p0.y + perpY0);
+          ctx.lineTo(p1.x + perpX1, p1.y + perpY1);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(p0.x - perpX0, p0.y - perpY0);
+          ctx.lineTo(p1.x - perpX1, p1.y - perpY1);
+          ctx.stroke();
+        }
+
+        ctx.save();
+        ctx.translate(car.x, car.y);
+        ctx.rotate(car.angle);
+
+        const beamGrad = ctx.createLinearGradient(16, 0, 75, 0);
+        beamGrad.addColorStop(0, "rgba(0, 243, 255, 0.35)");
+        beamGrad.addColorStop(1, "rgba(0, 243, 255, 0)");
+        ctx.fillStyle = beamGrad;
+        ctx.beginPath();
+        ctx.moveTo(16, -6);
+        ctx.lineTo(75, -22);
+        ctx.lineTo(75, 22);
+        ctx.lineTo(16, 6);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.shadowColor = "#00f3ff";
+        ctx.shadowBlur = 12;
+
+        ctx.fillStyle = "#090318";
+        ctx.fillRect(-13, -10.5, 7, 2.5);
+        ctx.fillRect(6, -10.5, 7, 2.5);
+        ctx.fillRect(-13, 8, 7, 2.5);
+        ctx.fillRect(6, 8, 7, 2.5);
+
+        ctx.fillStyle = "#160730";
+        ctx.strokeStyle = "#00f3ff";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.rect(-17, -8.5, 34, 17);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#ff007f";
+        ctx.fillRect(4, -2, 11, 4);
+
+        ctx.fillStyle = "#00f3ff";
+        ctx.beginPath();
+        ctx.moveTo(2, -6.5);
+        ctx.lineTo(8, -5.5);
+        ctx.lineTo(8, 5.5);
+        ctx.lineTo(2, 6.5);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = "#ff007f";
+        ctx.fillRect(-18, -9.5, 3, 19);
+
+        ctx.shadowBlur = 6;
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(15.5, -7, 2, 3.5);
+        ctx.fillRect(15.5, 3.5, 2, 3.5);
+
+        ctx.shadowColor = "#ff007f";
+        ctx.fillStyle = "#ff007f";
+        ctx.fillRect(-17.5, -7, 1.5, 4);
+        ctx.fillRect(-17.5, 3, 1.5, 4);
+
+        ctx.restore();
+      }
+
+      function animate() {
+        updateCar();
+        drawCar();
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    })();
+
+    // Background sound is provided by the shared engine: audio-vault.js
+
+    window.addEventListener("DOMContentLoaded", () => {
+      fetchRecords();
+    });
+  </script>
+</body>
+</html>

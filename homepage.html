@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fresh Collectibles // '82 Diecast Vault Showcase</title>
+  <meta name="description" content="Browse the full Fresh Collectibles diecast catalog — Hot Wheels, Matchbox, Kaido House, Pink Slips and Homies with photos, series and SKU details." />
+  <link rel="canonical" href="https://fresh-collection.eyeamfresh.blog/homepage.html" />
+  <meta name="theme-color" content="#070212" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Fresh Collectibles" />
+  <meta property="og:title" content="Fresh Collectibles // Diecast Vault Showcase" />
+  <meta property="og:description" content="Browse the full Fresh Collectibles diecast catalog — Hot Wheels, Matchbox, Kaido House, Pink Slips and Homies with photos, series and SKU details." />
+  <meta property="og:url" content="https://fresh-collection.eyeamfresh.blog/homepage.html" />
+  <meta property="og:image" content="https://fresh-collection.eyeamfresh.blog/assets/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Fresh Collectibles neon logo beside a framed Hot Wheels diecast car." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Fresh Collectibles // Diecast Vault Showcase" />
+  <meta name="twitter:description" content="Browse the full Fresh Collectibles diecast catalog — Hot Wheels, Matchbox, Kaido House, Pink Slips and Homies with photos, series and SKU details." />
+  <meta name="twitter:image" content="https://fresh-collection.eyeamfresh.blog/assets/og-image.png" />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="stylesheet" href="/assets/fonts.css" />
+  <link rel="preload" href="/assets/fonts/orbitron-500.woff2" as="font" type="font/woff2" crossorigin />
+
+  <style>
+    :root {
+      --neon-cyan: #00f3ff;
+      --neon-magenta: #ff007f;
+      --electric-purple: #9d00ff;
+      --synth-yellow: #ffe600;
+      --bg-dark: #070212;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100vh;
+      background-color: var(--bg-dark);
+      font-family: 'Orbitron', sans-serif;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    /* CRT Scanline & Chromatic Vignette Overlay */
+    .crt-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 50;
+      background:
+        linear-gradient(
+          rgba(18, 16, 16, 0) 50%,
+          rgba(0, 0, 0, 0.35) 50%
+        ),
+        linear-gradient(
+          90deg,
+          rgba(255, 0, 0, 0.04),
+          rgba(0, 255, 0, 0.01),
+          rgba(0, 0, 255, 0.04)
+        );
+      background-size: 100% 3px, 6px 100%;
+      box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.85);
+    }
+
+    @keyframes crtFlicker {
+      0% { opacity: 0.97; }
+      50% { opacity: 1; }
+      100% { opacity: 0.98; }
+    }
+    .crt-flicker {
+      animation: crtFlicker 0.15s infinite;
+    }
+
+    /* Ambient synthwave backdrop (matches welcome.html) */
+    .bg-scene {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 55% at 50% -12%, rgba(157, 0, 255, 0.38), transparent 62%),
+        radial-gradient(circle at 88% 18%, rgba(0, 243, 255, 0.14), transparent 42%),
+        radial-gradient(circle at 8% 70%, rgba(255, 0, 127, 0.12), transparent 46%);
+    }
+    .bg-grid {
+      position: fixed;
+      left: -20%;
+      right: -20%;
+      bottom: -8%;
+      height: 46vh;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.5;
+      background-image:
+        linear-gradient(rgba(0, 243, 255, 0.16) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.16) 1px, transparent 1px);
+      background-size: 52px 52px;
+      transform: perspective(340px) rotateX(62deg);
+      transform-origin: center bottom;
+      -webkit-mask-image: linear-gradient(to top, #000 5%, transparent 72%);
+      mask-image: linear-gradient(to top, #000 5%, transparent 72%);
+    }
+
+    /* Roaming Car Canvas Layer */
+    #roamingCarCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.45;
+    }
+
+    /* 1980s Metallic Chrome Typography */
+    .chrome-text {
+      background: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #a3e4ff 22%,
+        #1a3b70 48%,
+        #090418 50%,
+        #ff4db8 54%,
+        #ff9ce3 78%,
+        #ffffff 100%
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 12px rgba(0, 243, 255, 0.5)) drop-shadow(0 4px 0px #2b064d);
+      letter-spacing: 0.08em;
+    }
+
+    /* Small-size brand mark — same treatment as welcome.html, because the full
+       chrome gradient turns muddy at header sizes. */
+    .brand-mark {
+      background: linear-gradient(180deg, #ffffff 0%, #d8f8ff 38%, #7fe0ff 60%, #ffffff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 8px rgba(0, 243, 255, 0.55)) drop-shadow(0 2px 0 #2b064d);
+      letter-spacing: 0.06em;
+    }
+
+    /* Diecast Collector Blister HUD Frame */
+    .collector-hud {
+      border: 1px solid rgba(0, 243, 255, 0.35);
+      background: rgba(12, 5, 28, 0.85);
+      backdrop-filter: blur(8px);
+      box-shadow:
+        0 0 20px rgba(157, 0, 255, 0.25),
+        inset 0 0 15px rgba(0, 243, 255, 0.15);
+    }
+
+    .font-mono-tech {
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    /* Gallery Card Styling */
+    .diecast-card {
+      background: rgba(18, 8, 38, 0.85);
+      border: 1px solid rgba(0, 243, 255, 0.3);
+      border-radius: 0.75rem;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .diecast-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      border-color: var(--neon-cyan);
+      box-shadow:
+        0 0 25px rgba(0, 243, 255, 0.4),
+        0 0 45px rgba(255, 0, 127, 0.25);
+    }
+
+    .cyber-btn {
+      position: relative;
+      background: linear-gradient(135deg, #1b0736 0%, #3d0952 50%, #17062e 100%);
+      border: 1px solid var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .cyber-btn:hover {
+      border-color: #ffffff;
+      box-shadow: 0 0 20px rgba(0, 243, 255, 0.7), 0 0 30px rgba(255, 0, 127, 0.5);
+    }
+
+    .cyber-btn.sound-active {
+      border-color: var(--neon-magenta);
+      box-shadow: 0 0 14px rgba(255, 0, 127, 0.6), inset 0 0 8px rgba(255, 0, 127, 0.3);
+      color: #ff9ce3;
+    }
+
+    /* Catalog pagination (48 cards per page) */
+    .page-btn {
+      min-width: 2.6rem;
+    }
+    .page-btn-active {
+      border-color: var(--neon-cyan) !important;
+      color: #ffffff;
+      box-shadow: 0 0 14px rgba(0, 243, 255, 0.6), inset 0 0 8px rgba(0, 243, 255, 0.25);
+    }
+    #galleryGrid {
+      scroll-margin-top: 92px; /* keep the top row clear of the sticky header */
+    }
+
+    /* Header nav — same treatment as welcome.html */
+    .nav-link {
+      position: relative;
+      padding: 0.45rem 0.15rem;
+      color: #c4b5fd;
+      text-decoration: none;
+      letter-spacing: 0.22em;
+      transition: color 0.2s;
+      white-space: nowrap;
+    }
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.25s ease;
+    }
+    .nav-link:hover { color: #fff; }
+    .nav-link:hover::after { transform: scaleX(1); }
+    .nav-link.active { color: #00f3ff; }
+    .nav-link.active::after { transform: scaleX(1); }
+
+    input, select {
+      background: rgba(7, 2, 18, 0.9);
+      border: 1px solid rgba(0, 243, 255, 0.4);
+      color: #ffffff;
+      padding: 0.6rem 1rem;
+      border-radius: 0.5rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus, select:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 12px rgba(0, 243, 255, 0.5);
+    }
+  
+    /* ================= 8-BIT SOUND DOCK (synthwave theme) ================= */
+    #richardAudioDock {
+      position: fixed;
+      left: 14px;
+      bottom: 14px;
+      z-index: 80;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 9px;
+      border: 1px solid rgba(0, 243, 255, 0.45);
+      border-radius: 10px;
+      background: rgba(7, 2, 18, 0.92);
+      box-shadow:
+        0 0 18px rgba(0, 243, 255, 0.22),
+        inset 0 0 22px rgba(157, 0, 255, 0.12);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #b9a6e8;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #richardAudioDock button {
+      cursor: pointer;
+      border: 1px solid rgba(0, 243, 255, 0.35);
+      background: rgba(13, 5, 36, 0.85);
+      color: var(--neon-cyan);
+      border-radius: 7px;
+      padding: 5px 7px;
+      font: inherit;
+      font-size: 9px;
+      line-height: 1;
+      transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
+    }
+    #richardAudioDock button:hover {
+      border-color: var(--neon-cyan);
+      color: #ffffff;
+      background: rgba(0, 243, 255, 0.16);
+      box-shadow: 0 0 12px rgba(0, 243, 255, 0.45);
+    }
+    #richardAudioDock button.on {
+      border-color: var(--neon-magenta);
+      color: #ffffff;
+      background: rgba(255, 0, 127, 0.18);
+      box-shadow: 0 0 14px rgba(255, 0, 127, 0.55);
+    }
+    #richardAudioDock .ra-track {
+      max-width: 11rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 8px rgba(0, 243, 255, 0.55);
+    }
+    #richardAudioDock #ra-idx { color: var(--neon-magenta); }
+    #richardAudioDock input[type="range"] {
+      width: 64px;
+      margin: 0;
+      padding: 0;
+      border: none;
+      background: transparent;
+      box-shadow: none;
+      border-radius: 0;
+      accent-color: var(--neon-magenta);
+      cursor: pointer;
+    }
+    @media (max-width: 640px) {
+      #richardAudioDock { left: 10px; bottom: 10px; gap: 4px; padding: 6px 7px; }
+      #richardAudioDock .ra-track { display: none; }
+      #richardAudioDock input[type="range"] { width: 48px; }
+    }
+
+    /* Respect reduced-motion: no CRT flicker for visitors who ask for less motion. */
+    @media (prefers-reduced-motion: reduce) {
+      .crt-flicker { animation: none; }
+    }
+</style>
+  <link rel="stylesheet" href="/assets/tailwind.css" />
+
+</head>
+<body class="relative min-h-screen flex flex-col justify-between">
+
+  <!-- CRT Scanline Overlay -->
+  <div class="crt-overlay crt-flicker"></div>
+
+  <!-- Ambient backdrop -->
+  <div class="bg-scene"></div>
+  <div class="bg-grid"></div>
+
+  <!-- Roaming Retro Car Canvas -->
+  <canvas id="roamingCarCanvas"></canvas>
+
+  <!-- HEADER BAR -->
+  <header class="relative z-20 w-full border-b border-cyan-500/30 bg-[#070212]/90 backdrop-blur-md sticky top-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-3.5 flex flex-wrap justify-between items-center gap-3">
+
+      <!-- Brand Title (always returns to the vault home) -->
+      <div class="flex items-center gap-3">
+        <div>
+          <a href="welcome.html" class="block no-underline group" title="Back to Fresh Collectibles home">
+            <div class="font-mono-tech text-[9px] sm:text-[10px] tracking-[0.32em] text-cyan-300">
+              1:64 &amp; MORE // EST. 1982
+            </div>
+            <h1 class="brand-mark text-xl sm:text-2xl font-black italic tracking-wider uppercase leading-none transition-opacity duration-200 group-hover:opacity-85">
+              FRESH COLLECTIBLES
+            </h1>
+          </a>
+        </div>
+      </div>
+
+      <!-- Nav + actions (same order as welcome.html) -->
+      <div class="flex items-center gap-3 sm:gap-5 flex-wrap">
+        <nav class="flex items-center gap-3 sm:gap-5 font-mono-tech text-[10px] sm:text-[11px] uppercase">
+          <a href="welcome.html" class="nav-link">Home</a>
+          <a href="homepage.html" class="nav-link active">Catalog</a>
+          <a href="welcome.html#categories" class="nav-link">Categories</a>
+          <a href="news.html" class="nav-link">News</a>
+        </nav>
+
+        <div class="flex items-center gap-2">
+          <!-- Opens the themed intake form (add-item.html), which writes to the
+               same Hotwheels table through /diecast-api/ after a quick login. -->
+          <a id="addItemBtn" href="add-item.html"
+             class="cyber-btn px-3 py-2 rounded-lg text-cyan-300 font-mono-tech text-[10px] tracking-widest uppercase flex items-center justify-center gap-1.5"
+             title="Add a new item to the collection">
+            <span class="text-sm leading-none">+</span>
+            <span class="hidden sm:inline">ADD ITEM</span>
+            <span class="sm:hidden">ADD</span>
+          </a>
+          <!-- Background sound lives in the floating dock (bottom-left). -->
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN GALLERY CONTENT -->
+  <main class="relative z-10 max-w-7xl w-full mx-auto px-4 sm:px-8 py-8 flex-1">
+    <!-- Filter bar: search + category live just above the grid -->
+    <div class="mb-5 rounded-xl border border-cyan-500/25 bg-[#070212]/70 px-3 py-3 flex flex-col lg:flex-row lg:items-center gap-3">
+      <div class="flex flex-wrap items-center gap-2 flex-1">
+        <input type="text" id="searchInput" placeholder="SEARCH" oninput="filterRecords()" aria-label="Search collection" class="w-full sm:w-64 py-2 text-[10px] tracking-widest" />
+        <select id="categoryFilter" onchange="filterRecords()" aria-label="Filter by category" class="w-full sm:w-auto py-2 text-[10px] tracking-widest">
+          <option value="all" disabled selected hidden>CATEGORIES</option>
+          <option value="all">ALL ITEMS</option>
+        </select>
+      </div>
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between lg:justify-end gap-1.5 sm:gap-3 font-mono-tech text-[10px] tracking-[0.18em] uppercase">
+        <p id="itemCount" class="text-purple-300 leading-relaxed">Connecting to NocoDB vault...</p>
+        <a href="welcome.html" class="text-cyan-400 hover:text-cyan-200 no-underline self-start sm:self-auto whitespace-nowrap">&larr; MAIN MENU</a>
+      </div>
+    </div>
+    <div id="errorBox" class="hidden collector-hud bg-red-950/80 border-red-500 text-red-200 p-4 rounded-xl mb-6 font-mono-tech text-sm leading-relaxed"></div>
+    <!-- Section heading so card titles (h3) follow an h2 in the outline. -->
+    <h2 class="sr-only">Diecast catalog</h2>
+    <div id="galleryGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 lg:gap-5"></div>
+
+    <!-- Pagination controls - shown once the catalog exceeds one page (48 cards) -->
+    <nav id="paginationControls" aria-label="Catalog pages"
+         class="flex flex-wrap items-center justify-center gap-2 mt-7" style="display:none"></nav>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="relative z-20 w-full border-t border-purple-500/30 bg-[#05010f]/90 py-4 text-center font-mono-tech text-xs text-purple-300">
+    FRESH COLLECTIBLES CYBER VAULT // 1982–2026 ARCHIVE // EST. 1982
+  </footer>
+
+  <!-- DETAIL MODAL (2:1 PORTRAIT RATIO) -->
+  <div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/85 backdrop-blur-sm p-4">
+    <div class="collector-hud w-72 sm:w-80 rounded-2xl overflow-hidden border border-cyan-400 flex flex-col">
+      <div class="relative w-full h-[360px] sm:h-[400px] bg-black/60 overflow-hidden group">
+        <img id="modalImage" alt="Diecast Model" class="w-full h-full object-cover cursor-pointer transition-transform duration-200 hover:scale-105" onclick="openCurrentImageInNewTab()" title="Click to open image in new tab" onerror="console.warn('MODAL IMG FAILED:', this.src); this.onerror=null; this.src='/assets/placeholder.svg'" />
+        <div class="absolute bottom-2 right-2 bg-black/70 border border-cyan-400/50 text-cyan-300 font-mono-tech text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition pointer-events-none">
+          🔍 OPEN IN NEW TAB
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#070212] via-transparent to-transparent pointer-events-none"></div>
+      </div>
+      <div class="p-5 flex flex-col justify-between flex-1">
+        <div>
+          <div class="flex justify-between items-center mb-1.5">
+            <span id="modalCategory" class="font-mono-tech text-[10px] font-bold text-[#ff007f] tracking-widest uppercase"></span>
+            <span id="modalSku" class="font-mono-tech text-[10px] font-bold text-[#00f3ff]"></span>
+          </div>
+          <h2 id="modalTitle" class="chrome-text text-lg sm:text-xl font-black uppercase mb-3 leading-tight"></h2>
+          <div class="grid grid-cols-2 gap-1.5 font-mono-tech text-[10px] text-purple-200 mb-4 bg-[#070212]/60 p-2.5 rounded-lg border border-purple-500/30">
+            <div>YEAR: <span id="modalYear" class="text-white font-bold"></span></div>
+            <div>SERIES #: <span id="modalSeriesNo" class="text-white font-bold"></span></div>
+            <div>COLLECTOR: <span id="modalCollectorNo" class="text-white font-bold"></span></div>
+            <div>CASE: <span id="modalCaseCode" class="text-white font-bold"></span></div>
+          </div>
+        </div>
+        <div class="flex flex-col gap-2">
+          <a id="modalEditLink" href="add-item.html" style="display: none"
+             class="collector-hud block w-full py-2 rounded-xl font-mono-tech text-xs tracking-widest text-cyan-200 hover:text-white uppercase transition cursor-pointer text-center no-underline">
+            ✎ EDIT RECORD
+          </a>
+          <button onclick="closeModal()" class="collector-hud w-full py-2 rounded-xl font-mono-tech text-xs tracking-widest text-cyan-300 hover:text-white uppercase transition cursor-pointer text-center">
+            CLOSE VAULT
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const CONFIG = {
+      // Same-origin: nginx proxies /nocodb/ -> http://192.168.1.64:8200/ for
+      // attachment files, and /diecast-api/ -> the Hotwheels table. Neither
+      // needs a token in the page: nginx injects it server-side.
+      nocodbUrl: "/nocodb",
+      apiBase: "/diecast-api",
+      tableId: "mygbijn9x2f7xxl",
+      limit: 100, // page size per API request — fetchRecords pages through ALL rows
+
+      fields: {
+        title: "Title",
+        category: "Category",
+        subline: "Series",
+        image: "Gallery",
+        sku: "SKU",
+        year: "Release Year",
+        seriesNo: "Series Number",
+        collectorNo: "Collector Number",
+        caseCode: "Case Code",
+        treasureHunt: "Treasurehunt",
+        superTreasureHunt: "Super Treasurehunt",
+        chase: "Chase"
+      }
+    };
+
+    // One local, cacheable placeholder instead of a third-party request per card.
+    const PLACEHOLDER_URL = () => "/assets/placeholder.svg";
+
+    // Locally cached, correctly sized WebP derivatives, keyed by NocoDB
+    // attachment id (see /media/manifest.json). Anything not synced yet falls
+    // back to the NocoDB attachment so new items still appear immediately.
+    let MEDIA = {};
+
+    function attachmentIdOf(imgField) {
+      try {
+        let value = imgField;
+        if (typeof value === "string") {
+          const s = value.trim();
+          if (!s || (s[0] !== "[" && s[0] !== "{")) return null;
+          value = JSON.parse(s);
+        }
+        const item = Array.isArray(value) ? value[0] : value;
+        return item && item.id ? String(item.id) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function localMedia(id, kind) {
+      const m = id && MEDIA[id];
+      return m && m[kind] ? `/media/${id}/${m[kind]}` : null;
+    }
+
+    async function loadMediaManifest() {
+      try {
+        const res = await fetch("/media/manifest.json", { cache: "force-cache" });
+        if (res.ok) MEDIA = await res.json();
+      } catch (e) {
+        /* Non-fatal: cards fall back to the NocoDB attachment URLs. */
+      }
+    }
+
+    let allRecords = [];
+    let currentModalImgUrl = "";
+
+    const MOCK_FALLBACK_RECORDS = [
+      {"Title":"'92 Dodge Viper RT/10","Category":"Hotwheels","Series":"Drop Tops","SKU":"JJM01-N7C5","Release Year":2025,"Series Number":"2/5","Collector Number":"29/250","Case Code":"N","Treasurehunt":0,"Super Treasurehunt":1},
+      {"Title":"Porsche 911 Carrera T","Category":"Hotwheels","Series":"Factory Fresh","SKU":"JJH33-N7C5","Release Year":2025,"Series Number":"1/5","Collector Number":"15/250","Case Code":"N","Treasurehunt":0,"Super Treasurehunt":0},
+      {"Title":"'84 Audi Sport Quattro","Category":"Hotwheels","Series":"Wild Widebody","SKU":"JBC33-N9C0P","Release Year":2025,"Series Number":"5/5","Collector Number":"246/250","Case Code":"N","Treasurehunt":1,"Super Treasurehunt":0},
+      {"Title":"TOONED Purple Passion","Category":"Hotwheels","Series":"HW Dream Garage","SKU":"JJH54-N9C0G","Release Year":2026,"Series Number":"5/5","Collector Number":"148/250","Case Code":"N","Treasurehunt":0,"Super Treasurehunt":0},
+      {"Title":"Cone Shaker","Category":"Hotwheels","Series":"HW Starting Grid","SKU":"JJM04-N9C0E","Release Year":2025,"Series Number":"8/10","Collector Number":"122/250","Case Code":"N","Treasurehunt":1,"Super Treasurehunt":0},
+      {"Title":"Avus Quattro","Category":"Hotwheels","Series":"Jet Age Canopy","SKU":"13868-0911","Release Year":1995,"Series Number":null,"Collector Number":"453","Case Code":null,"Treasurehunt":0,"Super Treasurehunt":0}
+    ];
+
+    function showError(msg) {
+      const box = document.getElementById("errorBox");
+      if (box) {
+        box.textContent = msg;
+        box.classList.remove("hidden");
+        box.style.display = "block";
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (c) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[c]));
+    }
+
+    function toAbsoluteUrl(value) {
+      if (!value) return null;
+      const s = String(value).trim();
+      if (!s) return null;
+      if (/^https?:\/\//i.test(s)) return s;
+      if (s.startsWith("//")) return `http:${s}`;
+      return `${CONFIG.nocodbUrl}/${s.replace(/^\/+/, "")}`;
+    }
+
+    function resolveImageUrl(imgField, title) {
+      try {
+        let value = imgField;
+        if (typeof value === "string") {
+          const s = value.trim();
+          if (!s) return PLACEHOLDER_URL(title);
+          if (s[0] === "[" || s[0] === "{") {
+            value = JSON.parse(s);
+          } else {
+            return toAbsoluteUrl(s) || PLACEHOLDER_URL(title);
+          }
+        }
+        const item = Array.isArray(value) ? value[0] : value;
+        if (!item) return PLACEHOLDER_URL(title);
+        if (typeof item === "string") return toAbsoluteUrl(item) || PLACEHOLDER_URL(title);
+
+        // Prefer the permanent path/url; signed links expire after ~an hour.
+        return toAbsoluteUrl(item.url || item.path || item.signedUrl || item.signedPath) ||
+               PLACEHOLDER_URL(title);
+      } catch (e) {
+        if (typeof imgField === "string") {
+          const match = imgField.match(/(https?:\/\/[^\s"')\]]+)/);
+          if (match) return match[1];
+        }
+        return PLACEHOLDER_URL(title);
+      }
+    }
+
+    function resolveThumbUrl(imgField, title) {
+      try {
+        let value = imgField;
+        if (typeof value === "string") {
+          const s = value.trim();
+          if (s[0] === "[" || s[0] === "{") value = JSON.parse(s);
+        }
+        const item = Array.isArray(value) ? value[0] : value;
+        const cover = item && item.thumbnails && item.thumbnails.card_cover;
+        const path = cover && (cover.signedPath || cover.path || cover.signedUrl || cover.url);
+        return toAbsoluteUrl(path) || resolveImageUrl(imgField, title);
+      } catch (e) {
+        return resolveImageUrl(imgField, title);
+      }
+    }
+
+    function sublineOf(row) {
+      const raw = row[CONFIG.fields.subline] || row[CONFIG.fields.category] || "LIMITED EDITION";
+      return String(raw).trim();
+    }
+
+    function categoryOf(row) {
+      const raw = row[CONFIG.fields.category] || "UNCLASSIFIED";
+      return String(raw).trim();
+    }
+
+    async function fetchRecords() {
+      try {
+        // Page through the full table: NocoDB caps each request at CONFIG.limit
+        // rows (was silently cutting the catalog at 100 items and showing a
+        // wrong count). Keep requesting pages until the API marks the last one,
+        // so both the grid and the item counter reflect every row in the vault.
+        const pageSize = CONFIG.limit;
+        const maxPages = 100; // safety guard — supports 10,000 items at pageSize 100
+        let records = [];
+        let offset = 0;
+        let isLastPage = false;
+
+        for (let page = 0; page < maxPages && !isLastPage; page++) {
+          const endpoint = `${CONFIG.apiBase}/records?limit=${pageSize}&offset=${offset}&sort=Id`;
+
+          const controller = new AbortController();
+          // Generous timeout: over the Cloudflare tunnel a cold NocoDB can take a
+          // few seconds, and aborting too early drops the page to the offline
+          // fallback dataset even though the database is reachable.
+          const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+          const response = await fetch(endpoint, {
+            headers: { "Accept": "application/json" },
+            signal: controller.signal
+          });
+          clearTimeout(timeoutId);
+
+          if (!response.ok) {
+            // First page failing = treat as offline. A later page failing =
+            // keep the rows already fetched rather than showing nothing.
+            if (page === 0) throw new Error(`HTTP ${response.status}`);
+            break;
+          }
+
+          const data = await response.json();
+          const list = data.list || data.rows || (Array.isArray(data) ? data : []);
+          records = records.concat(list);
+
+          const pageInfo = data.pageInfo || {};
+          isLastPage = pageInfo.isLastPage === true || list.length < pageSize;
+          offset += list.length;
+        }
+
+        allRecords = records;
+
+        if (!allRecords || allRecords.length === 0) {
+          throw new Error("Zero records returned.");
+        }
+
+        populateCategories(allRecords);
+        filterRecords(); // renders page 1 (48 cards per page) over the whole set
+        applyCategoryFromUrl(); // may re-filter down to a single category
+      } catch (err) {
+        console.warn("NocoDB live fetch skipped/failed, loading offline fallback records:", err.message);
+        showError(`Notice: Live NocoDB connection unreachable. Loaded offline vault dataset.`);
+        allRecords = MOCK_FALLBACK_RECORDS;
+        populateCategories(allRecords);
+        filterRecords(); // renders page 1 (48 cards per page)
+        applyCategoryFromUrl();
+      }
+    }
+
+    function populateCategories(records) {
+      const select = document.getElementById("categoryFilter");
+      if (!select) return;
+      select.innerHTML = `
+        <option value="all" disabled selected hidden>CATEGORIES</option>
+        <option value="all">ALL ITEMS</option>
+      `;
+      const categories = new Set();
+      records.forEach(row => {
+        const cat = categoryOf(row);
+        if (cat) categories.add(cat);
+      });
+      Array.from(categories).sort().forEach(cat => {
+        const option = document.createElement("option");
+        option.value = cat;
+        option.textContent = cat;
+        select.appendChild(option);
+      });
+    }
+
+    function renderCards(records) {
+      const grid = document.getElementById("galleryGrid");
+      if (!grid) return;
+      grid.innerHTML = "";
+
+      if (records.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-16 font-mono-tech text-cyan-300">NO DIECAST MODELS FOUND IN VAULT.</div>`;
+        return;
+      }
+
+      records.forEach(row => {
+        const title = String(row[CONFIG.fields.title] || "Untitled Diecast").trim();
+        const sku = String(row[CONFIG.fields.sku] || "").trim();
+        const subline = sublineOf(row);
+        const collectorNo = row[CONFIG.fields.collectorNo] || "";
+        const year = row[CONFIG.fields.year] || "";
+        const isSuper = row[CONFIG.fields.superTreasureHunt] === 1;
+        const isTh = row[CONFIG.fields.treasureHunt] === 1;
+
+        const mediaId = attachmentIdOf(row[CONFIG.fields.image]);
+        const mediaMeta = mediaId && MEDIA[mediaId];
+        const imgUrl = localMedia(mediaId, "f") || resolveImageUrl(row[CONFIG.fields.image], title);
+        const thumbUrl = localMedia(mediaId, "c") || resolveThumbUrl(row[CONFIG.fields.image], title);
+
+        const card = document.createElement("div");
+        card.className = "diecast-card";
+        card.onclick = () => openModal(row, imgUrl);
+
+        card.innerHTML = `
+          <div class="w-full h-40 bg-[#090318] overflow-hidden relative">
+            <img src="${escapeHtml(thumbUrl)}" alt="${escapeHtml(title)}"${mediaMeta ? ` width="${mediaMeta.w}" height="${mediaMeta.h}"` : ""} loading="lazy" decoding="async" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" onerror="this.onerror=null; this.src='${PLACEHOLDER_URL(title)}'" />
+            ${isSuper ? '<span class="absolute top-2 right-2 bg-yellow-500 text-black font-extrabold text-[9px] px-2 py-0.5 rounded shadow">STH</span>' : ''}
+            ${!isSuper && isTh ? '<span class="absolute top-2 right-2 bg-green-500 text-black font-extrabold text-[9px] px-2 py-0.5 rounded shadow">TH</span>' : ''}
+          </div>
+          <div class="p-3 flex flex-col flex-1 justify-between">
+            <div>
+              <div class="flex justify-between items-center gap-2 mb-1">
+                <span class="font-mono-tech text-[9px] text-[#ff007f] tracking-wider uppercase font-bold truncate">${escapeHtml(subline)}</span>
+                <span class="font-mono-tech text-[10px] font-bold text-[#00f3ff] shrink-0">${escapeHtml(sku)}</span>
+              </div>
+              <h3 class="font-bold text-sm text-white tracking-wide uppercase leading-tight line-clamp-2 min-h-[2.1rem] mb-1">${escapeHtml(title)}</h3>
+              <p class="font-mono-tech text-[10px] text-purple-200 truncate">COL: ${escapeHtml(collectorNo || 'N/A')} &middot; ${escapeHtml(year || 'N/A')}</p>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // ---- Catalog pagination: 48 cards per page ----
+    const ITEMS_PER_PAGE = 48;
+    let currentPage = 1;
+    let filteredRecords = [];
+
+    function filterRecords() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const selectedCategory = document.getElementById("categoryFilter").value;
+
+      filteredRecords = allRecords.filter(row => {
+        const title = String(row[CONFIG.fields.title] || "").toLowerCase();
+        const sku = String(row[CONFIG.fields.sku] || "").toLowerCase();
+        const cat = categoryOf(row);
+        return (title.includes(query) || sku.includes(query)) &&
+               (selectedCategory === "all" || cat === selectedCategory);
+      });
+
+      currentPage = 1; // any filter change starts back at page 1
+      renderPage();
+    }
+
+    function renderPage() {
+      const total = filteredRecords.length;
+      const totalPages = Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
+      if (currentPage > totalPages) currentPage = totalPages;
+      if (currentPage < 1) currentPage = 1;
+
+      const start = (currentPage - 1) * ITEMS_PER_PAGE;
+      const pageRecords = filteredRecords.slice(start, start + ITEMS_PER_PAGE);
+
+      renderCards(pageRecords);
+      renderPagination(totalPages);
+
+      const countEl = document.getElementById("itemCount");
+      if (countEl) {
+        if (total === 0) {
+          countEl.textContent = "SHOWING 0 ITEMS";
+        } else {
+          const end = start + pageRecords.length;
+          const scope = total === allRecords.length
+            ? `OF ${total} ITEMS`
+            : `OF ${total} MATCHES (${allRecords.length} TOTAL)`;
+          countEl.textContent =
+            `SHOWING ${start + 1}–${end} ${scope} · PAGE ${currentPage}/${totalPages}`;
+        }
+      }
+    }
+
+    function renderPagination(totalPages) {
+      const box = document.getElementById("paginationControls");
+      if (!box) return;
+      box.innerHTML = "";
+
+      if (totalPages <= 1) {
+        box.style.display = "none";
+        return;
+      }
+      box.style.display = "flex";
+
+      const mkBtn = (label, targetPage, opts = {}) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = label;
+        btn.className =
+          "cyber-btn page-btn font-mono-tech text-[11px] tracking-widest uppercase px-3.5 py-2 rounded-lg text-cyan-300";
+        if (opts.active) btn.classList.add("page-btn-active");
+        if (opts.disabled) {
+          btn.disabled = true;
+          btn.classList.add("opacity-40");
+          btn.style.cursor = "not-allowed";
+        } else {
+          btn.onclick = () => goToPage(targetPage);
+        }
+        return btn;
+      };
+
+      box.appendChild(mkBtn("« PREV", currentPage - 1, { disabled: currentPage === 1 }));
+
+      for (const p of pageItems(totalPages)) {
+        if (p === "…") {
+          const gap = document.createElement("span");
+          gap.textContent = "…";
+          gap.className = "font-mono-tech text-[11px] text-purple-300 px-1";
+          box.appendChild(gap);
+        } else {
+          box.appendChild(mkBtn(String(p), p, { active: p === currentPage }));
+        }
+      }
+
+      box.appendChild(mkBtn("NEXT »", currentPage + 1, { disabled: currentPage === totalPages }));
+    }
+
+    // Windowed page list: 1 … current-2 … current+2 … last
+    function pageItems(totalPages) {
+      const items = [];
+      const windowSize = 2;
+      for (let p = 1; p <= totalPages; p++) {
+        const isEdge = p === 1 || p === totalPages;
+        const nearCurrent = Math.abs(p - currentPage) <= windowSize;
+        if (isEdge || nearCurrent) {
+          items.push(p);
+        } else if (items[items.length - 1] !== "…") {
+          items.push("…");
+        }
+      }
+      return items;
+    }
+
+    function goToPage(page) {
+      currentPage = page;
+      renderPage();
+      const grid = document.getElementById("galleryGrid");
+      if (grid) grid.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    // Category cards on welcome.html link here as homepage.html?category=Hotwheels
+    function applyCategoryFromUrl() {
+      const wanted = new URLSearchParams(location.search).get("category");
+      if (!wanted) return;
+      const select = document.getElementById("categoryFilter");
+      if (!select) return;
+      const match = Array.from(select.options).find(
+        opt => opt.value.toLowerCase() === wanted.toLowerCase()
+      );
+      if (!match) return;
+      select.value = match.value;
+      filterRecords();
+      console.log("[catalog] pre-filtered to", match.value);
+    }
+
+    function openModal(row, imgUrl) {
+      currentModalImgUrl = imgUrl;
+      const title = String(row[CONFIG.fields.title] || "Untitled Diecast").trim();
+      const modalImage = document.getElementById("modalImage");
+      modalImage.src = imgUrl;
+      modalImage.alt = title;
+
+      document.getElementById("modalTitle").textContent = title;
+      document.getElementById("modalSku").textContent = String(row[CONFIG.fields.sku] || "NO SKU").trim();
+      document.getElementById("modalCategory").textContent = categoryOf(row);
+      document.getElementById("modalYear").textContent = row[CONFIG.fields.year] || "N/A";
+      document.getElementById("modalSeriesNo").textContent = row[CONFIG.fields.seriesNo] || "N/A";
+      document.getElementById("modalCollectorNo").textContent = row[CONFIG.fields.collectorNo] || "N/A";
+      document.getElementById("modalCaseCode").textContent = row[CONFIG.fields.caseCode] || "N/A";
+
+      /* Editing is gated: the link lands on add-item.html, which asks for the
+         vault login before it shows or writes anything. */
+      const editLink = document.getElementById("modalEditLink");
+      if (editLink) {
+        if (row.Id) {
+          editLink.href = "add-item.html?edit=" + encodeURIComponent(row.Id);
+          editLink.style.display = "";
+        } else {
+          editLink.style.display = "none";
+        }
+      }
+
+      document.getElementById("detailModal").style.display = "flex";
+    }
+
+    function openCurrentImageInNewTab() {
+      if (currentModalImgUrl) {
+        window.open(currentModalImgUrl, '_blank');
+      }
+    }
+
+    function closeModal() {
+      document.getElementById("detailModal").style.display = "none";
+    }
+
+    document.getElementById("detailModal").addEventListener("click", (e) => {
+      if (e.target.id === "detailModal") closeModal();
+    });
+
+    // =========================================================
+    // 1. ROAMING '80s RETRO DIECAST CAR
+    // =========================================================
+    (function initRoamingCar() {
+      const canvas = document.getElementById("roamingCarCanvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+
+      let width = canvas.width = window.innerWidth;
+      let height = canvas.height = window.innerHeight;
+
+      window.addEventListener("resize", () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+
+      const car = {
+        x: width * 0.25,
+        y: height * 0.35,
+        angle: Math.random() * Math.PI * 2,
+        targetAngle: Math.random() * Math.PI * 2,
+        speed: 2.3,
+        turnTimer: 0,
+        trail: []
+      };
+
+      function pickNewWaypointDirection() {
+        const margin = 90;
+        const targetX = margin + Math.random() * Math.max(100, width - margin * 2);
+        const targetY = margin + Math.random() * Math.max(100, height - margin * 2);
+        car.targetAngle = Math.atan2(targetY - car.y, targetX - car.x);
+        car.turnTimer = 90 + Math.floor(Math.random() * 140);
+      }
+
+      function normalizeAngle(a) {
+        while (a > Math.PI) a -= Math.PI * 2;
+        while (a < -Math.PI) a += Math.PI * 2;
+        return a;
+      }
+
+      function updateCar() {
+        car.turnTimer--;
+        const margin = 65;
+
+        if (car.x < margin || car.x > width - margin || car.y < margin || car.y > height - margin) {
+          const centerAngle = Math.atan2(height / 2 - car.y, width / 2 - car.x);
+          car.targetAngle = centerAngle + (Math.random() - 0.5) * 0.6;
+          car.turnTimer = 60;
+        } else if (car.turnTimer <= 0) {
+          pickNewWaypointDirection();
+        }
+
+        const diff = normalizeAngle(car.targetAngle - car.angle);
+        car.angle += diff * 0.035;
+
+        const turnSharpness = Math.abs(diff);
+        const currentSpeed = car.speed * (1 - Math.min(0.35, turnSharpness * 0.4));
+
+        car.x += Math.cos(car.angle) * currentSpeed;
+        car.y += Math.sin(car.angle) * currentSpeed;
+
+        const rearX = car.x - Math.cos(car.angle) * 16;
+        const rearY = car.y - Math.sin(car.angle) * 16;
+        car.trail.push({ x: rearX, y: rearY, angle: car.angle, life: 1.0 });
+        if (car.trail.length > 42) car.trail.shift();
+
+        for (let i = 0; i < car.trail.length; i++) {
+          car.trail[i].life -= 0.024;
+        }
+      }
+
+      function drawCar() {
+        ctx.clearRect(0, 0, width, height);
+
+        for (let i = 1; i < car.trail.length; i++) {
+          const p0 = car.trail[i - 1];
+          const p1 = car.trail[i];
+          if (p1.life <= 0) continue;
+
+          const perpX0 = -Math.sin(p0.angle) * 5.5;
+          const perpY0 = Math.cos(p0.angle) * 5.5;
+          const perpX1 = -Math.sin(p1.angle) * 5.5;
+          const perpY1 = Math.cos(p1.angle) * 5.5;
+
+          ctx.strokeStyle = `rgba(255, 0, 127, ${p1.life * 0.45})`;
+          ctx.lineWidth = 2;
+
+          ctx.beginPath();
+          ctx.moveTo(p0.x + perpX0, p0.y + perpY0);
+          ctx.lineTo(p1.x + perpX1, p1.y + perpY1);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(p0.x - perpX0, p0.y - perpY0);
+          ctx.lineTo(p1.x - perpX1, p1.y - perpY1);
+          ctx.stroke();
+        }
+
+        ctx.save();
+        ctx.translate(car.x, car.y);
+        ctx.rotate(car.angle);
+
+        const beamGrad = ctx.createLinearGradient(16, 0, 75, 0);
+        beamGrad.addColorStop(0, "rgba(0, 243, 255, 0.35)");
+        beamGrad.addColorStop(1, "rgba(0, 243, 255, 0)");
+        ctx.fillStyle = beamGrad;
+        ctx.beginPath();
+        ctx.moveTo(16, -6);
+        ctx.lineTo(75, -22);
+        ctx.lineTo(75, 22);
+        ctx.lineTo(16, 6);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.shadowColor = "#00f3ff";
+        ctx.shadowBlur = 12;
+
+        ctx.fillStyle = "#090318";
+        ctx.fillRect(-13, -10.5, 7, 2.5);
+        ctx.fillRect(6, -10.5, 7, 2.5);
+        ctx.fillRect(-13, 8, 7, 2.5);
+        ctx.fillRect(6, 8, 7, 2.5);
+
+        ctx.fillStyle = "#160730";
+        ctx.strokeStyle = "#00f3ff";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.rect(-17, -8.5, 34, 17);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#ff007f";
+        ctx.fillRect(4, -2, 11, 4);
+
+        ctx.fillStyle = "#00f3ff";
+        ctx.beginPath();
+        ctx.moveTo(2, -6.5);
+        ctx.lineTo(8, -5.5);
+        ctx.lineTo(8, 5.5);
+        ctx.lineTo(2, 6.5);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = "#ff007f";
+        ctx.fillRect(-18, -9.5, 3, 19);
+
+        ctx.shadowBlur = 6;
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(15.5, -7, 2, 3.5);
+        ctx.fillRect(15.5, 3.5, 2, 3.5);
+
+        ctx.shadowColor = "#ff007f";
+        ctx.fillStyle = "#ff007f";
+        ctx.fillRect(-17.5, -7, 1.5, 4);
+        ctx.fillRect(-17.5, 3, 1.5, 4);
+
+        ctx.restore();
+      }
+
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      function animate() {
+        if (!document.hidden) {
+          updateCar();
+          drawCar();
+        }
+        requestAnimationFrame(animate);
+      }
+
+      if (reduceMotion) {
+        drawCar();
+      } else {
+        animate();
+      }
+    })();
+
+    // Background sound is provided by the inline 8-bit dock below.
+
+    // Start the manifest fetch immediately; it is a few KB and usually lands
+    // long before the paginated API responses, so cards get their local images.
+    const mediaManifestReady = loadMediaManifest();
+
+    window.addEventListener("DOMContentLoaded", async () => {
+      await mediaManifestReady;
+      fetchRecords();
+    });
+  </script>
+  <div id="richardAudioDock" role="region" aria-label="8-bit sound player">
+    <button type="button" id="ra-toggle" title="Play / pause 8-bit loop" aria-pressed="false">&#9654;</button>
+    <button type="button" id="ra-prev" title="Previous track" aria-label="Previous track">&#9664;&#9664;</button>
+    <button type="button" id="ra-next" title="Next track" aria-label="Next track">&#9654;&#9654;</button>
+    <span class="ra-track" id="ra-track">SOUND OFF</span>
+    <span id="ra-idx">1/5</span>
+    <input type="range" id="ra-vol" min="0" max="100" value="55" aria-label="Volume" title="Volume">
+  </div>
+
+<!-- =====================================================================
+     8-BIT SOUND ENGINE — five chiptune loops, synthesized live with the
+     Web Audio API. No audio files, no autoplay: the dock starts silent and
+     only ever makes sound after the visitor presses play.
+     ===================================================================== -->
+<script>
+  (function () {
+    "use strict";
+
+    var STORE_KEY = "richard.audio.v1";
+    var dock = document.getElementById("richardAudioDock");
+    if (!dock) return;
+
+    var btnToggle = document.getElementById("ra-toggle");
+    var btnPrev = document.getElementById("ra-prev");
+    var btnNext = document.getElementById("ra-next");
+    var elTrack = document.getElementById("ra-track");
+    var elIdx = document.getElementById("ra-idx");
+    var elVol = document.getElementById("ra-vol");
+
+    // 32-step patterns at 16th-note resolution.
+    // lead/bass = MIDI note numbers (0 = rest). drums: 1 = kick, 2 = hat.
+    var TRACKS = [
+      {
+        name: "NEON CIRCUIT",
+        bpm: 138,
+        lead: [69,0,72,0,76,0,79,0, 76,0,72,0,69,0,0,0, 67,0,71,0,74,0,79,0, 76,0,74,0,71,0,0,0],
+        bass: [45,0,45,0,45,0,45,0, 43,0,43,0,43,0,43,0, 41,0,41,0,41,0,41,0, 43,0,43,0,43,0,43,0],
+        drums: [1,0,0,0,2,0,0,0, 1,0,0,0,2,0,0,0, 1,0,0,0,2,0,0,0, 1,0,2,0,2,0,2,1]
+      },
+      {
+        name: "VAULT RUNNER",
+        bpm: 152,
+        lead: [76,0,79,0,83,0,81,0, 79,0,76,0,74,0,71,0, 72,0,76,0,79,0,83,0, 81,0,79,0,76,0,0,0],
+        bass: [40,0,40,0,40,0,40,0, 38,0,38,0,38,0,38,0, 36,0,36,0,36,0,36,0, 35,0,35,0,35,0,35,0],
+        drums: [1,0,2,0,2,0,2,1, 1,0,2,0,2,0,2,0, 1,0,2,0,2,0,2,1, 1,0,2,0,2,0,2,1]
+      },
+      {
+        name: "SYNTH SUNRISE",
+        bpm: 108,
+        lead: [72,0,76,0,79,0,83,0, 81,0,79,0,76,0,72,0, 74,0,77,0,81,0,84,0, 83,0,81,0,77,0,74,0],
+        bass: [36,0,0,0,36,0,0,0, 33,0,0,0,33,0,0,0, 29,0,0,0,29,0,0,0, 31,0,0,0,31,0,0,0],
+        drums: [1,0,0,0,2,0,0,0, 1,0,0,0,2,0,0,0, 1,0,0,0,2,0,0,0, 1,0,0,2,0,0,2,0]
+      },
+      {
+        name: "MIDNIGHT DRIVE",
+        bpm: 128,
+        lead: [74,0,77,0,81,0,84,0, 81,0,77,0,74,0,72,0, 70,0,74,0,77,0,81,0, 79,0,77,0,74,0,0,0],
+        bass: [38,0,38,0,38,0,38,0, 36,0,36,0,36,0,36,0, 34,0,34,0,34,0,34,0, 33,0,33,0,33,0,33,0],
+        drums: [1,0,0,2,0,0,1,0, 2,0,0,0,2,0,0,0, 1,0,0,2,0,0,1,0, 2,0,2,0,2,0,2,1]
+      },
+      {
+        name: "CHROME DREAMS",
+        bpm: 160,
+        lead: [78,0,81,0,85,0,88,0, 85,0,81,0,78,0,76,0, 74,0,78,0,81,0,85,0, 83,0,81,0,78,0,0,0],
+        bass: [42,0,42,0,42,0,42,0, 40,0,40,0,40,0,40,0, 38,0,38,0,38,0,38,0, 37,0,37,0,37,0,37,0],
+        drums: [1,0,2,0,2,0,1,2, 2,0,2,0,1,0,2,0, 1,0,2,0,2,0,1,2, 2,0,2,0,2,2,2,1]
+      }
+    ];
+
+    var ctx = null;
+    var master = null;
+    var noiseBuf = null;
+    var timer = null;
+    var playing = false;
+    var step = 0;
+    var nextTime = 0;
+    var trackIdx = 0;
+    var volume = 0.55;
+
+    // ---- persisted settings (track + volume only; never "playing") ----
+    try {
+      var saved = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
+      if (saved) {
+        if (typeof saved.v === "number" && isFinite(saved.v)) {
+          volume = Math.min(1, Math.max(0, saved.v));
+        }
+        if (typeof saved.i === "number" && saved.i >= 0 && saved.i < TRACKS.length) {
+          trackIdx = Math.floor(saved.i);
+        }
+      }
+    } catch (err) { /* storage blocked: defaults are fine */ }
+
+    function persist() {
+      try {
+        localStorage.setItem(STORE_KEY, JSON.stringify({ i: trackIdx, v: volume }));
+      } catch (err) { /* ignore */ }
+    }
+
+    function midiToHz(m) {
+      return 440 * Math.pow(2, (m - 69) / 12);
+    }
+
+    function ensureCtx() {
+      if (ctx) return true;
+      var Ctor = window.AudioContext || window.webkitAudioContext;
+      if (!Ctor) return false;
+      ctx = new Ctor();
+
+      master = ctx.createGain();
+      master.gain.value = volume * 0.45;
+      master.connect(ctx.destination);
+
+      // one second of white noise, reused by every hi-hat hit
+      noiseBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate), ctx.sampleRate);
+      var data = noiseBuf.getChannelData(0);
+      for (var i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+
+      return true;
+    }
+
+    function blip(midi, when, dur, type, peak) {
+      var osc = ctx.createOscillator();
+      var g = ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(midiToHz(midi), when);
+      g.gain.setValueAtTime(0.0001, when);
+      g.gain.exponentialRampToValueAtTime(peak, when + 0.008);
+      g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+      osc.connect(g);
+      g.connect(master);
+      osc.start(when);
+      osc.stop(when + dur + 0.02);
+    }
+
+    function kick(when) {
+      var osc = ctx.createOscillator();
+      var g = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(150, when);
+      osc.frequency.exponentialRampToValueAtTime(48, when + 0.11);
+      g.gain.setValueAtTime(0.5, when);
+      g.gain.exponentialRampToValueAtTime(0.0001, when + 0.14);
+      osc.connect(g);
+      g.connect(master);
+      osc.start(when);
+      osc.stop(when + 0.16);
+    }
+
+    function hat(when) {
+      var src = ctx.createBufferSource();
+      var hp = ctx.createBiquadFilter();
+      var g = ctx.createGain();
+      src.buffer = noiseBuf;
+      hp.type = "highpass";
+      hp.frequency.value = 6000;
+      g.gain.setValueAtTime(0.14, when);
+      g.gain.exponentialRampToValueAtTime(0.0001, when + 0.05);
+      src.connect(hp);
+      hp.connect(g);
+      g.connect(master);
+      src.start(when);
+      src.stop(when + 0.06);
+    }
+
+    // 25 ms look-ahead scheduler: stable timing even when the tab is busy.
+    function schedule() {
+      if (!ctx || !playing) return;
+      var track = TRACKS[trackIdx];
+      var dur = 60 / track.bpm / 4; // one 16th note
+      while (nextTime < ctx.currentTime + 0.15) {
+        var i = step % 32;
+        var lead = track.lead[i];
+        var bass = track.bass[i];
+        var drum = track.drums[i];
+        if (lead) blip(lead, nextTime, dur * 0.9, "square", 0.16);
+        if (bass) blip(bass, nextTime, dur * 0.95, "triangle", 0.24);
+        if (drum === 1) kick(nextTime);
+        else if (drum === 2) hat(nextTime);
+        nextTime += dur;
+        step++;
+      }
+    }
+
+    function updateUI() {
+      btnToggle.innerHTML = playing ? "&#10074;&#10074;" : "&#9654;";
+      btnToggle.classList.toggle("on", playing);
+      btnToggle.setAttribute("aria-pressed", playing ? "true" : "false");
+      btnToggle.title = playing ? "Pause 8-bit loop" : "Play 8-bit loop";
+      elTrack.textContent = playing ? TRACKS[trackIdx].name : "SOUND OFF";
+      elIdx.textContent = (trackIdx + 1) + "/" + TRACKS.length;
+      elVol.value = String(Math.round(volume * 100));
+    }
+
+    function start() {
+      // Never make noise behind the login gate.
+      if (document.body.classList.contains("locked")) return;
+      if (!ensureCtx()) return;
+      if (ctx.state === "suspended") ctx.resume();
+      master.gain.cancelScheduledValues(ctx.currentTime);
+      master.gain.setValueAtTime(volume * 0.45, ctx.currentTime);
+      playing = true;
+      step = 0;
+      nextTime = ctx.currentTime + 0.06;
+      clearInterval(timer);
+      timer = setInterval(schedule, 25);
+      schedule();
+      updateUI();
+    }
+
+    function stop() {
+      playing = false;
+      clearInterval(timer);
+      timer = null;
+      if (ctx && master) {
+        master.gain.cancelScheduledValues(ctx.currentTime);
+        master.gain.setTargetAtTime(0.0001, ctx.currentTime, 0.02);
+      }
+      updateUI();
+    }
+
+    function switchTrack(delta) {
+      trackIdx = (trackIdx + delta + TRACKS.length) % TRACKS.length;
+      persist();
+      var wasPlaying = playing;
+      if (wasPlaying) {
+        stop();
+        start();
+      } else {
+        updateUI();
+      }
+    }
+
+    btnToggle.addEventListener("click", function () {
+      if (playing) stop();
+      else start();
+    });
+
+    btnPrev.addEventListener("click", function () { switchTrack(-1); });
+    btnNext.addEventListener("click", function () { switchTrack(1); });
+
+    elVol.addEventListener("input", function () {
+      volume = Math.min(1, Math.max(0, Number(elVol.value) / 100));
+      if (ctx && master && playing) {
+        master.gain.cancelScheduledValues(ctx.currentTime);
+        master.gain.setTargetAtTime(volume * 0.45, ctx.currentTime, 0.01);
+      }
+      persist();
+    });
+
+    // If the gate comes back (session expired / sign out), go quiet at once.
+    new MutationObserver(function () {
+      if (document.body.classList.contains("locked") && playing) stop();
+    }).observe(document.body, { attributes: true, attributeFilter: ["class"] });
+
+    // Trackpad/media keys etc.: pause when the page is hidden.
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden && playing) stop();
+    });
+
+    updateUI();
+  })();
+</script>
+</body>
+</html>

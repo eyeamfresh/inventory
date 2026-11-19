@@ -1,0 +1,11 @@
+# Secrets — never push these
+long code key for noco.txt
+.htpasswd*
+
+# Local backup clutter (git itself is the backup now)
+*.bak
+*.bak-*
+
+# OS junk
+Thumbs.db
+desktop.ini

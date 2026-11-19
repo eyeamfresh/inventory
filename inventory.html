@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Work Van Stock — Parts Inventory</title>
+  <meta name="robots" content="noindex, nofollow" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --neon-cyan: #00f3ff;
+      --neon-magenta: #ff007f;
+      --neon-purple: #9d00ff;
+      --bg-deep: #05010f;
+      --panel: rgba(11, 4, 32, 0.88);
+    }
+    * { box-sizing: border-box; }
+    html { color-scheme: dark; }
+    body {
+      margin: 0;
+      background: var(--bg-deep);
+      color: #e9e4ff;
+      font-family: 'Share Tech Mono', monospace;
+      min-height: 100vh;
+    }
+    .font-display { font-family: 'Orbitron', sans-serif; }
+
+    /* ---- shared backdrop, same recipe as welcome/homepage ---- */
+    .bg-scene {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 55% at 50% -12%, rgba(157, 0, 255, 0.32), transparent 62%),
+        radial-gradient(circle at 88% 18%, rgba(0, 243, 255, 0.12), transparent 42%),
+        radial-gradient(circle at 8% 70%, rgba(255, 0, 127, 0.10), transparent 46%);
+    }
+    .bg-grid {
+      position: fixed;
+      left: -20%; right: -20%; bottom: -8%;
+      height: 42vh;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.35;
+      background-image:
+        linear-gradient(rgba(0, 243, 255, 0.16) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.16) 1px, transparent 1px);
+      background-size: 52px 52px;
+      transform: perspective(340px) rotateX(62deg);
+      transform-origin: center bottom;
+      -webkit-mask-image: linear-gradient(to top, #000 5%, transparent 72%);
+      mask-image: linear-gradient(to top, #000 5%, transparent 72%);
+    }
+    .crt-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0) 0px,
+        rgba(0, 0, 0, 0) 2px,
+        rgba(0, 0, 0, 0.22) 3px,
+        rgba(0, 0, 0, 0.22) 4px
+      );
+      opacity: 0.35;
+    }
+
+    .brand-mark {
+      background: linear-gradient(180deg, #ffffff 0%, #d8f8ff 38%, #7fe0ff 60%, #ffffff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 8px rgba(0, 243, 255, 0.55)) drop-shadow(0 2px 0 #2b064d);
+      letter-spacing: 0.06em;
+    }
+
+    .panel {
+      background: linear-gradient(160deg, rgba(27, 7, 54, 0.94) 0%, rgba(9, 3, 24, 0.96) 55%, rgba(17, 5, 40, 0.94) 100%);
+      border: 1px solid rgba(0, 243, 255, 0.26);
+      border-radius: 0.9rem;
+      box-shadow: 0 0 24px rgba(0, 0, 0, 0.55), inset 0 0 26px rgba(157, 0, 255, 0.10);
+    }
+
+    .cyber-btn {
+      background: linear-gradient(135deg, #1b0736 0%, #3d0952 50%, #17062e 100%);
+      border: 1px solid var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.25);
+      transition: all 0.18s ease;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .cyber-btn:hover {
+      border-color: #ffffff;
+      box-shadow: 0 0 18px rgba(0, 243, 255, 0.6), 0 0 26px rgba(255, 0, 127, 0.35);
+      color: #fff;
+    }
+    .cyber-btn:disabled { opacity: 0.45; cursor: wait; }
+    .cyber-btn-hot {
+      border-color: var(--neon-magenta);
+      box-shadow: 0 0 12px rgba(255, 0, 127, 0.45), inset 0 0 10px rgba(255, 0, 127, 0.18);
+    }
+    .cyber-btn-ghost { border-color: rgba(0, 243, 255, 0.35); }
+
+    /* ---- login gate --------------------------------------------------- */
+    #loginGate {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+      background:
+        radial-gradient(ellipse 62% 48% at 50% 18%, rgba(157, 0, 255, 0.26), transparent 62%),
+        radial-gradient(circle at 84% 82%, rgba(0, 243, 255, 0.12), transparent 46%),
+        rgba(5, 1, 15, 0.62);
+      -webkit-backdrop-filter: blur(2px) saturate(1.05);
+      backdrop-filter: blur(2px) saturate(1.05);
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+    #loginGate.is-gone { opacity: 0; visibility: hidden; pointer-events: none; }
+    #loginGate::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0) 0px,
+        rgba(0, 0, 0, 0) 2px,
+        rgba(0, 0, 0, 0.28) 3px,
+        rgba(0, 0, 0, 0.28) 4px
+      );
+      opacity: 0.4;
+    }
+    .gate-card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 26rem;
+      padding: 1.35rem 1.4rem 1.1rem;
+    }
+    .gate-top {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-bottom: 0.9rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid rgba(0, 243, 255, 0.18);
+    }
+    .gate-dots { display: inline-flex; gap: 4px; }
+    .gate-dots i {
+      display: block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #2b2450;
+      border: 1px solid rgba(0, 243, 255, 0.35);
+    }
+    .gate-dots i:first-child {
+      background: var(--neon-magenta);
+      border-color: var(--neon-magenta);
+      box-shadow: 0 0 7px var(--neon-magenta);
+    }
+    .gate-path {
+      margin-left: auto;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #7d71b0;
+    }
+    .gate-status {
+      margin-top: 0.55rem;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #8b7fc7;
+    }
+    .gate-status[data-mode="busy"] { color: var(--neon-cyan); }
+    .gate-status[data-mode="ok"] { color: #6effc8; text-shadow: 0 0 10px rgba(110, 255, 200, 0.55); }
+    .gate-status[data-mode="err"] { color: #ff7aa8; text-shadow: 0 0 10px rgba(255, 0, 127, 0.45); }
+    .gate-label {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-size: 9px;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: #9a8fc9;
+    }
+    .gate-pass { position: relative; }
+    .gate-pass input { padding-right: 3.7rem; letter-spacing: 0.22em; }
+    .gate-show {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: 1px solid rgba(0, 243, 255, 0.28);
+      border-radius: 5px;
+      color: #8fe7ff;
+      font-family: inherit;
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      padding: 4px 6px;
+      cursor: pointer;
+    }
+    .gate-show:hover { border-color: #fff; color: #fff; }
+    .gate-error {
+      margin-top: 0.7rem;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #ff8fb6;
+      line-height: 1.5;
+    }
+    .gate-error.is-on { border-left: 2px solid var(--neon-magenta); padding-left: 0.55rem; }
+    .gate-foot {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.4rem;
+      margin-top: 1rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid rgba(157, 0, 255, 0.22);
+      font-size: 8px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #6f639a;
+    }
+    body.locked { overflow: hidden; }
+    body.locked > header,
+    body.locked > main { display: none !important; }
+
+    input, select, textarea {
+      background: rgba(7, 2, 18, 0.92);
+      border: 1px solid rgba(0, 243, 255, 0.35);
+      color: #fff;
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 0 2px rgba(0, 243, 255, 0.16);
+    }
+    select option { background: #0b0420; }
+    ::placeholder { color: #6e628f; }
+
+    .hud-label {
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #9a8fc9;
+    }
+    .stat-tile {
+      background: linear-gradient(160deg, rgba(27, 7, 54, 0.9), rgba(7, 2, 18, 0.92));
+      border: 1px solid rgba(0, 243, 255, 0.2);
+      border-radius: 0.75rem;
+      padding: 0.75rem 0.9rem;
+    }
+    .stat-value {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 1.35rem;
+      color: #fff;
+      text-shadow: 0 0 12px rgba(0, 243, 255, 0.4);
+      line-height: 1.1;
+    }
+
+    /* ---- table ---- */
+    table.inv { width: 100%; border-collapse: separate; border-spacing: 0; }
+    table.inv thead th {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: #0a0320;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #9fe9ff;
+      font-weight: 400;
+      padding: 0.6rem 0.55rem;
+      border-bottom: 1px solid rgba(0, 243, 255, 0.35);
+      white-space: nowrap;
+    }
+    table.inv tbody td {
+      padding: 0.45rem 0.55rem;
+      border-bottom: 1px solid rgba(157, 0, 255, 0.16);
+      font-size: 11.5px;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    table.inv tbody tr:last-child td { border-bottom: none; }
+    table.inv tbody tr { transition: background 0.12s; }
+    table.inv tbody tr:hover { background: rgba(0, 243, 255, 0.055); }
+    table.inv tbody tr.row-low { background: rgba(255, 176, 32, 0.055); }
+    table.inv tbody tr.row-low:hover { background: rgba(255, 176, 32, 0.10); }
+    table.inv tbody tr.row-out { background: rgba(255, 0, 78, 0.08); }
+    table.inv tbody tr.row-out:hover { background: rgba(255, 0, 78, 0.13); }
+
+    .dot { display: inline-block; width: 7px; height: 7px; border-radius: 999px; }
+    .dot.ok  { background: #00f3a0; box-shadow: 0 0 6px #00f3a0; }
+    .dot.low { background: #ffb020; box-shadow: 0 0 6px #ffb020; }
+    .dot.out { background: #ff004e; box-shadow: 0 0 6px #ff004e; }
+
+    .cell-edit {
+      display: inline-block;
+      max-width: 100%;
+      text-align: left;
+      border-bottom: 1px dashed rgba(0, 243, 255, 0.28);
+      cursor: pointer;
+      background: none;
+      color: inherit;
+      font: inherit;
+      padding: 1px 2px;
+      border-radius: 2px;
+    }
+    .cell-edit:hover { background: rgba(0, 243, 255, 0.12); color: #fff; }
+    .cell-edit input {
+      width: 100%;
+      min-width: 70px;
+      padding: 2px 4px;
+      font-size: 11.5px;
+      border-radius: 3px;
+    }
+
+    .stepper { display: inline-flex; align-items: center; gap: 3px; }
+    .stepper button {
+      width: 18px; height: 18px;
+      line-height: 1;
+      display: inline-flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(0, 243, 255, 0.4);
+      border-radius: 4px;
+      color: #9fe9ff;
+      background: rgba(0, 243, 255, 0.06);
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .stepper button:hover { background: rgba(0, 243, 255, 0.2); color: #fff; }
+    .stepper .qty {
+      min-width: 46px;
+      text-align: center;
+      font-weight: 700;
+      color: #fff;
+    }
+    .stepper .qty.low { color: #ffb020; }
+    .stepper .qty.out { color: #ff5f85; }
+    .stepper .unit { font-size: 9px; color: #8b7fc7; letter-spacing: 0.1em; }
+
+    .stat-pill {
+      display: inline-block;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      padding: 1px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 243, 255, 0.35);
+      color: #9fe9ff;
+    }
+    .stat-pill.h { border-color: rgba(255, 0, 127, 0.55); color: #ff8fc4; }
+
+    .icon-btn {
+      width: 24px; height: 24px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(0, 243, 255, 0.3);
+      border-radius: 5px;
+      color: #9fe9ff;
+      background: rgba(0, 243, 255, 0.05);
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .icon-btn:hover { background: rgba(0, 243, 255, 0.18); color: #fff; border-color: var(--neon-cyan); }
+    .icon-btn.danger { border-color: rgba(255, 0, 78, 0.45); color: #ff7d9c; }
+    .icon-btn.danger:hover { background: rgba(255, 0, 78, 0.18); color: #fff; }
+
+    .toast {
+      animation: toastIn 0.2s ease-out;
+    }
+    @keyframes toastIn { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    .sync-dot { width: 7px; height: 7px; border-radius: 999px; background: #00f3a0; box-shadow: 0 0 6px #00f3a0; }
+    .sync-dot.busy { background: #ffb020; box-shadow: 0 0 6px #ffb020; animation: pulse 1s infinite; }
+    .sync-dot.err { background: #ff004e; box-shadow: 0 0 6px #ff004e; }
+    @keyframes pulse { 50% { opacity: 0.35; } }
+
+    /* scrollbars */
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: #0a0320; }
+    ::-webkit-scrollbar-thumb { background: #3d0952; border-radius: 6px; border: 2px solid #0a0320; }
+    ::-webkit-scrollbar-thumb:hover { background: #6d1a8a; }
+
+    @media (max-width: 1023px) {
+      .stat-value { font-size: 1.1rem; }
+    }
+  </style>
+</head>
+
+<body class="relative min-h-screen locked">
+  <div class="bg-scene"></div>
+  <div class="bg-grid"></div>
+  <div class="crt-overlay"></div>
+
+  <!-- ================= LOGIN GATE ================= -->
+  <!-- Shown until /stock-api/ accepts the operator's credentials. The page
+       markup itself carries no stock data; every row comes from the API. -->
+  <div id="loginGate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+    <div class="gate-card panel">
+      <div class="gate-top">
+        <span class="gate-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="gate-path">stock://eyeamfresh/vault</span>
+      </div>
+
+      <div class="text-center">
+        <div class="text-[9px] tracking-[0.32em] text-cyan-300 uppercase">Work Van Stock // Inventory Control</div>
+        <h1 id="gateTitle" class="brand-mark font-display text-xl sm:text-2xl font-black italic tracking-wider uppercase leading-none mt-1.5">
+          MY WORK VAN STOCK
+        </h1>
+        <div id="gateStatus" class="gate-status" data-mode="locked">Status: locked</div>
+      </div>
+
+      <form id="loginForm" autocomplete="on" novalidate>
+        <label class="gate-label mt-4" for="loginUser">Operator</label>
+        <input id="loginUser" name="username" type="text" autocomplete="username" spellcheck="false"
+               class="w-full" placeholder="username" required />
+
+        <label class="gate-label mt-3" for="loginPass">Access code</label>
+        <div class="gate-pass">
+          <input id="loginPass" name="password" type="password" autocomplete="current-password"
+                 class="w-full" placeholder="••••••••" required />
+          <button type="button" id="gateShow" class="gate-show" aria-label="Show access code" aria-pressed="false">SHOW</button>
+        </div>
+
+        <div id="gateError" class="gate-error" role="alert" aria-live="polite"></div>
+
+        <button id="gateSubmit" type="submit"
+                class="cyber-btn w-full mt-4 py-2.5 rounded-lg text-cyan-100 text-[11px] tracking-[0.22em] uppercase">
+          ▶ Enter Vault
+        </button>
+      </form>
+
+      <div class="gate-foot">
+        <span>Authorised operators only</span>
+        <span>Session ends on tab close</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= HEADER ================= -->
+  <header class="sticky top-0 z-30 w-full border-b border-cyan-500/30 bg-[#070212]/92 backdrop-blur-md">
+    <div class="max-w-[1560px] mx-auto px-3 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+      <a href="http://stock.eyeamfresh.blog" class="no-underline group" title="My Work Van Stock — stock.eyeamfresh.blog">
+        <div class="text-[9px] tracking-[0.32em] text-cyan-300 uppercase">Work Van Stock // Inventory Control</div>
+        <h1 class="brand-mark font-display text-lg sm:text-xl font-black italic tracking-wider uppercase leading-none group-hover:opacity-85">
+          MY WORK VAN STOCK
+        </h1>
+      </a>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <div id="syncBox" class="hidden sm:flex items-center gap-2 mr-1">
+          <span id="syncDot" class="sync-dot"></span>
+          <span id="syncText" class="text-[9px] tracking-[0.18em] uppercase text-purple-300">Loading…</span>
+        </div>
+        <button id="lockBtn" class="cyber-btn cyber-btn-ghost px-3 py-2 rounded-lg text-purple-200 text-[10px] tracking-widest uppercase" title="Lock this session and clear the screen">
+          ⏻ Lock
+        </button>
+        <button id="refreshBtn" class="cyber-btn cyber-btn-ghost px-3 py-2 rounded-lg text-cyan-200 text-[10px] tracking-widest uppercase" title="Reload from NocoDB">
+          ↻ Refresh
+        </button>
+        <button id="exportBtn" class="cyber-btn cyber-btn-ghost px-3 py-2 rounded-lg text-cyan-200 text-[10px] tracking-widest uppercase" title="Download the current view as CSV">
+          ↓ CSV
+        </button>
+        <button id="addBtn" class="cyber-btn cyber-btn-hot px-3 py-2 rounded-lg text-pink-100 text-[10px] tracking-widest uppercase" title="Add a new stock item">
+          + Add Item
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN ================= -->
+  <main class="relative z-10 max-w-[1560px] mx-auto px-3 sm:px-6 py-5 flex-1">
+
+    <!-- API / auth error banner -->
+    <div id="errorBox" class="hidden panel border-red-500/60 bg-red-950/60 text-red-100 px-4 py-3 mb-4 text-xs leading-relaxed"></div>
+
+    <!-- STATS -->
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 mb-4">
+      <div class="stat-tile">
+        <div class="hud-label">SKUs tracked</div>
+        <div class="stat-value" id="statSkus">—</div>
+        <div class="text-[9px] text-purple-300 mt-0.5 tracking-wide">active part numbers</div>
+      </div>
+      <div class="stat-tile">
+        <div class="hud-label">Units on hand</div>
+        <div class="stat-value" id="statUnits">—</div>
+        <div class="text-[9px] text-purple-300 mt-0.5 tracking-wide">pieces + metres</div>
+      </div>
+      <div class="stat-tile">
+        <div class="hud-label">Stock value</div>
+        <div class="stat-value text-cyan-200" id="statValue">—</div>
+        <div class="text-[9px] text-purple-300 mt-0.5 tracking-wide">on hand × unit price</div>
+      </div>
+      <button id="statLowTile" class="stat-tile text-left cursor-pointer hover:border-amber-400/60 transition-colors" title="Show items at or below minimum stock">
+        <div class="hud-label">Below min stock</div>
+        <div class="stat-value text-amber-300" id="statLow">—</div>
+        <div class="text-[9px] text-purple-300 mt-0.5 tracking-wide">tap to filter · <span id="statOut">0</span> out of stock</div>
+      </button>
+    </section>
+
+    <!-- TOOLBAR -->
+    <section class="panel p-3 mb-4 flex flex-col xl:flex-row xl:items-center gap-2.5">
+      <div class="flex flex-1 min-w-[240px] gap-2">
+        <div class="relative flex-1">
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-cyan-400/70 text-xs">⌕</span>
+          <input id="searchInput" type="text" placeholder="Search parts, numbers…"
+                 class="w-full pl-8" aria-label="Search inventory" />
+        </div>
+        <button id="searchBtn" class="cyber-btn px-3 py-2 rounded-lg text-cyan-200 text-[10px] tracking-widest uppercase flex items-center gap-1.5"
+                title="Search inventory" aria-label="Search inventory">
+          <span class="text-sm leading-none">⌕</span>
+          <span class="hidden sm:inline">Search</span>
+        </button>
+      </div>
+      <select id="hierFilter" aria-label="Filter by product hierarchy" class="w-full xl:w-auto">
+        <option value="all">ALL HIERARCHIES</option>
+      </select>
+      <select id="statusFilter" aria-label="Filter by stock status" class="w-full xl:w-auto">
+        <option value="all">ALL STOCK</option>
+        <option value="low">BELOW MIN</option>
+        <option value="out">OUT OF STOCK</option>
+        <option value="ok">HEALTHY</option>
+      </select>
+      <select id="sortBy" aria-label="Sort inventory" class="w-full xl:w-auto">
+        <option value="material">SORT: MATERIAL ↑</option>
+        <option value="description">SORT: DESCRIPTION ↑</option>
+        <option value="qtyAsc">SORT: ON HAND ↑</option>
+        <option value="qtyDesc">SORT: ON HAND ↓</option>
+        <option value="valueDesc">SORT: VALUE ↓</option>
+        <option value="hier">SORT: HIERARCHY ↑</option>
+      </select>
+      <div class="flex items-center justify-between gap-3 xl:justify-end">
+        <span id="shownCount" class="text-[10px] tracking-[0.16em] uppercase text-purple-300 whitespace-nowrap">SHOWING —</span>
+        <button id="clearFilters" class="text-[10px] tracking-[0.14em] uppercase text-cyan-400 hover:text-cyan-200 whitespace-nowrap">Reset</button>
+      </div>
+    </section>
+
+    <!-- DESKTOP TABLE -->
+    <section id="tableWrap" class="panel overflow-hidden hidden lg:block">
+      <div class="overflow-x-auto">
+        <table class="inv">
+          <thead>
+            <tr>
+              <th class="w-7"></th>
+              <th>Material</th>
+              <th>Description</th>
+              <th>Hier</th>
+              <th>On Hand</th>
+              <th>Unit Price</th>
+              <th>Min</th>
+              <th>Max</th>
+              <th>Value</th>
+              <th>Last Move</th>
+              <th>Stat</th>
+              <th class="text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+      <div id="tableEmpty" class="hidden px-4 py-10 text-center text-purple-300 text-xs tracking-widest uppercase">
+        No items match those filters.
+      </div>
+    </section>
+
+    <!-- MOBILE / NARROW CARDS -->
+    <section id="cardWrap" class="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-3"></section>
+
+    <!-- FOOTER NOTE -->
+    <footer class="mt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-[9px] tracking-[0.16em] uppercase text-purple-400/80">
+      <div>MY WORK VAN STOCK // INVENTORY // DATA: NOCODB</div>
+      <div id="lastSync" class="text-purple-400/70">NOT SYNCED YET</div>
+    </footer>
+  </main>
+
+  <!-- ================= EDIT / ADD MODAL ================= -->
+  <div id="modal" class="fixed inset-0 z-50 hidden items-start sm:items-center justify-center bg-black/80 backdrop-blur-sm p-3 overflow-y-auto">
+    <form id="itemForm" class="panel w-full max-w-2xl my-6 sm:my-0 overflow-hidden">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-cyan-500/25">
+        <div>
+          <div class="hud-label">Stock record</div>
+          <h2 id="modalTitle" class="font-display text-base sm:text-lg font-bold tracking-wider text-white uppercase">Edit item</h2>
+        </div>
+        <button type="button" id="modalClose" class="icon-btn" title="Close">✕</button>
+      </div>
+
+      <div class="p-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <input type="hidden" id="f_id" />
+
+        <label class="sm:col-span-2">
+          <span class="hud-label block mb-1">Description</span>
+          <input id="f_description" type="text" required class="w-full" placeholder="e.g. O-ring 19.5x2.5 EPDM" />
+        </label>
+
+        <label>
+          <span class="hud-label block mb-1">Material no.</span>
+          <input id="f_material" type="text" required class="w-full" placeholder="20171" />
+        </label>
+
+        <label>
+          <span class="hud-label block mb-1">Prod. hierarchy</span>
+          <input id="f_hier" type="text" class="w-full" placeholder="HH1E4R1" />
+        </label>
+
+        <label>
+          <span class="hud-label block mb-1">On hand</span>
+          <input id="f_onHand" type="number" step="0.001" min="0" class="w-full" />
+        </label>
+
+        <label>
+          <span class="hud-label block mb-1">Unit</span>
+          <select id="f_unit" class="w-full">
+            <option value="PC">PC — pieces</option>
+            <option value="M">M — metres</option>
+          </select>
+        </label>
+
+        <label>
+          <span class="hud-label block mb-1">Unit price (USD)</span>
+          <input id="f_price" type="number" step="0.01" min="0" class="w-full" />
+        </label>
+
+        <label>
+          <span class="hud-label block mb-1">Sales stat</span>
+          <input id="f_stat" type="text" class="w-full" placeholder="V / H" maxlength="4" />
+        </label>
+
+        <label>
+          <span class="hud-label block mb-1">Min stock</span>
+          <input id="f_min" type="number" step="0.001" min="0" class="w-full" />
+        </label>
+
+        <label>
+          <span class="hud-label block mb-1">Max stock</span>
+          <input id="f_max" type="number" step="0.001" min="0" class="w-full" />
+        </label>
+
+        <label class="sm:col-span-2">
+          <span class="hud-label block mb-1">Notes</span>
+          <textarea id="f_notes" rows="2" class="w-full" placeholder="Bin location, supplier, alternative part…"></textarea>
+        </label>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-3 border-t border-cyan-500/25">
+        <button type="button" id="deleteBtn" class="cyber-btn px-3 py-2 rounded-lg text-[10px] tracking-widest uppercase text-red-300 hidden" style="border-color:rgba(255,0,78,.55)">
+          Delete
+        </button>
+        <div class="flex items-center gap-2 ml-auto">
+          <button type="button" id="modalCancel" class="cyber-btn cyber-btn-ghost px-3 py-2 rounded-lg text-[10px] tracking-widest uppercase text-cyan-200">
+            Cancel
+          </button>
+          <button type="submit" id="saveBtn" class="cyber-btn px-4 py-2 rounded-lg text-[10px] tracking-widest uppercase text-cyan-100">
+            Save item
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- ================= TOASTS ================= -->
+  <div id="toasts" class="fixed bottom-4 right-4 z-[60] flex flex-col gap-2 items-end pointer-events-none"></div>
+
+  <script src="gate-audio.js?v=5"></script>
+  <script>
+    // =====================================================================
+    // Stock Vault — talks to NocoDB through /stock-api/.
+    // The API token is injected by nginx on the server; it never appears
+    // in this file. Only the Stock Inventory table is reachable there.
+    // =====================================================================
+    const API = "/stock-api";
+
+    // Credentials captured by the login gate. Every request below sends them
+    // explicitly, so the browser never falls back to its own auth dialog.
+    let auth = null;
+    const authHeaders = (extra = {}) =>
+      auth ? Object.assign({ Authorization: auth.header }, extra) : Object.assign({}, extra);
+
+    const F = {
+      id: "Id",
+      description: "Description",
+      material: "Material",
+      hier: "Prod Hier",
+      onHand: "On Hand",
+      unit: "Unit",
+      price: "Unit Price",
+      currency: "Currency",
+      min: "Min Stock",
+      max: "Max Stock",
+      consumed: "Total Consumed",
+      pack: "Pack Size",
+      last: "Last Movement",
+      stat: "Sales Stat",
+      notes: "Notes",
+    };
+    const NUM_FIELDS = ["onHand", "price", "min", "max", "consumed", "pack"];
+
+    const state = {
+      rows: [],
+      filtered: [],
+      query: "",
+      hier: "all",
+      status: "all",
+      sort: "material",
+      saving: 0,
+      loaded: false,
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+    }[c]));
+
+    const num = (v) => {
+      if (v === null || v === undefined || v === "") return 0;
+      const n = Number(v);
+      return Number.isFinite(n) ? n : 0;
+    };
+    const fmtQty = (v) => {
+      const n = num(v);
+      return Number.isInteger(n) ? String(n) : String(parseFloat(n.toFixed(3)));
+    };
+    const money = (v) => "$" + num(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const moneyShort = (v) => {
+      const n = num(v);
+      if (n >= 1000000) return "$" + (n / 1000000).toFixed(2) + "M";
+      if (n >= 10000) return "$" + (n / 1000).toFixed(1) + "k";
+      return money(n);
+    };
+    const fmtDate = (v) => {
+      if (!v) return "—";
+      const d = new Date(String(v).slice(0, 10) + "T00:00:00");
+      if (isNaN(d)) return String(v);
+      return d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }).toUpperCase();
+    };
+
+    function normalize(r) {
+      return {
+        id: num(r[F.id]),
+        description: String(r[F.description] ?? ""),
+        material: String(r[F.material] ?? ""),
+        hier: String(r[F.hier] ?? ""),
+        onHand: num(r[F.onHand]),
+        unit: String(r[F.unit] ?? "PC"),
+        price: num(r[F.price]),
+        currency: String(r[F.currency] ?? "USD"),
+        min: num(r[F.min]),
+        max: num(r[F.max]),
+        consumed: num(r[F.consumed]),
+        pack: r[F.pack] === null || r[F.pack] === undefined ? null : num(r[F.pack]),
+        last: r[F.last] ? String(r[F.last]).slice(0, 10) : "",
+        stat: String(r[F.stat] ?? ""),
+        notes: String(r[F.notes] ?? ""),
+      };
+    }
+
+    const stockStatus = (r) => {
+      if (r.onHand <= 0) return "out";
+      if (r.min > 0 && r.onHand < r.min) return "low";
+      return "ok";
+    };
+    const valueOf = (r) => r.onHand * r.price;
+
+    // ------------------------- UI helpers -------------------------------
+    function toast(message, kind = "ok") {
+      const colors = {
+        ok: "border-cyan-400/60 text-cyan-100",
+        error: "border-red-500/70 text-red-100",
+        warn: "border-amber-400/70 text-amber-100",
+      };
+      const el = document.createElement("div");
+      el.className = `toast panel px-3.5 py-2 text-[11px] tracking-wide pointer-events-auto ${colors[kind] || colors.ok}`;
+      el.textContent = message;
+      $("toasts").appendChild(el);
+      setTimeout(() => { el.style.opacity = "0"; el.style.transition = "opacity .3s"; }, 2600);
+      setTimeout(() => el.remove(), 3000);
+    }
+
+    function setSync(mode, text) {
+      const dot = $("syncDot"), label = $("syncText"), box = $("syncBox");
+      box.classList.remove("hidden");
+      dot.className = "sync-dot" + (mode === "busy" ? " busy" : mode === "err" ? " err" : "");
+      $("lastSync").textContent = text ? text.toUpperCase() : $("lastSync").textContent;
+      if (text) label.textContent = text;
+    }
+
+    function showError(message) {
+      const box = $("errorBox");
+      box.classList.remove("hidden");
+      box.innerHTML = message;
+    }
+    function hideError() { $("errorBox").classList.add("hidden"); }
+
+    // ------------------------- data loading -----------------------------
+    async function loadData({ silent = false } = {}) {
+      if (!silent) setSync("busy", "Syncing…");
+      try {
+        const res = await fetch(`${API}/records?limit=1000&sort=Material`, {
+          headers: authHeaders({ Accept: "application/json" }),
+          cache: "no-store",
+        });
+        if (res.status === 401 || res.status === 403) {
+          throw new Error("AUTH");
+        }
+        if (!res.ok) throw new Error(`NocoDB returned HTTP ${res.status}`);
+        const data = await res.json();
+        state.rows = (data.list || []).map(normalize);
+        state.loaded = true;
+        hideError();
+        buildHierOptions();
+        applyFilters();
+        const now = new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+        setSync("ok", `Synced ${now}`);
+      } catch (err) {
+        console.error(err);
+        setSync("err", "Sync failed");
+        if (err.message === "AUTH") {
+          lockApp("SESSION EXPIRED — SIGN IN AGAIN");
+          return;
+        }
+        if (!state.loaded) {
+          showError(
+            `Could not reach the inventory API (${esc(err.message)}).` +
+            ' <button onclick="loadData()" class="underline text-cyan-300 ml-2">Retry</button>'
+          );
+        } else {
+          toast("Sync failed — showing cached data", "error");
+        }
+      }
+    }
+
+    // ------------------------- filtering / sorting ----------------------
+    function buildHierOptions() {
+      const sel = $("hierFilter");
+      const current = sel.value;
+      const counts = new Map();
+      for (const r of state.rows) {
+        if (!r.hier) continue;
+        counts.set(r.hier, (counts.get(r.hier) || 0) + 1);
+      }
+      const hiers = [...counts.keys()].sort();
+      sel.innerHTML = '<option value="all">ALL HIERARCHIES</option>' +
+        hiers.map((h) => `<option value="${esc(h)}">${esc(h)} (${counts.get(h)})</option>`).join("");
+      if ([...sel.options].some((o) => o.value === current)) sel.value = current;
+    }
+
+    function applyFilters() {
+      const q = state.query.trim().toLowerCase();
+      let rows = state.rows.filter((r) => {
+        if (q) {
+          const hay = `${r.material} ${r.description} ${r.hier} ${r.stat}`.toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        if (state.hier !== "all" && r.hier !== state.hier) return false;
+        const st = stockStatus(r);
+        if (state.status === "low" && st !== "low") return false;
+        if (state.status === "out" && st !== "out") return false;
+        if (state.status === "ok" && st !== "ok") return false;
+        return true;
+      });
+
+      switch (state.sort) {
+        case "description": rows.sort((a, b) => a.description.localeCompare(b.description)); break;
+        case "qtyAsc": rows.sort((a, b) => a.onHand - b.onHand || a.material.localeCompare(b.material)); break;
+        case "qtyDesc": rows.sort((a, b) => b.onHand - a.onHand || a.material.localeCompare(b.material)); break;
+        case "valueDesc": rows.sort((a, b) => valueOf(b) - valueOf(a)); break;
+        case "hier": rows.sort((a, b) => a.hier.localeCompare(b.hier) || a.material.localeCompare(b.material)); break;
+        default: rows.sort((a, b) => a.material.localeCompare(b.material, undefined, { numeric: true }));
+      }
+
+      state.filtered = rows;
+      renderStats();
+      renderRows();
+      $("shownCount").textContent = `SHOWING ${rows.length} OF ${state.rows.length}`;
+    }
+
+    function renderStats() {
+      const rows = state.rows;
+      const units = rows.reduce((s, r) => s + r.onHand, 0);
+      const value = rows.reduce((s, r) => s + valueOf(r), 0);
+      const low = rows.filter((r) => stockStatus(r) === "low").length;
+      const out = rows.filter((r) => stockStatus(r) === "out").length;
+      $("statSkus").textContent = rows.length;
+      $("statUnits").textContent = fmtQty(units);
+      $("statValue").textContent = moneyShort(value);
+      $("statValue").title = money(value);
+      $("statLow").textContent = low + out;
+      $("statOut").textContent = out;
+    }
+
+    function statusChip(r) {
+      const st = stockStatus(r);
+      if (st === "out") return '<span class="stat-pill" style="border-color:rgba(255,0,78,.6);color:#ff8fa7">OUT</span>';
+      if (st === "low") return '<span class="stat-pill" style="border-color:rgba(255,176,32,.6);color:#ffcf7a">LOW</span>';
+      return '<span class="stat-pill" style="border-color:rgba(0,243,160,.5);color:#7dffcf">OK</span>';
+    }
+
+    const cellBtn = (r, field, content, extraClass = "") =>
+      `<button class="cell-edit ${extraClass}" data-id="${r.id}" data-field="${field}" title="Click to edit">${content}</button>`;
+
+    function renderRows() {
+      const stClass = { ok: "", low: "row-low", out: "row-out" };
+      $("tableBody").innerHTML = state.filtered.map((r) => {
+        const st = stockStatus(r);
+        return `
+        <tr class="${stClass[st]}">
+          <td><span class="dot ${st}"></span></td>
+          <td class="font-bold text-cyan-200">${esc(r.material)}</td>
+          <td class="max-w-[380px] overflow-hidden text-ellipsis">${cellBtn(r, "description", esc(r.description), "block w-full")}</td>
+          <td class="text-purple-200/90">${esc(r.hier || "—")}</td>
+          <td>
+            <div class="stepper" data-id="${r.id}">
+              <button data-step="-1" title="Remove one">−</button>
+              <span class="qty ${st}">${fmtQty(r.onHand)}</span>
+              <span class="unit">${esc(r.unit)}</span>
+              <button data-step="1" title="Add one">+</button>
+            </div>
+          </td>
+          <td class="text-cyan-100">${cellBtn(r, "price", money(r.price))}</td>
+          <td class="text-purple-200">${cellBtn(r, "min", fmtQty(r.min))}</td>
+          <td class="text-purple-200">${cellBtn(r, "max", fmtQty(r.max))}</td>
+          <td class="text-white font-bold">${money(valueOf(r))}</td>
+          <td class="text-purple-200/80">${r.last ? esc(fmtDate(r.last)) : "—"}</td>
+          <td>${r.stat ? `<span class="stat-pill ${r.stat.toUpperCase() === "H" ? "h" : ""}">${esc(r.stat)}</span>` : "—"}</td>
+          <td class="text-right">
+            <button class="icon-btn" data-edit="${r.id}" title="Edit item">✎</button>
+            <button class="icon-btn danger" data-del="${r.id}" title="Delete item">🗑</button>
+          </td>
+        </tr>`;
+      }).join("");
+
+      $("tableEmpty").classList.toggle("hidden", state.filtered.length !== 0);
+
+      $("cardWrap").innerHTML = state.filtered.map((r) => {
+        const st = stockStatus(r);
+        const stLabel = { ok: "IN STOCK", low: "BELOW MIN", out: "OUT OF STOCK" }[st];
+        return `
+        <article class="panel p-3.5 flex flex-col gap-2.5">
+          <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0">
+              <div class="text-[9px] tracking-[0.2em] text-cyan-300">${esc(r.material)} · ${esc(r.hier || "—")}</div>
+              <h3 class="text-sm font-bold text-white leading-tight mt-0.5">${esc(r.description)}</h3>
+            </div>
+            <span class="stat-pill shrink-0" style="${
+              st === "out" ? "border-color:rgba(255,0,78,.6);color:#ff8fa7" :
+              st === "low" ? "border-color:rgba(255,176,32,.6);color:#ffcf7a" :
+              "border-color:rgba(0,243,160,.5);color:#7dffcf"}">${stLabel}</span>
+          </div>
+
+          <div class="flex items-center justify-between gap-2 border-t border-cyan-500/15 pt-2.5">
+            <div class="stepper" data-id="${r.id}">
+              <button data-step="-1">−</button>
+              <span class="qty ${st}">${fmtQty(r.onHand)}</span>
+              <span class="unit">${esc(r.unit)}</span>
+              <button data-step="1">+</button>
+            </div>
+            <div class="text-right">
+              <div class="text-sm font-bold text-white">${money(valueOf(r))}</div>
+              <div class="text-[9px] text-purple-300">${money(r.price)} / ${esc(r.unit)}</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2 text-[10px] text-purple-200">
+            <div><span class="hud-label block">Min</span>${fmtQty(r.min)}</div>
+            <div><span class="hud-label block">Max</span>${fmtQty(r.max)}</div>
+            <div><span class="hud-label block">Last</span>${r.last ? esc(fmtDate(r.last)) : "—"}</div>
+          </div>
+
+          ${r.notes ? `<div class="text-[9px] text-purple-300/90 leading-snug">${esc(r.notes)}</div>` : ""}
+
+          <div class="flex items-center justify-between border-t border-cyan-500/15 pt-2.5">
+            <span class="text-[9px] text-purple-400">${r.stat ? "STAT " + esc(r.stat) : ""}</span>
+            <div class="flex gap-1.5">
+              <button class="icon-btn w-7 h-7" data-edit="${r.id}" title="Edit">✎</button>
+              <button class="icon-btn danger w-7 h-7" data-del="${r.id}" title="Delete">🗑</button>
+            </div>
+          </div>
+        </article>`;
+      }).join("");
+    }
+
+    // ------------------------- saving -----------------------------------
+    async function patchRecord(id, fields) {
+      const payload = [{ Id: id }];
+      for (const [key, val] of Object.entries(fields)) payload[0][F[key]] = val;
+      const res = await fetch(`${API}/records`, {
+        method: "PATCH",
+        headers: authHeaders({ "Content-Type": "application/json" }),
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(`Save failed (HTTP ${res.status})`);
+      return res.json().catch(() => null);
+    }
+
+    function updateField(id, field, value) {
+      const row = state.rows.find((r) => r.id === id);
+      if (!row || row[field] === value) return;
+      const before = row[field];
+      row[field] = value;
+      applyFilters();
+      patchRecord(id, { [field]: value })
+        .then(() => setSync("ok", "Saved"))
+        .catch((err) => {
+          row[field] = before;
+          applyFilters();
+          toast(err.message, "error");
+          setSync("err", "Save failed");
+        });
+    }
+
+    function stepQty(id, delta) {
+      const row = state.rows.find((r) => r.id === id);
+      if (!row) return;
+      const next = Math.max(0, Math.round((row.onHand + delta) * 1000) / 1000);
+      updateField(id, "onHand", next);
+    }
+
+    // ------------------------- inline editing ---------------------------
+    function startEdit(el) {
+      if (el.querySelector("input")) return;
+      const id = Number(el.dataset.id);
+      const field = el.dataset.field;
+      const row = state.rows.find((r) => r.id === id);
+      if (!row) return;
+
+      const isNum = NUM_FIELDS.includes(field);
+      const oldText = el.textContent;
+      const input = document.createElement("input");
+      input.type = isNum ? "number" : "text";
+      if (isNum) input.step = field === "price" ? "0.01" : "0.001";
+      input.value = row[field];
+      el.textContent = "";
+      el.appendChild(input);
+      input.focus();
+      input.select();
+
+      let done = false;
+      const finish = (commit) => {
+        if (done) return;
+        done = true;
+        const raw = input.value.trim();
+        el.textContent = oldText;
+        if (!commit) return;
+        if (isNum) {
+          const n = Number(raw);
+          if (raw === "" || !Number.isFinite(n) || n < 0) {
+            toast("Enter a number of 0 or more", "error");
+            return;
+          }
+          if (n !== row[field]) updateField(id, field, n);
+        } else if (raw !== row[field]) {
+          if (field === "description" && !raw) { toast("Description cannot be empty", "error"); return; }
+          updateField(id, field, raw);
+        }
+      };
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") { e.preventDefault(); finish(true); }
+        else if (e.key === "Escape") { e.preventDefault(); finish(false); }
+        e.stopPropagation();
+      });
+      input.addEventListener("blur", () => finish(true));
+    }
+
+    // ------------------------- modal ------------------------------------
+    let editingId = null;
+
+    function openModal(row = null) {
+      editingId = row ? row.id : null;
+      $("modalTitle").textContent = row ? "Edit item" : "Add inventory item";
+      $("f_id").value = row ? row.id : "";
+      $("f_description").value = row ? row.description : "";
+      $("f_material").value = row ? row.material : "";
+      $("f_hier").value = row ? row.hier : "";
+      $("f_onHand").value = row ? row.onHand : 0;
+      $("f_unit").value = row ? row.unit : "PC";
+      $("f_price").value = row ? row.price : 0;
+      $("f_stat").value = row ? row.stat : "V";
+      $("f_min").value = row ? row.min : 0;
+      $("f_max").value = row ? row.max : 0;
+      $("f_notes").value = row ? row.notes : "";
+      $("deleteBtn").classList.toggle("hidden", !row);
+      $("modal").classList.remove("hidden");
+      $("modal").classList.add("flex");
+      setTimeout(() => $("f_description").focus(), 40);
+    }
+
+    function closeModal() {
+      $("modal").classList.add("hidden");
+      $("modal").classList.remove("flex");
+      editingId = null;
+    }
+
+    async function saveModal(e) {
+      e.preventDefault();
+      const btn = $("saveBtn");
+      btn.disabled = true;
+      const fields = {
+        description: $("f_description").value.trim(),
+        material: $("f_material").value.trim(),
+        hier: $("f_hier").value.trim(),
+        onHand: num($("f_onHand").value),
+        unit: $("f_unit").value,
+        price: num($("f_price").value),
+        stat: $("f_stat").value.trim().toUpperCase(),
+        min: num($("f_min").value),
+        max: num($("f_max").value),
+        notes: $("f_notes").value.trim(),
+      };
+      try {
+        if (editingId) {
+          await patchRecord(editingId, fields);
+          Object.assign(state.rows.find((r) => r.id === editingId), fields);
+          toast("Item updated");
+        } else {
+          const payload = {
+            [F.description]: fields.description,
+            [F.material]: fields.material,
+            [F.hier]: fields.hier,
+            [F.onHand]: fields.onHand,
+            [F.unit]: fields.unit,
+            [F.price]: fields.price,
+            [F.currency]: "USD",
+            [F.min]: fields.min,
+            [F.max]: fields.max,
+            [F.stat]: fields.stat,
+            [F.notes]: fields.notes,
+          };
+          const res = await fetch(`${API}/records`, {
+            method: "POST",
+            headers: authHeaders({ "Content-Type": "application/json" }),
+            body: JSON.stringify([payload]),
+          });
+          if (!res.ok) throw new Error(`Add failed (HTTP ${res.status})`);
+          toast("Item added");
+          closeModal();
+          await loadData({ silent: true });
+          btn.disabled = false;
+          return;
+        }
+        applyFilters();
+        closeModal();
+        setSync("ok", "Saved");
+      } catch (err) {
+        toast(err.message, "error");
+        setSync("err", "Save failed");
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function deleteRow(id) {
+      const row = state.rows.find((r) => r.id === id);
+      if (!row) return;
+      if (!confirm(`Delete "${row.description}" (${row.material}) from inventory?\n\nThis removes it from NocoDB too.`)) return;
+      try {
+        const res = await fetch(`${API}/records`, {
+          method: "DELETE",
+          headers: authHeaders({ "Content-Type": "application/json" }),
+          body: JSON.stringify([{ Id: id }]),
+        });
+        if (!res.ok) throw new Error(`Delete failed (HTTP ${res.status})`);
+        state.rows = state.rows.filter((r) => r.id !== id);
+        closeModal();
+        applyFilters();
+        toast("Item deleted");
+        setSync("ok", "Saved");
+      } catch (err) {
+        toast(err.message, "error");
+      }
+    }
+
+    // ------------------------- CSV --------------------------------------
+    function exportCsv() {
+      const cols = [
+        ["Material", (r) => r.material],
+        ["Description", (r) => r.description],
+        ["Prod Hier", (r) => r.hier],
+        ["On Hand", (r) => r.onHand],
+        ["Unit", (r) => r.unit],
+        ["Unit Price", (r) => r.price],
+        ["Currency", (r) => r.currency],
+        ["Min Stock", (r) => r.min],
+        ["Max Stock", (r) => r.max],
+        ["Total Consumed", (r) => r.consumed],
+        ["Pack Size", (r) => (r.pack === null ? "" : r.pack)],
+        ["Stock Value", (r) => valueOf(r).toFixed(2)],
+        ["Status", (r) => stockStatus(r).toUpperCase()],
+        ["Last Movement", (r) => r.last],
+        ["Sales Stat", (r) => r.stat],
+        ["Notes", (r) => r.notes],
+      ];
+      const q = (v) => {
+        const s = String(v ?? "");
+        return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+      };
+      const lines = [cols.map(([h]) => q(h)).join(",")];
+      for (const r of state.filtered) lines.push(cols.map(([, fn]) => q(fn(r))).join(","));
+      const blob = new Blob(["\ufeff" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+      const a = document.createElement("a");
+      const stamp = new Date().toISOString().slice(0, 10);
+      a.href = URL.createObjectURL(blob);
+      a.download = `stock-inventory-${stamp}.csv`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      toast(`Exported ${state.filtered.length} rows`);
+    }
+
+    // ------------------------- events -----------------------------------
+    function bind() {
+      $("refreshBtn").addEventListener("click", () => loadData());
+      $("exportBtn").addEventListener("click", exportCsv);
+      $("addBtn").addEventListener("click", () => openModal());
+      $("modalClose").addEventListener("click", closeModal);
+      $("modalCancel").addEventListener("click", closeModal);
+      $("itemForm").addEventListener("submit", saveModal);
+      $("deleteBtn").addEventListener("click", () => editingId && deleteRow(editingId));
+
+      $("statLowTile").addEventListener("click", () => {
+        $("statusFilter").value = "low";
+        state.status = "low";
+        applyFilters();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      let t = null;
+      $("searchInput").addEventListener("input", (e) => {
+        clearTimeout(t);
+        t = setTimeout(() => { state.query = e.target.value; applyFilters(); }, 120);
+      });
+
+      const runSearch = () => {
+        clearTimeout(t);
+        state.query = $("searchInput").value;
+        applyFilters();
+        $("searchInput").blur();
+        const results = window.innerWidth < 1024 ? $("cardWrap") : $("tableWrap");
+        results.scrollIntoView({ behavior: "smooth", block: "start" });
+      };
+      $("searchBtn").addEventListener("click", runSearch);
+      $("searchInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") { e.preventDefault(); runSearch(); }
+        else if (e.key === "Escape") {
+          $("searchInput").value = "";
+          state.query = "";
+          applyFilters();
+        }
+      });
+      $("hierFilter").addEventListener("change", (e) => { state.hier = e.target.value; applyFilters(); });
+      $("statusFilter").addEventListener("change", (e) => { state.status = e.target.value; applyFilters(); });
+      $("sortBy").addEventListener("change", (e) => { state.sort = e.target.value; applyFilters(); });
+      $("clearFilters").addEventListener("click", () => {
+        $("searchInput").value = "";
+        $("hierFilter").value = "all";
+        $("statusFilter").value = "all";
+        $("sortBy").value = "material";
+        Object.assign(state, { query: "", hier: "all", status: "all", sort: "material" });
+        applyFilters();
+      });
+
+      // Delegated clicks for table + cards
+      const onClick = (e) => {
+        const edit = e.target.closest("[data-edit]");
+        if (edit) { const r = state.rows.find((x) => x.id === Number(edit.dataset.edit)); if (r) openModal(r); return; }
+
+        const del = e.target.closest("[data-del]");
+        if (del) { deleteRow(Number(del.dataset.del)); return; }
+
+        const step = e.target.closest("[data-step]");
+        if (step) {
+          const host = step.closest(".stepper");
+          stepQty(Number(host.dataset.id), Number(step.dataset.step));
+          return;
+        }
+
+        const cell = e.target.closest(".cell-edit");
+        if (cell && !cell.querySelector("input")) startEdit(cell);
+      };
+      $("tableBody").addEventListener("click", onClick);
+      $("cardWrap").addEventListener("click", onClick);
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !$("modal").classList.contains("hidden")) closeModal();
+        if (e.key === "/" && document.activeElement.tagName !== "INPUT" &&
+            document.activeElement.tagName !== "TEXTAREA" && document.activeElement.tagName !== "SELECT") {
+          e.preventDefault();
+          $("searchInput").focus();
+        }
+      });
+
+      $("modal").addEventListener("mousedown", (e) => {
+        if (e.target === $("modal")) closeModal();
+      });
+    }
+
+    // ------------------------- login gate -------------------------------
+    // nginx still guards every byte of stock data on /stock-api/; this gate
+    // just asks for those credentials up front, checks them with a one-record
+    // probe, then attaches them to each request so no browser popup appears.
+    const SESSION_KEY = "fresh.stock.session.v1";
+    const USER_KEY = "fresh.stock.user";
+
+    function basicToken(user, pass) {
+      const bytes = new TextEncoder().encode(`${user}:${pass}`);
+      let bin = "";
+      for (const b of bytes) bin += String.fromCharCode(b);
+      return btoa(bin);
+    }
+
+    function readSession() {
+      try {
+        const raw = sessionStorage.getItem(SESSION_KEY);
+        if (!raw) return null;
+        const s = JSON.parse(raw);
+        if (!s || !s.u || !s.p) return null;
+        return { user: String(s.u), header: "Basic " + String(s.p) };
+      } catch (err) {
+        return null;
+      }
+    }
+
+    function writeSession(user, token) {
+      try { sessionStorage.setItem(SESSION_KEY, JSON.stringify({ u: user, p: token })); } catch (err) {}
+      try { localStorage.setItem(USER_KEY, user); } catch (err) {}
+    }
+
+    async function probeHeader(header) {
+      const res = await fetch(`${API}/records?limit=1`, {
+        headers: { Accept: "application/json", Authorization: header },
+        cache: "no-store",
+      });
+      return res.status;
+    }
+
+    function gateStatus(text, mode) {
+      const el = $("gateStatus");
+      el.textContent = "STATUS: " + text;
+      el.dataset.mode = mode || "locked";
+    }
+
+    function gateError(message) {
+      const box = $("gateError");
+      box.textContent = message || "";
+      box.classList.toggle("is-on", !!message);
+    }
+
+    function gateBusy(busy) {
+      $("gateSubmit").disabled = busy;
+      $("gateSubmit").textContent = busy ? "▣ VERIFYING…" : "▶ ENTER VAULT";
+      $("loginUser").disabled = busy;
+      $("loginPass").disabled = busy;
+      $("gateShow").disabled = busy;
+    }
+
+    function wipeView() {
+      state.rows = [];
+      state.filtered = [];
+      state.loaded = false;
+      $("tableBody").innerHTML = "";
+      $("cardWrap").innerHTML = "";
+      $("hierFilter").innerHTML = '<option value="all">ALL HIERARCHIES</option>';
+      ["statSkus", "statUnits", "statValue", "statLow", "statOut"].forEach((id) => {
+        const el = $(id);
+        if (el) el.textContent = "—";
+      });
+      $("shownCount").textContent = "SHOWING —";
+      $("lastSync").textContent = "NOT SYNCED YET";
+      hideError();
+    }
+
+    function lockApp(message) {
+      auth = null;
+      try { sessionStorage.removeItem(SESSION_KEY); } catch (err) {}
+      wipeView();
+      gateBusy(false);
+      gateError(message || "");
+      gateStatus("LOCKED", "locked");
+      $("loginPass").value = "";
+      $("loginGate").classList.remove("is-gone");
+      document.body.classList.add("locked");
+      if (!$("loginUser").value) {
+        try { $("loginUser").value = localStorage.getItem(USER_KEY) || ""; } catch (err) {}
+      }
+      const target = $("loginUser").value ? $("loginPass") : $("loginUser");
+      setTimeout(() => {
+        try { target.focus(); if (target.select) target.select(); } catch (err) {}
+      }, 80);
+    }
+
+    async function unlockApp() {
+      writeSession(auth.user, auth.header.replace(/^Basic\s+/, ""));
+      gateStatus("GRANTED", "ok");
+      gateError("");
+      document.body.classList.remove("locked");
+      $("loginGate").classList.add("is-gone");
+      await loadData();
+      try { $("searchInput").focus({ preventScroll: true }); } catch (err) {}
+    }
+
+    async function signIn(user, pass) {
+      if (!user || !pass) {
+        gateStatus("DENIED", "err");
+        gateError("Enter both operator and access code");
+        (user ? $("loginPass") : $("loginUser")).focus();
+        return;
+      }
+      gateBusy(true);
+      gateError("");
+      gateStatus("VERIFYING…", "busy");
+      const token = basicToken(user, pass);
+      let status = 0;
+      try {
+        status = await probeHeader("Basic " + token);
+      } catch (err) {
+        gateBusy(false);
+        gateStatus("OFFLINE", "err");
+        gateError("Cannot reach the vault — check your connection");
+        return;
+      }
+      if (status === 200) {
+        auth = { user, header: "Basic " + token };
+        await unlockApp();
+        gateBusy(false);
+        return;
+      }
+      gateBusy(false);
+      gateStatus("DENIED", "err");
+      gateError(status === 401 || status === 403
+        ? "Access denied — wrong operator or code"
+        : `Vault error ${status} — try again`);
+      $("loginPass").value = "";
+      $("loginPass").focus();
+    }
+
+    function bindGate() {
+      $("loginForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        signIn($("loginUser").value.trim(), $("loginPass").value);
+      });
+      $("gateShow").addEventListener("click", () => {
+        const input = $("loginPass");
+        const reveal = input.type === "password";
+        input.type = reveal ? "text" : "password";
+        $("gateShow").textContent = reveal ? "HIDE" : "SHOW";
+        $("gateShow").setAttribute("aria-pressed", reveal ? "true" : "false");
+        input.focus();
+      });
+      $("lockBtn").addEventListener("click", () => {
+        lockApp("LOCKED — SESSION CLEARED");
+      });
+    }
+
+    async function startGate() {
+      bindGate();
+      const saved = readSession();
+      if (!saved) {
+        lockApp("");
+        return;
+      }
+      // Same tab, page reloaded: re-verify quietly before showing the app.
+      document.body.classList.add("locked");
+      $("loginGate").classList.remove("is-gone");
+      gateBusy(true);
+      gateStatus("RESTORING…", "busy");
+      let status = 0;
+      try { status = await probeHeader(saved.header); } catch (err) { status = 0; }
+      if (status === 200) {
+        auth = saved;
+        await unlockApp();
+        gateBusy(false);
+        return;
+      }
+      lockApp(status === 401 || status === 403
+        ? "SESSION EXPIRED — SIGN IN AGAIN"
+        : "CANNOT REACH THE VAULT — CHECK YOUR CONNECTION");
+    }
+
+    bind();
+    startGate();
+
+    // Keep the sheet fresh when returning to the tab (only while unlocked).
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden && auth) loadData({ silent: true });
+    });
+  </script>
+</body>
+</html>
